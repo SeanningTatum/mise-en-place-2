@@ -1,4 +1,3 @@
-import { YoutubeTranscript } from "youtube-transcript";
 import { createLayerLogger } from "./logger";
 
 const log = createLayerLogger("server");
@@ -113,20 +112,126 @@ export async function getVideoMetadata(videoId: string): Promise<VideoMetadata> 
 }
 
 /**
+ * Decode HTML entities in transcript text
+ */
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
+}
+
+/**
+ * Extract caption track URL from YouTube video page
+ */
+async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
+  const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  
+  const response = await fetch(videoUrl, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "Accept-Language": "en-US,en;q=0.9",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch video page: ${response.status}`);
+  }
+
+  const html = await response.text();
+  
+  // Look for captions in the ytInitialPlayerResponse
+  const playerResponseMatch = html.match(/ytInitialPlayerResponse\s*=\s*({.+?});/);
+  if (!playerResponseMatch) {
+    log.debug({ videoId }, "No ytInitialPlayerResponse found");
+    return null;
+  }
+
+  try {
+    const playerResponse = JSON.parse(playerResponseMatch[1]);
+    const captions = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+    
+    if (!captions || captions.length === 0) {
+      log.debug({ videoId }, "No caption tracks found");
+      return null;
+    }
+
+    // Prefer English captions, fallback to first available
+    const englishTrack = captions.find((track: { languageCode: string }) => 
+      track.languageCode === "en" || track.languageCode?.startsWith("en")
+    );
+    const track = englishTrack || captions[0];
+    
+    log.debug({ videoId, language: track.languageCode }, "Found caption track");
+    return track.baseUrl;
+  } catch (error) {
+    log.error({ error, videoId }, "Failed to parse player response");
+    return null;
+  }
+}
+
+/**
+ * Fetch and parse transcript XML from caption track URL
+ */
+async function fetchTranscriptFromUrl(captionUrl: string): Promise<TranscriptSegment[]> {
+  const response = await fetch(captionUrl, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch captions: ${response.status}`);
+  }
+
+  const xml = await response.text();
+  
+  // Parse the XML transcript - format: <text start="0.0" dur="3.5">text content</text>
+  const segments: TranscriptSegment[] = [];
+  const textRegex = /<text\s+start="([^"]+)"\s+dur="([^"]+)"[^>]*>([^<]*)<\/text>/g;
+  
+  let match;
+  while ((match = textRegex.exec(xml)) !== null) {
+    const start = parseFloat(match[1]) * 1000; // Convert to milliseconds
+    const duration = parseFloat(match[2]) * 1000;
+    const text = decodeHtmlEntities(match[3]).trim();
+    
+    if (text) {
+      segments.push({
+        text,
+        offset: Math.round(start),
+        duration: Math.round(duration),
+      });
+    }
+  }
+
+  return segments;
+}
+
+/**
  * Fetch transcript for a YouTube video
+ * Uses direct fetch to YouTube's caption system (Cloudflare Workers compatible)
  */
 export async function getTranscript(videoId: string): Promise<TranscriptSegment[]> {
   log.debug({ videoId }, "Fetching YouTube transcript");
 
   try {
-    const transcript = await YoutubeTranscript.fetchTranscript(videoId);
+    // Extract caption track URL from video page
+    const captionUrl = await extractCaptionTrackUrl(videoId);
+    
+    if (!captionUrl) {
+      log.warn({ videoId }, "No captions available for video");
+      return [];
+    }
 
-    const segments: TranscriptSegment[] = transcript.map((segment) => ({
-      text: segment.text,
-      offset: Math.round(segment.offset),
-      duration: Math.round(segment.duration),
-    }));
-
+    // Fetch and parse the transcript
+    const segments = await fetchTranscriptFromUrl(captionUrl);
+    
     log.info({ videoId, segmentCount: segments.length }, "Transcript fetched successfully");
     return segments;
   } catch (error) {

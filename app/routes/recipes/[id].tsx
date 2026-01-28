@@ -119,12 +119,14 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
     <div className="mx-auto max-w-5xl space-y-6">
       {/* YouTube Player */}
       {recipe.sourceType === "youtube" && recipe.youtubeVideoId && (
-        <YouTubePlayer
-          videoId={recipe.youtubeVideoId}
-          seekTo={seekTo}
-          onTimeUpdate={handleTimeUpdate}
-          onSeeked={handleSeeked}
-        />
+        <div data-testid="youtube-player-container">
+          <YouTubePlayer
+            videoId={recipe.youtubeVideoId}
+            seekTo={seekTo}
+            onTimeUpdate={handleTimeUpdate}
+            onSeeked={handleSeeked}
+          />
+        </div>
       )}
 
       {/* Recipe Header */}
@@ -171,13 +173,13 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" data-testid="recipe-menu-button">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer">
+              <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
                 <ExternalLink className="mr-2 h-4 w-4" />
                 View Original
               </a>
@@ -185,6 +187,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
             <DropdownMenuItem
               className="text-destructive"
               onClick={() => setDeleteDialogOpen(true)}
+              data-testid="delete-recipe-button"
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete Recipe
@@ -194,14 +197,16 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
       </div>
 
       {/* Macros */}
-      <MacrosCard
-        calories={recipe.calories}
-        protein={recipe.protein}
-        carbs={recipe.carbs}
-        fat={recipe.fat}
-        fiber={recipe.fiber}
-        servings={recipe.servings}
-      />
+      <div data-testid="macros-card-container">
+        <MacrosCard
+          calories={recipe.calories}
+          protein={recipe.protein}
+          carbs={recipe.carbs}
+          fat={recipe.fat}
+          fiber={recipe.fiber}
+          servings={recipe.servings}
+        />
+      </div>
 
       {/* Content Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
@@ -230,7 +235,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent data-testid="delete-recipe-dialog">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
             <AlertDialogDescription>
@@ -238,10 +243,11 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="delete-cancel-button">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-testid="delete-confirm-button"
             >
               Delete
             </AlertDialogAction>

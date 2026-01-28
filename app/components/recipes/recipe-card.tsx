@@ -31,7 +31,7 @@ export function RecipeCard({
       : null;
 
   return (
-    <Link to={`/recipes/${id}`}>
+    <Link to={`/recipes/${id}`} data-testid={`recipe-card-${id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-md">
         <div className="aspect-video relative overflow-hidden bg-muted">
           {thumbnailUrl ? (

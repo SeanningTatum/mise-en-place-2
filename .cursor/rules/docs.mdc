@@ -12,14 +12,37 @@ docs/
 ├── ideas/      # Brainstorming and feature ideas
 ├── meetings/   # Meeting notes (date-prefixed)
 ├── plans/      # Roadmaps and project plans
-└── releases/   # Changelog and release notes
+├── releases/   # Changelog and release notes
+└── testing/    # Testing plans with screenshots
+    └── {feature}/
+        ├── {feature}.md
+        └── screenshots/
 ```
 
 ## Naming Conventions
 
 - **meetings:** `YYYY-MM-DD-description.md` (e.g., `2026-01-24-kickoff.md`)
 - **releases:** `vX.Y.Z.md` or `YYYY-MM-DD-release.md` (e.g., `v1.0.0.md`)
+- **testing:** `{feature-name}/{feature-name}.md` (e.g., `recipes/recipes.md`)
 - **others:** `kebab-case.md` (e.g., `authentication.md`, `feature-brainstorm.md`)
+
+## Testing Documentation Structure
+
+Testing plans live in `docs/testing/` with their own screenshots folder:
+
+```
+docs/testing/{feature-name}/
+├── {feature-name}.md      # Testing plan with scenario descriptions
+└── screenshots/           # Playwright screenshots
+    ├── scenario-1.png
+    ├── scenario-2.png
+    └── ...
+```
+
+Screenshots are referenced with relative paths in the testing plan:
+```markdown
+**Screenshot:** ![Description](./screenshots/scenario-1.png)
+```
 
 ## Formatting Standards
 
@@ -75,6 +98,43 @@ Code examples and usage instructions.
 
 ## Key Files
 - `path/to/file.ts` - Description
+```
+
+### Testing Plan
+
+```markdown
+# Testing Plan: {Feature Name}
+
+## Overview
+Brief description of what was implemented and what needs to be tested.
+
+## Prerequisites
+- [ ] Development server running
+- [ ] Database seeded with test data
+- [ ] Test user credentials available
+
+## Test Scenarios
+
+### Scenario 1: {Happy Path}
+**Description:** {What this scenario tests}
+**Steps:**
+1. Navigate to {URL}
+2. {Action}
+**Expected Result:** {What should happen}
+
+**Screenshot:** ![{Description}](./screenshots/scenario-1.png)
+
+## UI Elements to Verify
+- [ ] {Element} renders correctly
+
+## Test IDs Reference
+
+| Element | Test ID |
+|---------|---------|
+| {Element} | `{data-testid}` |
+
+## E2E Test Coverage
+Test file: `e2e/{feature-name}.spec.ts`
 ```
 
 ### Release Notes
@@ -166,3 +226,4 @@ How we'll measure success.
 3. **Link related docs:** Reference other relevant documentation
 4. **Keep updated:** Remove outdated information
 5. **Version awareness:** Note which version features apply to
+6. **Screenshots in testing:** Save to `docs/testing/{feature}/screenshots/` folder

@@ -116,19 +116,30 @@ export const recipesRouter = createTRPCRouter({
       let thumbnailUrl: string | null = null;
 
       if (isYouTubeUrl(url)) {
-        // YouTube extraction - pass URL directly to Gemini Pro for accurate timestamps
+        // YouTube extraction - use Gemini 3 Pro to process video directly
         sourceType = "youtube";
         youtubeVideoId = parseYouTubeUrl(url);
-        log.debug({ url, videoId: youtubeVideoId }, "Detected YouTube URL, using Gemini Pro video processing");
+        log.debug({ url, videoId: youtubeVideoId }, "Detected YouTube URL, using Gemini 3 Pro video processing");
+
+        // Check Gemini client is configured
+        if (!ctx.gemini) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Recipe extraction is not configured. Please set GEMINI_API_KEY.",
+          });
+        }
 
         try {
-          // Fetch metadata separately (for thumbnail)
-          if (youtubeVideoId) {
-            const metadata = await getVideoMetadata(youtubeVideoId);
-            thumbnailUrl = metadata.thumbnailUrl;
+          if (!youtubeVideoId) {
+            throw new Error("Invalid YouTube URL");
           }
 
-          // Use Gemini Pro to process the video directly for accurate timestamps
+          // Fetch metadata for thumbnail
+          const metadata = await getVideoMetadata(youtubeVideoId);
+          thumbnailUrl = metadata.thumbnailUrl;
+
+          // Use Gemini 3 Pro to process the YouTube video directly
+          // This passes the YouTube URL to Gemini which can watch and understand the video
           extractedRecipe = await extractRecipeFromYouTube(ctx.gemini, url);
         } catch (error) {
           log.error({ error, url }, "Failed to extract from YouTube video");

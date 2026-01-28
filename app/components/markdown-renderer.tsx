@@ -19,7 +19,8 @@ import {
   IconLink,
 } from "@tabler/icons-react";
 
-// Initialize mermaid with default config
+// Initialize mermaid with comprehensive config for all diagram types
+// Note: This is the default config, actual rendering uses config in MermaidBlock
 mermaid.initialize({
   startOnLoad: false,
   theme: "default",
@@ -140,14 +141,232 @@ function MermaidBlock({ code }: MermaidBlockProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we only render on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+
     const renderDiagram = async () => {
       try {
         // Generate a valid ID (mermaid doesn't like special characters)
-        const safeId = `mermaid-${id.replace(/:/g, "-")}`;
-        const { svg } = await mermaid.render(safeId, code);
-        setSvg(svg);
+        const safeId = `mermaid-${id.replace(/:/g, "-").replace(/\s/g, "").replace(/\//g, "-")}`;
+        
+        // Create a temporary container with explicit width for rendering
+        const tempContainer = document.createElement("div");
+        tempContainer.style.width = "1200px";
+        tempContainer.style.position = "absolute";
+        tempContainer.style.left = "-9999px";
+        tempContainer.style.top = "-9999px";
+        document.body.appendChild(tempContainer);
+        
+        // Detect diagram type from code to apply specific settings
+        const diagramType = code.trim().split('\n')[0].toLowerCase();
+        const isJourney = diagramType.includes('journey');
+        const isSequence = diagramType.includes('sequencediagram');
+        const isFlowchart = diagramType.includes('flowchart') || diagramType.includes('graph');
+        const isStateDiagram = diagramType.includes('statediagram');
+        const isErDiagram = diagramType.includes('erdiagram');
+        const isGantt = diagramType.includes('gantt');
+        const isPie = diagramType.includes('pie');
+        const isMindmap = diagramType.includes('mindmap');
+        const isQuadrant = diagramType.includes('quadrantchart');
+        
+        // Re-initialize mermaid before each render with optimized settings
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: "default",
+          securityLevel: "loose",
+          fontFamily: "system-ui, -apple-system, sans-serif",
+          // Global font size - smaller for better fit
+          fontSize: 12,
+          // Flowchart settings - smaller padding and wrapping
+          flowchart: { 
+            htmlLabels: true, 
+            useMaxWidth: false,
+            curve: "basis",
+            diagramPadding: 8,
+            nodeSpacing: 50,
+            rankSpacing: 50,
+            wrappingWidth: 150,
+          },
+          // Sequence diagram - larger width for better readability
+          sequence: { 
+            useMaxWidth: false,
+            wrap: true,
+            width: 150,
+            height: 50,
+            boxMargin: 10,
+            boxTextMargin: 5,
+            noteMargin: 10,
+            messageMargin: 35,
+            mirrorActors: false,
+            actorFontSize: 12,
+            noteFontSize: 11,
+            messageFontSize: 12,
+          },
+          // ER diagram - compact entities
+          er: { 
+            useMaxWidth: false,
+            layoutDirection: "TB",
+            minEntityWidth: 80,
+            minEntityHeight: 50,
+            entityPadding: 10,
+            fontSize: 11,
+          },
+          // State diagram - smaller text
+          state: { 
+            useMaxWidth: false,
+            titleTopMargin: 15,
+            nodeSpacing: 30,
+            rankSpacing: 30,
+          },
+          // Pie chart
+          pie: { 
+            useMaxWidth: false,
+            textPosition: 0.75,
+          },
+          // Gantt chart - compact
+          gantt: { 
+            useMaxWidth: false,
+            titleTopMargin: 15,
+            barHeight: 20,
+            barGap: 4,
+            topPadding: 30,
+            leftPadding: 60,
+            gridLineStartPadding: 25,
+            fontSize: 10,
+            sectionFontSize: 11,
+          },
+          // Journey diagram - much more compact
+          journey: { 
+            useMaxWidth: false,
+            diagramMarginX: 20,
+            diagramMarginY: 10,
+            leftMargin: 50,
+            width: 150,
+            height: 40,
+            boxMargin: 5,
+            boxTextMargin: 3,
+            noteMargin: 5,
+            messageMargin: 20,
+            taskFontSize: 10,
+            sectionFontSize: 11,
+          },
+          // Mindmap - compact
+          mindmap: { 
+            useMaxWidth: false,
+            padding: 8,
+            maxNodeWidth: 150,
+          },
+          // Quadrant chart - smaller overall
+          quadrantChart: { 
+            useMaxWidth: false,
+            chartWidth: 400,
+            chartHeight: 400,
+            titleFontSize: 14,
+            titlePadding: 8,
+            quadrantPadding: 4,
+            xAxisLabelPadding: 8,
+            yAxisLabelPadding: 8,
+            xAxisLabelFontSize: 11,
+            yAxisLabelFontSize: 11,
+            quadrantLabelFontSize: 11,
+            quadrantTextTopPadding: 4,
+            pointTextPadding: 4,
+            pointLabelFontSize: 10,
+            pointRadius: 4,
+          },
+        });
+        
+        const { svg: renderedSvg } = await mermaid.render(safeId, code.trim(), tempContainer);
+        
+        // Clean up temp container
+        document.body.removeChild(tempContainer);
+        
+        // Post-process SVG to ensure proper sizing and responsiveness
+        let processedSvg = renderedSvg;
+        
+        // Determine max-width based on diagram type
+        let maxWidth = "100%";
+        let minHeight = "auto";
+        
+        // Sequence diagrams need more width
+        if (isSequence) {
+          maxWidth = "100%";
+          minHeight = "300px";
+        }
+        // Journey diagrams should be scaled down
+        else if (isJourney) {
+          maxWidth = "100%";
+        }
+        // ER diagrams need good width for multiple entities  
+        else if (isErDiagram) {
+          maxWidth = "100%";
+          minHeight = "250px";
+        }
+        // Quadrant charts should be reasonably sized
+        else if (isQuadrant) {
+          maxWidth = "500px";
+        }
+        
+        // Remove any existing style attributes and add responsive styles
+        processedSvg = processedSvg.replace(
+          /<svg([^>]*)>/,
+          (match, attrs) => {
+            // Extract existing viewBox if present
+            const viewBoxMatch = attrs.match(/viewBox="([^"]*)"/);
+            const viewBox = viewBoxMatch ? viewBoxMatch[0] : '';
+            
+            // Extract existing width/height to use in viewBox if needed
+            const widthMatch = attrs.match(/width="(\d+(?:\.\d+)?)/);
+            const heightMatch = attrs.match(/height="(\d+(?:\.\d+)?)/);
+            
+            // Create new SVG tag with responsive attributes
+            let newAttrs = attrs
+              .replace(/width="[^"]*"/g, '')
+              .replace(/height="[^"]*"/g, '')
+              .replace(/style="[^"]*"/g, '');
+            
+            // Add viewBox if not present and we have width/height
+            if (!viewBoxMatch && widthMatch && heightMatch) {
+              newAttrs += ` viewBox="0 0 ${widthMatch[1]} ${heightMatch[1]}"`;
+            } else if (viewBoxMatch) {
+              newAttrs += ` ${viewBox}`;
+            }
+            
+            return `<svg${newAttrs} style="max-width: ${maxWidth}; min-height: ${minHeight}; height: auto; display: block;">`;
+          }
+        );
+        
+        // Scale down text in SVG for better fitting
+        processedSvg = processedSvg.replace(
+          /<style>([\s\S]*?)<\/style>/,
+          (match, styleContent) => {
+            // Add CSS to scale text and improve fitting
+            const additionalStyles = `
+              .node rect, .node circle, .node ellipse, .node polygon, .node path { 
+                stroke-width: 1px !important; 
+              }
+              .label, .nodeLabel, .edgeLabel, .cluster-label {
+                font-size: 11px !important;
+              }
+              .messageText, .actor {
+                font-size: 11px !important;
+              }
+              text {
+                font-family: system-ui, -apple-system, sans-serif !important;
+              }
+            `;
+            return `<style>${styleContent}${additionalStyles}</style>`;
+          }
+        );
+        
+        setSvg(processedSvg);
         setError(null);
       } catch (err) {
         console.error("Mermaid render error:", err);
@@ -156,15 +375,23 @@ function MermaidBlock({ code }: MermaidBlockProps) {
     };
 
     renderDiagram();
-  }, [code, id]);
+  }, [code, id, isClient]);
 
   if (error) {
     return (
       <div className="my-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
         <p className="text-sm text-destructive">Failed to render diagram: {error}</p>
-        <pre className="mt-2 text-xs text-muted-foreground overflow-x-auto">
+        <pre className="mt-2 text-xs text-muted-foreground overflow-x-auto whitespace-pre-wrap">
           {code}
         </pre>
+      </div>
+    );
+  }
+
+  if (!svg) {
+    return (
+      <div className="my-6 flex justify-center items-center rounded-xl border bg-muted/30 p-6 min-h-[200px]">
+        <div className="text-muted-foreground text-sm">Loading diagram...</div>
       </div>
     );
   }

@@ -35,4 +35,50 @@ export const analyticsRouter = createTRPCRouter({
     .query(({ ctx, input }) =>
       analyticsRepository.getRecentSignupsCount(ctx.db, input)
     ),
+
+  // Recipe analytics
+  getRecipeGrowth: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      })
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getRecipeGrowth(ctx.db, input)
+    ),
+
+  getRecipeStats: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getRecipeStats(ctx.db)
+  ),
+
+  getSourceTypeDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getSourceTypeDistribution(ctx.db)
+  ),
+
+  getTopRecipeCreators: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().int().min(1).max(50).default(10),
+      })
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getTopRecipeCreators(ctx.db, input)
+    ),
+
+  // Ingredient analytics
+  getIngredientGrowth: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      })
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getIngredientGrowth(ctx.db, input)
+    ),
+
+  getIngredientCategoryDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getIngredientCategoryDistribution(ctx.db)
+  ),
 });

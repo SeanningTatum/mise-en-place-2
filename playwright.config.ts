@@ -13,15 +13,26 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
+    // Setup project for authentication
+    {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+    },
+    // Main test project that depends on setup
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        // Use saved auth state
+        storageState: "e2e/.auth/user.json",
+      },
+      dependencies: ["setup"],
     },
   ],
   webServer: {
     command: "bun run dev",
     url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120 * 1000,
   },
 });

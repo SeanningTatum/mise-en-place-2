@@ -31,7 +31,7 @@ export function RecipeSteps({
   showYouTubeTimestamps = true,
 }: RecipeStepsProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="recipe-steps">
       <h3 className="font-semibold text-lg">Steps</h3>
       <ol className="space-y-4">
         {steps.map((step) => (

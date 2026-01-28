@@ -44,8 +44,8 @@ Pattern: Look for `LAN-` followed by numbers.
 Look for any generated testing plans in these locations:
 
 - `e2e/*.spec.ts` - E2E test files
-- `docs/features/*-testing.md` - Test documentation
-- `.cursor/testing-results/` directory
+- `docs/testing/{feature}/{feature}.md` - Testing plans with screenshots
+- `docs/testing/{feature}/screenshots/` - Playwright screenshots
 - Recent conversation context mentioning test scenarios
 
 If a testing plan exists, include its test cases in the PR description.

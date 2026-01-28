@@ -54,7 +54,7 @@ export function IngredientsList({ ingredients, checkable = false }: IngredientsL
   const hasCategories = categories.length > 1 || (categories.length === 1 && categories[0] !== "Other");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="ingredients-list">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-lg">Ingredients</h3>
         {checkable && checkedItems.size > 0 && (

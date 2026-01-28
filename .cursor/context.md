@@ -13,6 +13,7 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
 - **Markdown**: react-markdown with remark-gfm for GitHub Flavored Markdown
 - **Syntax Highlighting**: Shiki with github-light/dark themes
 - **Diagrams**: Mermaid for rendering diagrams in markdown
+- **AI Providers**: Google Gemini AI SDK, Anthropic Claude SDK
 - **Package Manager**: Bun
 
 ## Architecture
@@ -61,9 +62,12 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
   - `.cursor/rules/docs.mdc` - Documentation guidelines for agents
 
 ### Recipe Extraction
-- AI-powered recipe extraction from YouTube videos and blog/recipe sites using Gemini AI
+- AI-powered recipe extraction from YouTube videos and blog/recipe sites using Gemini AI or Claude AI
+- **AI Providers**:
+  - **Gemini**: Primary provider for YouTube video processing (Gemini 3 Pro) and blog content extraction
+  - **Claude**: Alternative provider using Claude Sonnet 4.5 with tool_use for structured output extraction from YouTube transcripts
 - **Source Types**:
-  - **YouTube**: Extracts transcript, video metadata, and syncs steps with video timestamps
+  - **YouTube**: Extracts transcript, video metadata, and syncs steps with video timestamps (can use Gemini 3 Pro video processing or Claude with transcript)
   - **Blog/Recipe Sites**: Extracts content using JSON-LD structured data and Readability parser
 - **Extracted Data**:
   - Title, description, servings, prep/cook times
@@ -78,6 +82,7 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
   - Admin ingredient management with duplicate merging
 - **Key files**:
   - `app/lib/gemini.ts` - Gemini AI client for recipe extraction
+  - `app/lib/claude.ts` - Claude AI client for recipe extraction (alternative to Gemini)
   - `app/lib/youtube.ts` - YouTube transcript and metadata fetching
   - `app/lib/content-extractor.ts` - Blog content extraction (JSON-LD + Readability)
   - `app/repositories/recipe.ts` - Recipe CRUD operations
@@ -90,9 +95,12 @@ flowchart TD
     User[User] -->|Submit URL| Extract[recipes.extract]
     Extract -->|YouTube URL| YT[youtube.ts]
     Extract -->|Blog URL| Blog[content-extractor.ts]
-    YT -->|Transcript + Metadata| Gemini[gemini.ts]
-    Blog -->|HTML Content| Gemini
+    YT -->|Transcript + Metadata| AI{AI Provider}
+    Blog -->|HTML Content| AI
+    AI -->|Gemini 3 Pro| Gemini[gemini.ts]
+    AI -->|Claude Sonnet 4.5| Claude[claude.ts]
     Gemini -->|Structured Recipe| Preview[Recipe Preview]
+    Claude -->|Structured Recipe| Preview
     Preview -->|User Confirms| Save[recipes.save]
     Save -->|Save Recipe| Repo[recipe.ts Repository]
     Repo -->|Create Records| DB[(Database)]
@@ -101,6 +109,8 @@ flowchart TD
     DB -->|ingredient| IngTable[ingredient table]
     DB -->|recipe_ingredient| JunctionTable[recipe_ingredient table]
 ```
+
+*Note: Either Gemini or Claude can be used for recipe extraction. Gemini supports direct YouTube video processing, while Claude uses transcript-based extraction with tool_use for structured output.*
 
 ## Routes
 
@@ -144,6 +154,7 @@ flowchart TD
 - **recipe_ingredient**: Junction table linking recipes to ingredients with quantities, units, and notes
 
 ## Recent Changes
+- **Claude AI Integration** - Added Claude Sonnet 4.5 integration as an alternative AI provider for recipe extraction. New `app/lib/claude.ts` provides `extractRecipeFromTranscript()` function using tool_use for structured output extraction from YouTube transcripts. Claude client is available in tRPC context via `ANTHROPIC_API_KEY`. Enhanced YouTube transcript fetching in `app/lib/youtube.ts` and improved markdown rendering in `app/components/markdown-renderer.tsx`.
 - **Recipe Extraction Feature** - Added AI-powered recipe extraction from YouTube videos and blog sites using Gemini AI. Extracts title, description, servings, prep/cook times, macros per serving, ingredients, and step-by-step instructions. YouTube recipes include timestamps that sync with video playback. Includes user recipe collection (`/recipes`), recipe detail pages with YouTube player, admin recipe/ingredient management, and full CRUD operations via tRPC. New database tables: `recipe`, `recipe_step`, `ingredient`, `recipe_ingredient`.
 - **Documentation UI Enhancement** - Enhanced `/admin/docs` with URL state management, syntax highlighting (shiki), table of contents, search/filter, rich empty states per category, and breadcrumbs. Added Releases category for changelogs. Created `.cursor/rules/docs.mdc` for documentation guidelines.
 - **Admin Documentation Feature** - Added markdown documentation viewer at `/admin/docs` with category-based organization (meetings, ideas, plans, features, releases). Includes Mermaid diagram support for visualizing architecture and flows. Uses react-markdown, remark-gfm, shiki, and mermaid packages. Documents are stored as static markdown files in `docs/` folder.

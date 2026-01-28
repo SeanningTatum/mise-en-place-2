@@ -82,7 +82,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold">My Recipes</h1>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-sm text-muted-foreground" data-testid="recipe-count">
           {total} recipe{total !== 1 ? "s" : ""}
         </span>
       </div>
@@ -91,9 +91,9 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <Tabs value={currentSource} onValueChange={handleSourceChange} className="w-full sm:w-auto">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="youtube">YouTube</TabsTrigger>
-            <TabsTrigger value="blog">Blogs</TabsTrigger>
+            <TabsTrigger value="all" data-testid="filter-tab-all">All</TabsTrigger>
+            <TabsTrigger value="youtube" data-testid="filter-tab-youtube">YouTube</TabsTrigger>
+            <TabsTrigger value="blog" data-testid="filter-tab-blog">Blogs</TabsTrigger>
           </TabsList>
         </Tabs>
         <div className="relative flex-1 sm:max-w-xs">
@@ -130,7 +130,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2" data-testid="pagination">
               <Button
                 variant="outline"
                 size="sm"
@@ -140,10 +140,11 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
                   params.set("page", String(page - 1));
                   setSearchParams(params);
                 }}
+                data-testid="pagination-previous"
               >
                 Previous
               </Button>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground" data-testid="pagination-info">
                 Page {page + 1} of {totalPages}
               </span>
               <Button
@@ -155,6 +156,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
                   params.set("page", String(page + 1));
                   setSearchParams(params);
                 }}
+                data-testid="pagination-next"
               >
                 Next
               </Button>
@@ -173,7 +175,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           </p>
           {!currentSearch && currentSource === "all" && (
             <Link to="/recipes/new">
-              <Button className="gap-2">
+              <Button className="gap-2" data-testid="extract-first-recipe-button">
                 <Plus className="h-4 w-4" />
                 Extract Your First Recipe
               </Button>

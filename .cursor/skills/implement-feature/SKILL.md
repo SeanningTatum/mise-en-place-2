@@ -163,15 +163,16 @@ Add logs for:
 ```markdown
 Test the {feature} implementation:
 
-1. Create testing plan at `.cursor/testing-plans/{feature}.md`
-2. Verify with Playwright MCP:
+1. Create testing plan at `docs/testing/{feature}/{feature}.md`
+2. Create screenshots folder at `docs/testing/{feature}/screenshots/`
+3. Verify with Playwright MCP:
    - Navigate to {route}
    - Test happy path: {steps}
    - Test edge cases: {cases}
    - Test error handling: {scenarios}
-3. Write E2E tests at `e2e/{feature}.spec.ts`
-4. Create test documentation at `docs/features/{feature}-testing.md`
-5. Add data-testid attributes to interactive elements
+4. Save screenshots to `docs/testing/{feature}/screenshots/`
+5. Write E2E tests at `e2e/{feature}.spec.ts`
+6. Add data-testid attributes to interactive elements
 ```
 
 ### Analytics: `data-analytics`
