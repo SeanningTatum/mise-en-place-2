@@ -67,7 +67,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
         return
       }
 
-      navigate("/")
+      navigate("/recipes")
     } catch (err) {
       setAuthError(err instanceof Error ? err.message : "Failed to create account")
     }

@@ -8,6 +8,7 @@
  */
 import { getDb } from "@/db";
 import { createAuth, type Auth } from "@/auth/server";
+import { createGeminiClient } from "@/lib/gemini";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z, ZodError } from "zod/v4";
@@ -39,6 +40,11 @@ export const createTRPCContext = async (opts: {
     headers: opts.headers,
   });
 
+  // Create Gemini client if API key is configured
+  const gemini = opts.cfContext.GEMINI_API_KEY
+    ? createGeminiClient(opts.cfContext.GEMINI_API_KEY)
+    : null;
+
   return {
     headers: opts.headers,
     authApi: auth.api,
@@ -52,6 +58,7 @@ export const createTRPCContext = async (opts: {
     workflows: {
       ExampleWorkflow: opts.cfContext.EXAMPLE_WORKFLOW,
     },
+    gemini,
   };
 };
 /**

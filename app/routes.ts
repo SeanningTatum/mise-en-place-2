@@ -18,11 +18,22 @@ export default [
   route("/login", "routes/authentication/login.tsx"),
   route("/sign-up", "routes/authentication/sign-up.tsx"),
 
+  // Recipe Routes
+  ...prefix("recipes", [
+    layout("routes/recipes/_layout.tsx", [
+      index("routes/recipes/_index.tsx"),
+      route("/new", "routes/recipes/new.tsx"),
+      route("/:id", "routes/recipes/[id].tsx"),
+    ]),
+  ]),
+
   // Admin Routes
   ...prefix("admin", [
     layout("routes/admin/_layout.tsx", [
       route("/", "routes/admin/_index.tsx"),
       route("/users", "routes/admin/users.tsx"),
+      route("/recipes", "routes/admin/recipes.tsx"),
+      route("/ingredients", "routes/admin/ingredients.tsx"),
       route("/docs/:category?/:doc?", "routes/admin/docs.tsx"),
       route("/kitchen-sink", "routes/admin/kitchen-sink.tsx"),
     ]),

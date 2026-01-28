@@ -1,0 +1,48 @@
+// Secrets to be set via 'wrangler secret put BETTER_AUTH_SECRET'
+{
+  "name": "mise-en-place-2",
+  "main": "workers/app.ts",
+  "compatibility_date": "2025-03-25",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": "build/client",
+    "binding": "ASSETS"
+  },
+  "placement": {
+    "mode": "smart"
+  },
+  "d1_databases": [
+    {
+      "binding": "DATABASE",
+      "database_name": "mise-en-place-2-db",
+      "database_id": "63c196ad-7fd0-41c6-a332-bec38e160271",
+      "migrations_dir": "./drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "mise-en-place-2-bucket"
+    }
+  ],
+  "workflows": [
+    {
+      "binding": "EXAMPLE_WORKFLOW",
+      "name": "mise-en-place-2-example-workflow",
+      "class_name": "ExampleWorkflow"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true,
+      "persist": true
+    }
+  }
+}
