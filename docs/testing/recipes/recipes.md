@@ -22,7 +22,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** All UI elements render correctly
 
-**Screenshot:** ![Recipe List Page](./screenshots/recipe-list-with-card.png)
+**Screenshot:** ![Recipe List Page](/docs/testing/recipes/screenshots/recipe-list-with-card.png)
 
 ### Scenario 2: Empty State
 **Description:** Verify empty state displays when no recipes exist
@@ -33,7 +33,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Empty state displays with CTA button
 
-**Screenshot:** ![Empty State](./screenshots/recipe-list-empty.png)
+**Screenshot:** ![Empty State](/docs/testing/recipes/screenshots/recipe-list-empty.png)
 
 ### Scenario 3: Recipe Grid Display
 **Description:** Verify recipe cards display in grid when recipes exist
@@ -44,7 +44,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Recipe grid displays recipe cards correctly
 
-**Screenshot:** ![Recipe Grid](./screenshots/recipe-list-with-card.png)
+**Screenshot:** ![Recipe Grid](/docs/testing/recipes/screenshots/recipe-list-with-card.png)
 
 ### Scenario 4: Search Functionality
 **Description:** Verify search filters recipes by query
@@ -58,7 +58,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Search filters recipes and updates URL correctly
 
-**Screenshot:** ![Search Functionality](./screenshots/recipe-list-with-card.png)
+**Screenshot:** ![Search Functionality](/docs/testing/recipes/screenshots/recipe-list-with-card.png)
 
 ### Scenario 5: Filter Tabs
 **Description:** Verify source type filters work correctly
@@ -74,7 +74,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Filter tabs update URL and filter recipes correctly
 
-**Screenshot:** ![Filter Tabs](./screenshots/recipe-list-with-card.png)
+**Screenshot:** ![Filter Tabs](/docs/testing/recipes/screenshots/recipe-list-with-card.png)
 
 ### Scenario 6: Recipe Card Navigation
 **Description:** Verify clicking recipe card navigates to detail page
@@ -97,7 +97,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** All key elements display correctly
 
-**Screenshot:** ![Recipe Detail](./screenshots/recipe-detail.png)
+**Screenshot:** ![Recipe Detail](/docs/testing/recipes/screenshots/recipe-detail.png)
 
 ### Scenario 8: YouTube Player (YouTube Recipes)
 **Description:** Verify YouTube player displays for YouTube recipes
@@ -108,7 +108,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** YouTube player displays for YouTube recipes
 
-**Screenshot:** ![YouTube Player](./screenshots/recipe-detail.png)
+**Screenshot:** ![YouTube Player](/docs/testing/recipes/screenshots/recipe-detail.png)
 
 ### Scenario 9: Ingredients Checkboxes
 **Description:** Verify ingredients can be checked/unchecked
@@ -121,7 +121,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Ingredients can be checked/unchecked for cooking mode
 
-**Screenshot:** ![Ingredients Checkboxes](./screenshots/recipe-ingredients-checked.png)
+**Screenshot:** ![Ingredients Checkboxes](/docs/testing/recipes/screenshots/recipe-ingredients-checked.png)
 
 ### Scenario 10: Recipe Steps with Timestamps
 **Description:** Verify recipe steps display with timestamp buttons for YouTube recipes
@@ -134,7 +134,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Steps display with clickable timestamps for YouTube recipes
 
-**Screenshot:** ![Recipe Steps](./screenshots/recipe-ingredients.png)
+**Screenshot:** ![Recipe Steps](/docs/testing/recipes/screenshots/recipe-ingredients.png)
 
 ### Scenario 11: Delete Recipe Flow
 **Description:** Verify delete recipe functionality
@@ -149,7 +149,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Delete dialog opens and closes correctly
 
-**Screenshot:** ![Delete Dialog](./screenshots/recipe-detail.png)
+**Screenshot:** ![Delete Dialog](/docs/testing/recipes/screenshots/recipe-detail.png)
 
 ### Scenario 12: New Recipe Page - Form Display
 **Description:** Verify new recipe extraction form displays correctly
@@ -162,7 +162,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Form displays with proper validation
 
-**Screenshot:** ![New Recipe Form](./screenshots/recipe-new-form.png)
+**Screenshot:** ![New Recipe Form](/docs/testing/recipes/screenshots/recipe-new-form.png)
 
 ### Scenario 12b: Recipe Extraction Loading State
 **Description:** Verify extraction loading state displays during AI processing
@@ -174,7 +174,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Loading state shows with "Extracting..." button
 
-**Screenshot:** ![Extracting State](./screenshots/recipe-extracting.png)
+**Screenshot:** ![Extracting State](/docs/testing/recipes/screenshots/recipe-extracting.png)
 
 ### Scenario 12c: Recipe Preview
 **Description:** Verify extracted recipe preview displays correctly
@@ -186,7 +186,7 @@ The recipe extraction feature allows users to extract recipes from YouTube video
 
 **Expected Result:** Recipe preview displays all extracted information
 
-**Screenshot:** ![Recipe Preview](./screenshots/recipe-preview.png)
+**Screenshot:** ![Recipe Preview](/docs/testing/recipes/screenshots/recipe-preview.png)
 
 ### Scenario 13: New Recipe Page - URL Input Validation
 **Description:** Verify URL input enables extract button when filled
