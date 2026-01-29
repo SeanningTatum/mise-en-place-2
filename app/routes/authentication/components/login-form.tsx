@@ -3,9 +3,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import {
   Form,
@@ -22,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useState } from "react"
+import { AlertCircle, ArrowRight } from "lucide-react"
 
 interface LoginFormProps extends React.ComponentProps<"div"> { }
 
@@ -64,28 +62,36 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className="border-border/50 shadow-warm">
+        {/* Decorative top accent */}
+        <div className="h-1 bg-linear-to-r from-primary via-primary/50 to-accent" />
+        
+        <CardContent className="p-6 sm:p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="font-display text-2xl font-semibold text-foreground">
+              Welcome back
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Sign in to access your recipe collection
+            </p>
+          </div>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm font-medium">Email</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="m@example.com"
+                        placeholder="you@example.com"
                         {...field}
                         disabled={form.formState.isSubmitting}
+                        className="h-11 bg-card border-border/50 focus:border-primary/50"
                       />
                     </FormControl>
                     <FormMessage />
@@ -97,45 +103,73 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel>Password</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel className="text-sm font-medium">Password</FormLabel>
                       <a
                         href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                        className="text-xs text-muted-foreground hover:text-primary transition-colors"
                       >
-                        Forgot your password?
+                        Forgot password?
                       </a>
                     </div>
                     <FormControl>
                       <Input
                         type="password"
+                        placeholder="••••••••"
                         {...field}
                         disabled={form.formState.isSubmitting}
+                        className="h-11 bg-card border-border/50 focus:border-primary/50"
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              
               {authError && (
-                <div className="text-sm text-red-600 text-center">
-                  {authError}
+                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{authError}</span>
                 </div>
               )}
-              <div className="space-y-4">
+              
+              <div className="space-y-4 pt-2">
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full h-11 gap-2 shadow-warm hover:shadow-warm-lg font-medium"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "Logging in..." : "Login"}
+                  {form.formState.isSubmitting ? (
+                    "Signing in..."
+                  ) : (
+                    <>
+                      Sign in
+                      <ArrowRight className="h-4 w-4" />
+                    </>
+                  )}
                 </Button>
-                <p className="text-center text-sm text-muted-foreground">
-                  Don&apos;t have an account?{" "}
-                  <Link to="/sign-up" className="underline underline-offset-4">
-                    Sign up
-                  </Link>
-                </p>
+                
+                {/* Divider */}
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border/50" />
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="bg-card px-3 text-xs text-muted-foreground">
+                      New to mise en place?
+                    </span>
+                  </div>
+                </div>
+                
+                <Link to="/sign-up" className="block">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11 border-border/50 hover:bg-secondary/50"
+                  >
+                    Create an account
+                  </Button>
+                </Link>
               </div>
             </form>
           </Form>

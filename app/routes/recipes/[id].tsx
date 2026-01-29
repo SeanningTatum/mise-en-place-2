@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { redirect, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -34,6 +34,8 @@ import {
   Clock,
   Users,
   Calendar,
+  UtensilsCrossed,
+  ListOrdered,
 } from "lucide-react";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
@@ -103,8 +105,9 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   // Loading state
   if (!loaderData?.recipe) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="flex flex-col items-center justify-center py-20">
+        <div className="w-12 h-12 rounded-full bg-secondary animate-pulse" />
+        <p className="mt-4 text-muted-foreground">Loading recipe...</p>
       </div>
     );
   }
@@ -116,10 +119,10 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
       : null;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-8">
       {/* YouTube Player */}
       {recipe.sourceType === "youtube" && recipe.youtubeVideoId && (
-        <div data-testid="youtube-player-container">
+        <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
           <YouTubePlayer
             videoId={recipe.youtubeVideoId}
             seekTo={seekTo}
@@ -129,55 +132,62 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
         </div>
       )}
 
-      {/* Recipe Header */}
+      {/* Recipe Header - Editorial Style */}
       <div className="flex items-start justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold sm:text-3xl" data-testid="recipe-title">
+        <div className="space-y-4">
+          {/* Title */}
+          <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight leading-tight text-foreground" data-testid="recipe-title">
             {recipe.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            <Badge variant="secondary" className="gap-1">
+          
+          {/* Meta info pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="secondary" className="gap-1.5 px-3 py-1 bg-card border border-border/50">
               {recipe.sourceType === "youtube" ? (
                 <>
-                  <Youtube className="h-3 w-3" />
-                  YouTube
+                  <Youtube className="h-3.5 w-3.5 text-red-500" />
+                  <span>YouTube</span>
                 </>
               ) : (
                 <>
-                  <Globe className="h-3 w-3" />
-                  Blog
+                  <Globe className="h-3.5 w-3.5 text-primary" />
+                  <span>Blog</span>
                 </>
               )}
             </Badge>
             {recipe.servings && (
-              <span className="flex items-center gap-1">
-                <Users className="h-4 w-4" />
-                {recipe.servings} servings
-              </span>
+              <Badge variant="outline" className="gap-1.5 px-3 py-1 border-border/50">
+                <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>{recipe.servings} servings</span>
+              </Badge>
             )}
             {totalTime && (
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                {totalTime} min
-              </span>
+              <Badge variant="outline" className="gap-1.5 px-3 py-1 border-border/50">
+                <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>{totalTime} min</span>
+              </Badge>
             )}
-            <span className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" />
-              Saved {new Date(recipe.createdAt).toLocaleDateString()}
-            </span>
+            <Badge variant="outline" className="gap-1.5 px-3 py-1 border-border/50">
+              <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>Saved {new Date(recipe.createdAt).toLocaleDateString()}</span>
+            </Badge>
           </div>
+          
+          {/* Description */}
           {recipe.description && (
-            <p className="text-muted-foreground max-w-2xl">{recipe.description}</p>
+            <p className="text-muted-foreground max-w-2xl leading-relaxed">
+              {recipe.description}
+            </p>
           )}
         </div>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" data-testid="recipe-menu-button">
+            <Button variant="outline" size="icon" className="border-border/50" data-testid="recipe-menu-button">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem asChild>
               <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
                 <ExternalLink className="mr-2 h-4 w-4" />
@@ -185,7 +195,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               </a>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-destructive"
+              className="text-destructive focus:text-destructive"
               onClick={() => setDeleteDialogOpen(true)}
               data-testid="delete-recipe-button"
             >
@@ -196,7 +206,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
         </DropdownMenu>
       </div>
 
-      {/* Macros */}
+      {/* Macros Card */}
       <div data-testid="macros-card-container">
         <MacrosCard
           calories={recipe.calories}
@@ -208,48 +218,60 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
         />
       </div>
 
-      {/* Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Ingredients */}
-        <Card className="lg:col-span-1">
-          <CardContent className="pt-6">
+      {/* Content Grid - Editorial Layout */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Ingredients - Sidebar style */}
+        <Card className="lg:col-span-1 border-border/50 shadow-warm overflow-hidden">
+          <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <UtensilsCrossed className="h-5 w-5 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
+            </div>
             <IngredientsList
               ingredients={recipe.ingredients}
               checkable
             />
-          </CardContent>
+          </div>
         </Card>
 
-        {/* Steps */}
-        <Card className="lg:col-span-2">
-          <CardContent className="pt-6">
+        {/* Steps - Main content */}
+        <Card className="lg:col-span-2 border-border/50 shadow-warm overflow-hidden">
+          <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-5">
+              <ListOrdered className="h-5 w-5 text-primary" />
+              <h2 className="font-display text-lg font-semibold text-foreground">Instructions</h2>
+            </div>
             <RecipeSteps
               steps={recipe.steps}
               onTimestampClick={recipe.sourceType === "youtube" ? handleTimestampClick : undefined}
               activeStep={activeStep}
               showYouTubeTimestamps={recipe.sourceType === "youtube"}
             />
-          </CardContent>
+          </div>
         </Card>
       </div>
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent data-testid="delete-recipe-dialog">
+        <AlertDialogContent data-testid="delete-recipe-dialog" className="border-border/50">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Recipe</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="font-display text-xl">Delete Recipe</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Are you sure you want to delete "{recipe.title}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="delete-cancel-button">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="delete-cancel-button" className="border-border/50">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid="delete-confirm-button"
             >
-              Delete
+              Delete Recipe
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
