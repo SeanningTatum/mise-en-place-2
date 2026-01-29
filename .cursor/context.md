@@ -40,7 +40,8 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
 - **Database**: Cloudflare D1 (SQLite) with Drizzle ORM
 - **Auth**: Better Auth
 - **API**: tRPC for type-safe API routes
-- **Styling**: Tailwind CSS v4, shadcn/ui components
+- **Styling**: Tailwind CSS v4, shadcn/ui components, editorial cookbook design system
+- **Typography**: Playfair Display (serif) for headings, Source Sans 3 (sans-serif) for body text
 - **Markdown**: react-markdown with remark-gfm for GitHub Flavored Markdown
 - **Syntax Highlighting**: Shiki with github-light/dark themes
 - **Diagrams**: Mermaid for rendering diagrams in markdown
@@ -52,6 +53,69 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
 - **tRPC Routes**: API layer in `app/trpc/routes/` - validates input, calls repositories
 - **Server Loaders**: Use `context.trpc` for server-side data fetching
 - **Client Hooks**: Use `api.routeName.useQuery/useMutation` for client-side
+
+## Design System
+
+**Editorial Cookbook Aesthetic** - A warm, artisanal design system inspired by classic cookbooks and editorial layouts.
+
+### Branding
+- **App Name**: "mise en place" (tagline: "Everything in its place")
+- **Identity**: ChefHat icon (lucide-react), warm earthy color palette, editorial typography
+- **Visual Style**: Paper-like textures, warm shadows, elegant serif headings
+
+### Typography
+- **Display Font**: Playfair Display (serif) - Used for headings (h1-h6) with elegant, editorial feel
+- **Body Font**: Source Sans 3 (sans-serif) - Clean, readable for body text
+- **CSS Variable**: `--font-display` for Playfair Display
+- **Utility Class**: `.font-display` to apply display font
+- **Features**: Letter spacing (-0.02em), optimized kerning and ligatures, text balance
+
+### Color Palette
+All colors use OKLCH color space for perceptual uniformity and better color manipulation.
+
+**Light Mode:**
+- **Primary (Terracotta)**: `oklch(0.55 0.14 35)` - Rich terracotta/burnt sienna
+- **Accent (Sage)**: `oklch(0.70 0.08 145)` - Fresh sage green
+- **Background**: `oklch(0.98 0.008 85)` - Warm cream/paper tone
+- **Card**: `oklch(0.995 0.005 85)` - Slightly warmer white like parchment
+- **Foreground**: `oklch(0.22 0.02 50)` - Deep warm brown
+- **Borders**: `oklch(0.90 0.015 75)` - Subtle warm tone
+
+**Dark Mode:**
+- Deep espresso/coffee tones with lighter terracotta accents
+- Maintains warm, earthy feel with darker backgrounds
+
+**CSS Variables:**
+- `--terracotta` / `--terracotta-foreground` - Custom terracotta color
+- `--sage` / `--sage-foreground` - Custom sage accent color
+- All standard Tailwind semantic colors (primary, secondary, muted, accent, etc.)
+
+### Visual Effects
+- **Grain Texture**: Subtle paper texture overlay via SVG noise filter (`body::before` pseudo-element, 3% opacity)
+- **Warm Shadows**: Custom shadow utilities for paper-like depth
+  - `.shadow-warm` - Standard warm shadow
+  - `.shadow-warm-lg` - Larger warm shadow for hover states
+- **Heading Underline**: `.heading-underline` utility class for decorative underlines on headings
+
+### UI Components
+- **Recipe Cards**: 4:3 aspect ratio (`aspect-4/3`), gradient overlays for text legibility, hover scale effects (`group-hover:scale-105`), warm shadows (`shadow-warm`, `hover:shadow-warm-lg`), serif titles using `.font-display`
+- **Recipe Extractor**: Animated loading state with bouncing dots, warm shadow cards
+- **Auth Pages**: Branded with ChefHat logo and "mise en place" identity, decorative gradient accent bars, warm shadow cards, serif headings
+- **Recipe Detail**: Editorial layout with section headers, icons, and structured typography, warm shadow cards, serif headings for titles
+- **Recipe List**: Staggered fade-in animations (`animate-in fade-in slide-in-from-bottom-4`), refined empty states, serif headings
+- **Layout Header/Footer**: Sticky header with backdrop blur, ChefHat branding, serif app name, warm shadow buttons, subtle footer with italic tagline
+
+### Utility Classes
+- `.font-display` - Apply Playfair Display serif font
+- `.shadow-warm` - Standard warm paper-like shadow (used on cards, buttons)
+- `.shadow-warm-lg` - Larger warm shadow for hover states (used on interactive elements)
+- `.heading-underline` - Decorative underline for headings (40% width, primary color)
+
+### Key Files
+- `app/app.css` - Design system definitions, CSS variables, utility classes, typography setup, grain texture overlay
+- `app/routes/recipes/_layout.tsx` - Layout header/footer using design system
+- `app/components/recipes/recipe-card.tsx` - Recipe card component with design system styling
+- `app/routes/authentication/` - Auth pages (login, sign-up) with branded design system
 
 ## Features
 
@@ -185,6 +249,7 @@ flowchart TD
 - **recipe_ingredient**: Junction table linking recipes to ingredients with quantities, units, and notes
 
 ## Recent Changes
+- **Editorial Cookbook Design System** (Latest) - Added comprehensive editorial cookbook design system with warm typography and colors. Typography: Playfair Display (serif) for headings via `.font-display` utility class, Source Sans 3 (sans-serif) for body text, with optimized letter spacing (-0.02em) and kerning. Color palette uses OKLCH color space: terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds (`oklch(0.98 0.008 85)`), espresso/coffee tones for dark mode. Visual effects: grain texture overlay via SVG noise filter (`body::before` pseudo-element at 3% opacity), warm shadow utilities (`.shadow-warm`, `.shadow-warm-lg`), `.heading-underline` decorative utility (40% width, primary color). Enhanced components: recipe cards (4:3 aspect ratio, gradient overlays for text legibility, hover scale effects, warm shadows), recipe extractor (animated loading with bouncing dots), auth pages (ChefHat logo branding, "mise en place" identity, decorative gradient accent bars, serif headings), recipe detail (editorial layout with section headers and icons), recipe list (staggered fade-in animations, refined empty states), layout header/footer (sticky header with backdrop blur, branded ChefHat logo, serif app name, warm shadow buttons, italic tagline). All design system definitions in `app/app.css`.
 - **Claude AI Integration** - Added Claude Sonnet 4.5 integration as an alternative AI provider for recipe extraction. New `app/lib/claude.ts` provides `extractRecipeFromTranscript()` function using tool_use for structured output extraction from YouTube transcripts. Claude client is available in tRPC context via `ANTHROPIC_API_KEY`. Enhanced YouTube transcript fetching in `app/lib/youtube.ts` and improved markdown rendering in `app/components/markdown-renderer.tsx`.
 - **Recipe Extraction Feature** - Added AI-powered recipe extraction from YouTube videos and blog sites using Gemini AI. Extracts title, description, servings, prep/cook times, macros per serving, ingredients, and step-by-step instructions. YouTube recipes include timestamps that sync with video playback. Includes user recipe collection (`/recipes`), recipe detail pages with YouTube player, admin recipe/ingredient management, and full CRUD operations via tRPC. New database tables: `recipe`, `recipe_step`, `ingredient`, `recipe_ingredient`.
 - **Documentation UI Enhancement** - Enhanced `/admin/docs` with URL state management, syntax highlighting (shiki), table of contents, search/filter, rich empty states per category, and breadcrumbs. Added Releases category for changelogs. Created `.cursor/rules/docs.mdc` for documentation guidelines.
