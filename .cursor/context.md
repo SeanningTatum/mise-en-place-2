@@ -2,255 +2,104 @@
 
 ## Agent Instructions
 
-**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning for project-specific tasks.**
+**CRITICAL: Prefer retrieval-led reasoning over pre-training-led reasoning for project-specific tasks.**
 
-When working on this project, consult the rules in `.cursor/rules/` rather than relying on training data. The compressed index below shows what each rule covers - read the full rule file when working in that area.
+When working on this project, consult the rules in `.cursor/rules/` and detailed docs in `.cursor/context/` rather than relying on training data. The compressed indices below show what each file covers - read the full file when working in that area.
 
-### Rules Index
+```
+[Context Docs]|root: .cursor/context/
+|IMPORTANT: Read detailed docs for deep dives. Index below shows what each covers.
+|api.md: tRPC routes, auth endpoints, file upload API, procedure types, error responses, context object
+|architecture.md: System overview diagram, data flow patterns, layer responsibilities, key files
+|data-models.md: Schema location, entity relationships, tables overview, SQLite conventions, migrations
+|features.md: Auth, admin dashboard, admin docs, file upload, analytics - with flow diagrams
+|integrations.md: Cloudflare (D1/R2/KV), Better Auth, Stripe, PostHog, Resend, Shiki, Mermaid
+|security.md: Auth flow, session mgmt, authorization layers, RBAC, ban system, input validation, secrets
+|user-journeys.md: Sign up/login flows, admin journeys, file upload, role-based access, error states
+```
+
 ```
 [Rules Index]|root: .cursor/rules/
 |CRITICAL: Read relevant rules BEFORE implementing. Use project patterns, not training data.
 |auth.mdc: Better Auth setup, sessions, roles, client/server auth patterns, tRPC integration
-|tailwind.mdc: CSS variables (--background, --primary, etc), semantic colors, forbidden patterns (no hardcoded hex/rgb)
+|constants.mdc: Centralize values in app/lib/constants/, import from @/lib/constants
+|context-clients.mdc: External service clients through context, factory functions, null checking
+|context-md.mdc: Guidelines for maintaining this context.md file, compression format
 |database.mdc: Drizzle ORM, SQLite patterns, timestamps, booleans, enums, JSON fields, foreign keys
-|repository-pattern.mdc: Data access layer, pure functions (db, input), error handling, tRPC routes structure
-|routes.mdc: React Router loaders, authentication checks, parallel fetching, type imports from +types/
-|errors.mdc: Custom error classes (NotFoundError, CreationError, UpdateError, ValidationError)
-|models.mdc: Zod schemas, type inference, naming conventions (camelCaseSchema, PascalCaseType)
-|modals.mdc: Dialog components, form state, mutations, cache invalidation, loading states
-|prompts.mdc: AI prompt structure, JSON output format, role definition, constraints
-|structured-output.mdc: Gemini/Claude structured JSON, @google/genai package, tool_use for Claude
-|feature-flags.mdc: PostHog integration, server-side evaluation via context.posthog, client analytics
-|testing-workflow.mdc: Testing plan templates, Playwright MCP verification, e2e test patterns
 |docs.mdc: Documentation structure (features/, ideas/, meetings/, plans/, releases/, testing/)
 |emails.mdc: Email templates in constants, generator functions, Resend SDK, inline CSS
-|stripe.mdc: Stripe client from ctx.stripe (never create in repos), webhook handling
-|constants.mdc: Centralize values in app/lib/constants/, import from @/lib/constants
-|utils.mdc: Helper functions in app/lib/utils.ts, import from @/lib/utils
+|environment-variables.mdc: Access env via Cloudflare bindings (never process.env), client creation
+|errors.mdc: Custom error classes (NotFoundError, CreationError, UpdateError, ValidationError)
+|feature-flags.mdc: PostHog integration, server-side evaluation via context.posthog, client analytics
+|frontend-task.mdc: Playwright MCP testing, component styling, cn() utility, React Hook Form
+|fullstack-task.mdc: Architecture overview, repository→tRPC→client flow, context.trpc usage
 |general-rules.mdc: React Router + Cloudflare Workers, always use bun
-|fullstack-task.mdc: Architecture overview, repository→tRPC→client flow
+|modals.mdc: Dialog components, form state, mutations, cache invalidation, loading states
+|models.mdc: Zod schemas, type inference, naming conventions (camelCaseSchema, PascalCaseType)
+|playwright-rules.mdc: E2E test patterns, getByTestId preferred, test.describe blocks
+|prompts.mdc: AI prompt structure, JSON output format, role definition, constraints
+|pull-request.mdc: PR description format, commit conventions
+|repository-pattern.mdc: Data access layer, pure functions (db, input), error handling
+|routes.mdc: React Router loaders, authentication checks, parallel fetching, type imports
+|stripe.mdc: Stripe client from ctx.stripe (never create in repos), webhook handling
+|structured-output.mdc: Gemini/Claude structured JSON, @google/genai package, tool_use for Claude
+|tailwind.mdc: CSS variables, OKLCH colors, semantic colors, forbidden patterns (no hardcoded hex/rgb)
+|test-credentials.mdc: Test admin user (admin@test.local / TestAdmin123!), setup commands
+|testing-workflow.mdc: Testing plan templates, Playwright MCP verification, e2e test patterns
+|utils.mdc: Helper functions in app/lib/utils.ts, import from @/lib/utils
 ```
 
 ## Overview
-A SaaS starter template built with React Router and Cloudflare Workers. Provides authentication, admin dashboard, recipe extraction from YouTube videos and blogs, and database setup out of the box.
+
+"mise en place" - A recipe management SaaS with AI-powered extraction from YouTube videos and blogs, built on React Router + Cloudflare Workers.
 
 ## Tech Stack
+
 - **Framework**: React Router v7 (SSR on Cloudflare Workers)
-- **Runtime**: Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite) with Drizzle ORM
-- **Auth**: Better Auth
-- **API**: tRPC for type-safe API routes
-- **Styling**: Tailwind CSS v4, shadcn/ui components, editorial cookbook design system
-- **Typography**: Playfair Display (serif) for headings, Source Sans 3 (sans-serif) for body text
-- **Markdown**: react-markdown with remark-gfm for GitHub Flavored Markdown
-- **Syntax Highlighting**: Shiki with github-light/dark themes
-- **Diagrams**: Mermaid for rendering diagrams in markdown
-- **AI Providers**: Google Gemini AI SDK, Anthropic Claude SDK
+- **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
+- **Auth**: Better Auth with roles (user/admin)
+- **API**: tRPC for type-safe routes
+- **Styling**: Tailwind v4, shadcn/ui, editorial cookbook design system
+- **Typography**: Playfair Display (serif headings), Source Sans 3 (body)
+- **AI**: Google Gemini, Anthropic Claude
 - **Package Manager**: Bun
 
 ## Architecture
-- **Repository Pattern**: Data access via `app/repositories/` - pure functions with `(db, input)` signature
+
+- **Repository Pattern**: Data access via `app/repositories/` - pure functions `(db, input)`
 - **tRPC Routes**: API layer in `app/trpc/routes/` - validates input, calls repositories
 - **Server Loaders**: Use `context.trpc` for server-side data fetching
 - **Client Hooks**: Use `api.routeName.useQuery/useMutation` for client-side
 
-## Design System
-
-**Editorial Cookbook Aesthetic** - A warm, artisanal design system inspired by classic cookbooks and editorial layouts.
-
-### Branding
-- **App Name**: "mise en place" (tagline: "Everything in its place")
-- **Identity**: ChefHat icon (lucide-react), warm earthy color palette, editorial typography
-- **Visual Style**: Paper-like textures, warm shadows, elegant serif headings
-
-### Typography
-- **Display Font**: Playfair Display (serif) - Used for headings (h1-h6) with elegant, editorial feel
-- **Body Font**: Source Sans 3 (sans-serif) - Clean, readable for body text
-- **CSS Variable**: `--font-display` for Playfair Display
-- **Utility Class**: `.font-display` to apply display font
-- **Features**: Letter spacing (-0.02em), optimized kerning and ligatures, text balance
-
-### Color Palette
-All colors use OKLCH color space for perceptual uniformity and better color manipulation.
-
-**Light Mode:**
-- **Primary (Terracotta)**: `oklch(0.55 0.14 35)` - Rich terracotta/burnt sienna
-- **Accent (Sage)**: `oklch(0.70 0.08 145)` - Fresh sage green
-- **Background**: `oklch(0.98 0.008 85)` - Warm cream/paper tone
-- **Card**: `oklch(0.995 0.005 85)` - Slightly warmer white like parchment
-- **Foreground**: `oklch(0.22 0.02 50)` - Deep warm brown
-- **Borders**: `oklch(0.90 0.015 75)` - Subtle warm tone
-
-**Dark Mode:**
-- Deep espresso/coffee tones with lighter terracotta accents
-- Maintains warm, earthy feel with darker backgrounds
-
-**CSS Variables:**
-- `--terracotta` / `--terracotta-foreground` - Custom terracotta color
-- `--sage` / `--sage-foreground` - Custom sage accent color
-- All standard Tailwind semantic colors (primary, secondary, muted, accent, etc.)
-
-### Visual Effects
-- **Grain Texture**: Subtle paper texture overlay via SVG noise filter (`body::before` pseudo-element, 3% opacity)
-- **Warm Shadows**: Custom shadow utilities for paper-like depth
-  - `.shadow-warm` - Standard warm shadow
-  - `.shadow-warm-lg` - Larger warm shadow for hover states
-- **Heading Underline**: `.heading-underline` utility class for decorative underlines on headings
-
-### UI Components
-- **Recipe Cards**: 4:3 aspect ratio (`aspect-4/3`), gradient overlays for text legibility, hover scale effects (`group-hover:scale-105`), warm shadows (`shadow-warm`, `hover:shadow-warm-lg`), serif titles using `.font-display`
-- **Recipe Extractor**: Animated loading state with bouncing dots, warm shadow cards
-- **Auth Pages**: Branded with ChefHat logo and "mise en place" identity, decorative gradient accent bars, warm shadow cards, serif headings
-- **Recipe Detail**: Editorial layout with section headers, icons, and structured typography, warm shadow cards, serif headings for titles
-- **Recipe List**: Staggered fade-in animations (`animate-in fade-in slide-in-from-bottom-4`), refined empty states, serif headings
-- **Layout Header/Footer**: Sticky header with backdrop blur, ChefHat branding, serif app name, warm shadow buttons, subtle footer with italic tagline
-
-### Utility Classes
-- `.font-display` - Apply Playfair Display serif font
-- `.shadow-warm` - Standard warm paper-like shadow (used on cards, buttons)
-- `.shadow-warm-lg` - Larger warm shadow for hover states (used on interactive elements)
-- `.heading-underline` - Decorative underline for headings (40% width, primary color)
-
-### Key Files
-- `app/app.css` - Design system definitions, CSS variables, utility classes, typography setup, grain texture overlay
-- `app/routes/recipes/_layout.tsx` - Layout header/footer using design system
-- `app/components/recipes/recipe-card.tsx` - Recipe card component with design system styling
-- `app/routes/authentication/` - Auth pages (login, sign-up) with branded design system
-
 ## Features
 
 ### Authentication
-- Email/password auth via Better Auth
-- User roles: `user`, `admin`
-- Ban system with reason and expiration
-- Session management with impersonation support
-- **Key files**: `app/auth/`, `app/routes/authentication/`
+Email/password auth, user roles (user/admin), ban system, impersonation.
+**Key files**: `app/auth/`, `app/routes/authentication/`
 
 ### Admin Dashboard
-- Protected admin routes at `/admin`
-- User management table
-- Interactive charts and analytics
-- **Key files**: `app/routes/admin/`
-
-### File Upload
-- R2 bucket integration for file storage
-- **Key files**: `app/components/file-upload.tsx`, `app/routes/api/upload-file.ts`
-
-### Admin Documentation
-- Markdown documentation viewer at `/admin/docs/:category?/:doc?`
-- Documents organized by 5 categories: meetings, ideas, plans, features, releases
-- Static markdown files stored in `docs/` folder (version controlled)
-- Features:
-  - **URL State Management**: Direct linking to specific documents via URL params
-  - **Syntax Highlighting**: Code blocks with shiki (github-light/dark themes)
-  - **Table of Contents**: Auto-extracted headings with scroll tracking
-  - **Search/Filter**: Filter documents by title or content
-  - **Rich Empty States**: Custom icons/messages per category
-  - **Breadcrumbs**: Category > Document navigation
-  - **Mermaid Diagrams**: Visualize architecture, flows, and relationships
-  - Category-based navigation with tabs
-  - Document list sidebar with auto-generated titles
-- **Key files**: 
-  - `app/routes/admin/docs.tsx` - Main documentation page
-  - `app/components/markdown-renderer.tsx` - Markdown renderer with syntax highlighting
-  - `docs/` - Static markdown files organized by category
-  - `.cursor/rules/docs.mdc` - Documentation guidelines for agents
+User management, analytics charts, documentation viewer.
+**Key files**: `app/routes/admin/`, `app/trpc/routes/admin.ts`
 
 ### Recipe Extraction
-- AI-powered recipe extraction from YouTube videos and blog/recipe sites using Gemini AI or Claude AI
-- **AI Providers**:
-  - **Gemini**: Primary provider for YouTube video processing (Gemini 3 Pro) and blog content extraction
-  - **Claude**: Alternative provider using Claude Sonnet 4.5 with tool_use for structured output extraction from YouTube transcripts
-- **Source Types**:
-  - **YouTube**: Extracts transcript, video metadata, and syncs steps with video timestamps (can use Gemini 3 Pro video processing or Claude with transcript)
-  - **Blog/Recipe Sites**: Extracts content using JSON-LD structured data and Readability parser
-- **Extracted Data**:
-  - Title, description, servings, prep/cook times
-  - Macros per serving (calories, protein, carbs, fat, fiber)
-  - Ingredients with quantities and units
-  - Step-by-step instructions with optional video timestamps
-- **Features**:
-  - Recipe preview before saving
-  - YouTube video player with timestamp navigation
-  - Checkable ingredient list
-  - Recipe collection with search and source type filters
-  - Admin ingredient management with duplicate merging
-- **Key files**:
-  - `app/lib/gemini.ts` - Gemini AI client for recipe extraction
-  - `app/lib/claude.ts` - Claude AI client for recipe extraction (alternative to Gemini)
-  - `app/lib/youtube.ts` - YouTube transcript and metadata fetching
-  - `app/lib/content-extractor.ts` - Blog content extraction (JSON-LD + Readability)
-  - `app/repositories/recipe.ts` - Recipe CRUD operations
-  - `app/repositories/ingredient.ts` - Ingredient management
-  - `app/components/recipes/` - Recipe UI components (cards, extractor, preview, player, steps, ingredients)
+AI-powered extraction from YouTube (with timestamps) and blogs using Gemini/Claude. Extracts title, description, servings, macros, ingredients, steps.
+**Key files**: `app/lib/{gemini,claude,youtube,content-extractor}.ts`, `app/repositories/recipe.ts`, `app/components/recipes/`
 
-**Recipe Extraction Flow:**
-```mermaid
-flowchart TD
-    User[User] -->|Submit URL| Extract[recipes.extract]
-    Extract -->|YouTube URL| YT[youtube.ts]
-    Extract -->|Blog URL| Blog[content-extractor.ts]
-    YT -->|Transcript + Metadata| AI{AI Provider}
-    Blog -->|HTML Content| AI
-    AI -->|Gemini 3 Pro| Gemini[gemini.ts]
-    AI -->|Claude Sonnet 4.5| Claude[claude.ts]
-    Gemini -->|Structured Recipe| Preview[Recipe Preview]
-    Claude -->|Structured Recipe| Preview
-    Preview -->|User Confirms| Save[recipes.save]
-    Save -->|Save Recipe| Repo[recipe.ts Repository]
-    Repo -->|Create Records| DB[(Database)]
-    DB -->|recipe| RecipeTable[recipe table]
-    DB -->|recipe_step| StepTable[recipe_step table]
-    DB -->|ingredient| IngTable[ingredient table]
-    DB -->|recipe_ingredient| JunctionTable[recipe_ingredient table]
-```
+### Admin Documentation
+Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, search.
+**Key files**: `app/routes/admin/docs.tsx`, `app/components/markdown-renderer.tsx`, `docs/`
 
-*Note: Either Gemini or Claude can be used for recipe extraction. Gemini supports direct YouTube video processing, while Claude uses transcript-based extraction with tool_use for structured output.*
+## Design System
 
-## Routes
+**Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
 
-### User Routes
-- `/recipes` - User's recipe collection with grid view, search, and source type filters
-- `/recipes/new` - Extract new recipe from URL (YouTube or blog)
-- `/recipes/:id` - Recipe detail page with YouTube player, checkable ingredients, timestamp-linked steps
-
-### Admin Routes
-- `/admin/recipes` - Admin view of all recipes
-- `/admin/ingredients` - Ingredient index browser with merge duplicates capability
-
-## API Routes
-- `admin.getUsers` - List all users (admin only)
-- **Recipe Endpoints**:
-  - `recipes.extract` - Extract recipe from URL (returns preview)
-  - `recipes.save` - Save extracted recipe
-  - `recipes.list` - User's recipes (paginated)
-  - `recipes.get` - Single recipe with relations
-  - `recipes.delete` - Delete owned recipe
-  - `recipes.adminList` - All recipes (admin)
-  - `recipes.adminDelete` - Delete any recipe (admin)
-- **Ingredient Endpoints**:
-  - `ingredients.list` - All ingredients with usage count (admin)
-  - `ingredients.merge` - Merge duplicate ingredients (admin)
-- Auth endpoints via Better Auth at `/api/auth/*`
-- tRPC endpoints at `/api/trpc/*`
-
-## Database
-
-### Auth Tables
-- **user**: Core user table with roles, ban status
-- **session**: Auth sessions with impersonation support
-- **account**: OAuth/credential accounts
-- **verification**: Email verification tokens
-
-### Recipe Tables
-- **recipe**: Stores extracted recipes with macros (calories, protein, carbs, fat, fiber per serving), source URL/type, YouTube video ID, thumbnail, servings, prep/cook times
-- **recipe_step**: Individual cooking steps with step number, instruction, and optional video timestamps (timestampSeconds, durationSeconds)
-- **ingredient**: Normalized ingredient database for future meal planning (name, category)
-- **recipe_ingredient**: Junction table linking recipes to ingredients with quantities, units, and notes
+- **Colors**: OKLCH - terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds
+- **Typography**: `.font-display` for Playfair Display headings, letter spacing -0.02em
+- **Effects**: Grain texture (3% SVG noise), `.shadow-warm` / `.shadow-warm-lg`, `.heading-underline`
+- **Key file**: `app/app.css`
 
 ## Recent Changes
-- **Editorial Cookbook Design System** (Latest) - Added comprehensive editorial cookbook design system with warm typography and colors. Typography: Playfair Display (serif) for headings via `.font-display` utility class, Source Sans 3 (sans-serif) for body text, with optimized letter spacing (-0.02em) and kerning. Color palette uses OKLCH color space: terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds (`oklch(0.98 0.008 85)`), espresso/coffee tones for dark mode. Visual effects: grain texture overlay via SVG noise filter (`body::before` pseudo-element at 3% opacity), warm shadow utilities (`.shadow-warm`, `.shadow-warm-lg`), `.heading-underline` decorative utility (40% width, primary color). Enhanced components: recipe cards (4:3 aspect ratio, gradient overlays for text legibility, hover scale effects, warm shadows), recipe extractor (animated loading with bouncing dots), auth pages (ChefHat logo branding, "mise en place" identity, decorative gradient accent bars, serif headings), recipe detail (editorial layout with section headers and icons), recipe list (staggered fade-in animations, refined empty states), layout header/footer (sticky header with backdrop blur, branded ChefHat logo, serif app name, warm shadow buttons, italic tagline). All design system definitions in `app/app.css`.
-- **Claude AI Integration** - Added Claude Sonnet 4.5 integration as an alternative AI provider for recipe extraction. New `app/lib/claude.ts` provides `extractRecipeFromTranscript()` function using tool_use for structured output extraction from YouTube transcripts. Claude client is available in tRPC context via `ANTHROPIC_API_KEY`. Enhanced YouTube transcript fetching in `app/lib/youtube.ts` and improved markdown rendering in `app/components/markdown-renderer.tsx`.
-- **Recipe Extraction Feature** - Added AI-powered recipe extraction from YouTube videos and blog sites using Gemini AI. Extracts title, description, servings, prep/cook times, macros per serving, ingredients, and step-by-step instructions. YouTube recipes include timestamps that sync with video playback. Includes user recipe collection (`/recipes`), recipe detail pages with YouTube player, admin recipe/ingredient management, and full CRUD operations via tRPC. New database tables: `recipe`, `recipe_step`, `ingredient`, `recipe_ingredient`.
-- **Documentation UI Enhancement** - Enhanced `/admin/docs` with URL state management, syntax highlighting (shiki), table of contents, search/filter, rich empty states per category, and breadcrumbs. Added Releases category for changelogs. Created `.cursor/rules/docs.mdc` for documentation guidelines.
-- **Admin Documentation Feature** - Added markdown documentation viewer at `/admin/docs` with category-based organization (meetings, ideas, plans, features, releases). Includes Mermaid diagram support for visualizing architecture and flows. Uses react-markdown, remark-gfm, shiki, and mermaid packages. Documents are stored as static markdown files in `docs/` folder.
+
+- **Editorial Cookbook Design System** - Added warm typography (Playfair Display/Source Sans 3), OKLCH color palette, grain texture, warm shadows, enhanced components (recipe cards, auth pages, layout)
+- **Claude AI Integration** - Added Claude Sonnet 4.5 as alternative AI provider for recipe extraction via `app/lib/claude.ts` with tool_use for structured output
+- **Recipe Extraction Feature** - AI extraction from YouTube/blogs with macros, timestamps, ingredient management. New tables: recipe, recipe_step, ingredient, recipe_ingredient
