@@ -7,6 +7,25 @@ description: Create implementation plans with subagent assignments for each task
 
 Create structured implementation plans that assign appropriate subagents to each task and include PR validation.
 
+## Before Planning: Rules Index
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When planning tasks that touch specific areas, note which rules apply:
+
+| File Pattern | Rule to Include in Plan |
+|--------------|------------------------|
+| `app/repositories/*.ts` | `repository-pattern.mdc` |
+| `app/trpc/routes/*.ts` | `repository-pattern.mdc` |
+| `app/routes/**/*.tsx` | `routes.mdc` |
+| `app/db/schema.ts` | `database.mdc` |
+| `app/components/*-modal.tsx` | `modals.mdc` |
+| `**/stripe*`, `**/payment*` | `stripe.mdc` |
+| `e2e/**/*` | `playwright-rules.mdc` |
+| `docs/**/*.md` | `docs.mdc` |
+
+Include rule requirements in task descriptions so subagents know what patterns to follow.
+
 ## When to Use
 
 - User requests a plan for feature implementation

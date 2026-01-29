@@ -7,6 +7,12 @@ description: Validate pull requests against project standards before submission.
 
 Validate that changes follow project standards before creating a pull request.
 
+## Rules Reference
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When validating files, read the full rule from `.cursor/rules/` to verify compliance:
+
 ## When to Run
 
 **Run this skill proactively** before using the `create-pull-request` skill. This ensures all requirements are met before PR creation.

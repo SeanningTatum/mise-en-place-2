@@ -7,6 +7,14 @@ description: Syncs latest changes across documentation, analytics dashboard, and
 
 Orchestrates multiple subagents to ensure documentation, analytics, and tests stay in sync with the latest codebase changes.
 
+## Rules Reference
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When syncing, ensure updates follow:
+- `docs.mdc` - Documentation structure and templates
+- `testing-workflow.mdc` - Testing plans and e2e patterns
+
 ## When to Use
 
 - After completing a feature implementation

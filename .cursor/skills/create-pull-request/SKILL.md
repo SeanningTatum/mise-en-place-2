@@ -7,6 +7,12 @@ description: Create a GitHub pull request with a properly formatted description.
 
 Create GitHub PRs with descriptions following the team's template structure.
 
+## Before Creating PR
+
+**IMPORTANT: Run the `pr-checker` skill first** to validate changes follow project rules.
+
+Read `.cursor/context.md` for the compressed Rules Index. Ensure all touched files comply with their respective rules before creating the PR.
+
 ## Workflow
 
 ### Step 1: Gather Context

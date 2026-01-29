@@ -83,7 +83,9 @@ export function isYouTubeUrl(url: string): boolean {
  * Fetch video metadata using YouTube oEmbed API
  * This doesn't require an API key
  */
-export async function getVideoMetadata(videoId: string): Promise<VideoMetadata> {
+export async function getVideoMetadata(
+  videoId: string,
+): Promise<VideoMetadata> {
   log.debug({ videoId }, "Fetching YouTube video metadata");
 
   const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
@@ -107,7 +109,9 @@ export async function getVideoMetadata(videoId: string): Promise<VideoMetadata> 
     };
   } catch (error) {
     log.error({ error, videoId }, "Failed to fetch video metadata");
-    throw new Error(`Failed to fetch video metadata: ${error instanceof Error ? error.message : "Unknown error"}`);
+    throw new Error(
+      `Failed to fetch video metadata: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 
@@ -122,7 +126,9 @@ function decodeHtmlEntities(text: string): string {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&apos;/g, "'")
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16)),
+    )
     .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
 }
 
@@ -131,10 +137,11 @@ function decodeHtmlEntities(text: string): string {
  */
 async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
   const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  
+
   const response = await fetch(videoUrl, {
     headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       "Accept-Language": "en-US,en;q=0.9",
     },
   });
@@ -144,9 +151,11 @@ async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
   }
 
   const html = await response.text();
-  
+
   // Look for captions in the ytInitialPlayerResponse
-  const playerResponseMatch = html.match(/ytInitialPlayerResponse\s*=\s*({.+?});/);
+  const playerResponseMatch = html.match(
+    /ytInitialPlayerResponse\s*=\s*({.+?});/,
+  );
   if (!playerResponseMatch) {
     log.debug({ videoId }, "No ytInitialPlayerResponse found");
     return null;
@@ -154,19 +163,21 @@ async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
 
   try {
     const playerResponse = JSON.parse(playerResponseMatch[1]);
-    const captions = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
-    
+    const captions =
+      playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
+
     if (!captions || captions.length === 0) {
       log.debug({ videoId }, "No caption tracks found");
       return null;
     }
 
     // Prefer English captions, fallback to first available
-    const englishTrack = captions.find((track: { languageCode: string }) => 
-      track.languageCode === "en" || track.languageCode?.startsWith("en")
+    const englishTrack = captions.find(
+      (track: { languageCode: string }) =>
+        track.languageCode === "en" || track.languageCode?.startsWith("en"),
     );
     const track = englishTrack || captions[0];
-    
+
     log.debug({ videoId, language: track.languageCode }, "Found caption track");
     return track.baseUrl;
   } catch (error) {
@@ -178,10 +189,13 @@ async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
 /**
  * Fetch and parse transcript XML from caption track URL
  */
-async function fetchTranscriptFromUrl(captionUrl: string): Promise<TranscriptSegment[]> {
+async function fetchTranscriptFromUrl(
+  captionUrl: string,
+): Promise<TranscriptSegment[]> {
   const response = await fetch(captionUrl, {
     headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     },
   });
 
@@ -190,17 +204,18 @@ async function fetchTranscriptFromUrl(captionUrl: string): Promise<TranscriptSeg
   }
 
   const xml = await response.text();
-  
+
   // Parse the XML transcript - format: <text start="0.0" dur="3.5">text content</text>
   const segments: TranscriptSegment[] = [];
-  const textRegex = /<text\s+start="([^"]+)"\s+dur="([^"]+)"[^>]*>([^<]*)<\/text>/g;
-  
+  const textRegex =
+    /<text\s+start="([^"]+)"\s+dur="([^"]+)"[^>]*>([^<]*)<\/text>/g;
+
   let match;
   while ((match = textRegex.exec(xml)) !== null) {
     const start = parseFloat(match[1]) * 1000; // Convert to milliseconds
     const duration = parseFloat(match[2]) * 1000;
     const text = decodeHtmlEntities(match[3]).trim();
-    
+
     if (text) {
       segments.push({
         text,
@@ -217,13 +232,15 @@ async function fetchTranscriptFromUrl(captionUrl: string): Promise<TranscriptSeg
  * Fetch transcript for a YouTube video
  * Uses direct fetch to YouTube's caption system (Cloudflare Workers compatible)
  */
-export async function getTranscript(videoId: string): Promise<TranscriptSegment[]> {
+export async function getTranscript(
+  videoId: string,
+): Promise<TranscriptSegment[]> {
   log.debug({ videoId }, "Fetching YouTube transcript");
 
   try {
     // Extract caption track URL from video page
     const captionUrl = await extractCaptionTrackUrl(videoId);
-    
+
     if (!captionUrl) {
       log.warn({ videoId }, "No captions available for video");
       return [];
@@ -231,13 +248,16 @@ export async function getTranscript(videoId: string): Promise<TranscriptSegment[
 
     // Fetch and parse the transcript
     const segments = await fetchTranscriptFromUrl(captionUrl);
-    
-    log.info({ videoId, segmentCount: segments.length }, "Transcript fetched successfully");
+
+    log.info(
+      { videoId, segmentCount: segments.length },
+      "Transcript fetched successfully",
+    );
     return segments;
   } catch (error) {
     log.error({ error, videoId }, "Failed to fetch transcript");
     throw new Error(
-      `Failed to fetch transcript: ${error instanceof Error ? error.message : "Unknown error"}. The video may not have captions available.`
+      `Failed to fetch transcript: ${error instanceof Error ? error.message : "Unknown error"}. The video may not have captions available.`,
     );
   }
 }
@@ -246,7 +266,9 @@ export async function getTranscript(videoId: string): Promise<TranscriptSegment[
  * Combine transcript segments into coherent text with timestamps
  * Format: [MM:SS] text
  */
-export function formatTranscriptWithTimestamps(segments: TranscriptSegment[]): string {
+export function formatTranscriptWithTimestamps(
+  segments: TranscriptSegment[],
+): string {
   return segments
     .map((segment) => {
       const totalSeconds = Math.floor(segment.offset / 1000);
@@ -261,7 +283,9 @@ export function formatTranscriptWithTimestamps(segments: TranscriptSegment[]): s
 /**
  * Fetch all YouTube video data (metadata + transcript)
  */
-export async function fetchYouTubeVideoData(url: string): Promise<YouTubeVideoData> {
+export async function fetchYouTubeVideoData(
+  url: string,
+): Promise<YouTubeVideoData> {
   const startTime = Date.now();
   log.info({ url }, "Fetching YouTube video data");
 
@@ -281,7 +305,7 @@ export async function fetchYouTubeVideoData(url: string): Promise<YouTubeVideoDa
   const durationMs = Date.now() - startTime;
   log.info(
     { videoId, durationMs, transcriptLength: transcript.length },
-    "YouTube video data fetched successfully"
+    "YouTube video data fetched successfully",
   );
 
   return {

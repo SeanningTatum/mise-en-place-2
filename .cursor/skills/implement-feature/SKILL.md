@@ -7,12 +7,72 @@ description: Executes feature implementation with automatic subagent delegation 
 
 Execute feature implementations by automatically delegating to specialized subagents based on what the feature requires.
 
+## Before You Start: Rules Index
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Before implementing, read `.cursor/context.md` which contains a compressed Rules Index. Consult the relevant rule files BEFORE writing code:
+
+| Area | Rule to Read |
+|------|--------------|
+| Database/Schema | `database.mdc` |
+| Repositories | `repository-pattern.mdc` |
+| tRPC Routes | `repository-pattern.mdc` |
+| UI Routes/Pages | `routes.mdc` |
+| Styling/Colors | `tailwind.mdc` |
+| Modals | `modals.mdc` |
+| Auth | `auth.mdc` |
+| AI/Prompts | `prompts.mdc`, `structured-output.mdc` |
+| Feature Flags | `feature-flags.mdc` |
+| Errors | `errors.mdc` |
+
+Rules are in `.cursor/rules/`. Read the full rule before implementing that layer.
+
 ## When to Use
 
 - Implementing a new feature (any scope)
 - Building functionality that touches multiple layers
 - After planning, when ready to execute
 - Any task where subagent delegation would improve quality
+
+## Design-First Workflow
+
+**CRITICAL**: For any feature with UI, check for a design specification before implementing.
+
+### Pre-Implementation Design Check
+
+```mermaid
+flowchart TD
+    Start([Feature Request]) --> Check{Has Architecture Doc?}
+    Check -->|Yes| HasDesign{Has Design Spec section?}
+    Check -->|No| CreateDesign[Use ux-product-thinking to create]
+    HasDesign -->|Yes| ReadDesign[Read design spec from architecture doc]
+    HasDesign -->|No| AddDesign[Add Phase 6 design spec to architecture doc]
+    CreateDesign --> ReadDesign
+    AddDesign --> ReadDesign
+    ReadDesign --> Implement[Implement with design specs]
+```
+
+### Design Spec Location
+
+Architecture documents with design specs are at: `docs/features/[feature-name]-architecture.md`
+
+**Required design spec elements before UI implementation:**
+- [ ] Aesthetic direction (tone)
+- [ ] Memorable element
+- [ ] Typography choices (NOT Inter/Roboto/Arial)
+- [ ] Color palette with CSS variable mappings
+- [ ] Motion/animation moments
+- [ ] Spatial composition approach
+
+### When to Invoke ux-product-thinking First
+
+| Scenario | Action |
+|----------|--------|
+| New feature with UI | Run ux-product-thinking first to create architecture doc with design spec |
+| Existing architecture doc missing design spec | Add Phase 6 design spec before implementing |
+| Architecture doc has design spec | Read and follow during implementation |
+| Backend-only feature | Skip design spec, proceed with implementation |
 
 ## Workflow
 
@@ -33,10 +93,19 @@ Execute subagents in dependency order:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
+│                    DESIGN PHASE (if UI feature)             │
+├─────────────────────────────────────────────────────────────┤
+│  0. Design Specification (ux-product-thinking)              │
+│     └─ Research → Goals → Flows → Components → Design Spec  │
+│     └─ Creates: docs/features/[feature]-architecture.md     │
+│     └─ Output: Typography, colors, motion, composition      │
+├─────────────────────────────────────────────────────────────┤
 │                    IMPLEMENTATION PHASE                      │
 ├─────────────────────────────────────────────────────────────┤
 │  1. Core Implementation (generalPurpose)                    │
 │     └─ Schema → Repository → tRPC → Components → Routes     │
+│     └─ READ design spec from architecture doc FIRST         │
+│     └─ Apply distinctive typography, colors, motion         │
 │                                                              │
 │  2. Figma Integration (if applicable)                       │
 │     ├─ figma-to-tailwind-converter (for design code)        │
@@ -75,6 +144,38 @@ Task({
 ---
 
 ## Subagent Delegation Guide
+
+### Design Specification: `ux-product-thinking` + `frontend-design`
+
+**When:** Any feature with UI that doesn't have a design spec
+
+**Triggers:**
+- No architecture doc exists at `docs/features/[feature]-architecture.md`
+- Architecture doc exists but lacks Frontend Design Specification section
+- User requests distinctive/memorable UI
+
+**Delegation Pattern:**
+```markdown
+1. Use ux-product-thinking skill to create architecture doc with:
+   - Research, goals, user analysis, flows, components, wireframes
+   - Phase 6: Frontend Design Specification
+
+2. Read and apply the frontend-design skill (.cursor/skills/frontend-design/SKILL.md)
+   for the design spec section
+
+Output: `docs/features/{feature}-architecture.md` with complete design spec
+```
+
+**Applying Design Spec During Implementation:**
+```markdown
+Before implementing {feature} UI:
+
+1. Read design spec from `docs/features/{feature}-architecture.md`
+2. Read frontend-design skill for implementation guidance
+3. Apply: typography, colors (CSS variables), motion, composition
+```
+
+---
 
 ### Core Implementation: `generalPurpose`
 
@@ -223,21 +324,33 @@ If applicable, add Mermaid diagrams for:
 ## Execution Decision Tree
 
 ```
-Is this a UI implementation from Figma?
-├─ Yes → 1. generalPurpose (implement)
-│        2. figma-to-tailwind-converter (if hardcoded colors)
-│        3. figma-design-validator (verify match)
-│        4. tester
-│        5. context-keeper
+Does this feature have a UI component?
+├─ Yes → Does architecture doc exist with design spec?
+│        ├─ No → 0. Use ux-product-thinking FIRST
+│        │       └─ Create docs/features/[feature]-architecture.md
+│        │       └─ Include Phase 6 Frontend Design Spec
+│        │
+│        └─ Yes → Read design spec, then:
+│                 Is this from Figma?
+│                 ├─ Yes → 1. generalPurpose (implement following design spec)
+│                 │        2. figma-to-tailwind-converter (if hardcoded colors)
+│                 │        3. figma-design-validator (verify match)
+│                 │        4. tester
+│                 │        5. context-keeper
+│                 │
+│                 └─ No → 1. generalPurpose (implement following design spec)
+│                         2. logger (if business logic)
+│                         3. tester
+│                         4. context-keeper
 │
-└─ No → Does it involve database/API changes?
+└─ No (backend only) → Does it involve database/API changes?
         ├─ Yes → 1. generalPurpose (full-stack)
         │        2. logger
         │        3. tester
         │        4. data-analytics (if new metrics)
         │        5. context-keeper
         │
-        └─ No → 1. generalPurpose (frontend-only)
+        └─ No → 1. generalPurpose
                 2. tester
                 3. context-keeper
 ```
@@ -246,8 +359,10 @@ Is this a UI implementation from Figma?
 
 ## Quick Reference
 
-| Subagent | Trigger | Output |
-|----------|---------|--------|
+| Skill/Subagent | Trigger | Output |
+|----------------|---------|--------|
+| `ux-product-thinking` | UI feature without architecture doc | Architecture doc with flows + design spec |
+| `frontend-design` | UI implementation (read during Phase 6 & implementation) | Design guidelines |
 | `generalPurpose` | Always | Core implementation |
 | `figma-to-tailwind-converter` | Figma code with hardcoded colors | Converted code |
 | `figma-design-validator` | After Figma implementation | Validation report |
@@ -292,17 +407,48 @@ Is this a UI implementation from Figma?
 5. **context-keeper** → Document new component
 ```
 
+### Design-First Feature: Landing Page
+
+```markdown
+**Feature:** Create landing page for new product launch
+
+**Scope Analysis:** Frontend with UI (needs design spec first)
+
+**Pre-check:** No architecture doc exists → Use ux-product-thinking first
+
+**Execution:**
+
+0. **ux-product-thinking + frontend-design** → Create architecture doc:
+   - Follow ux-product-thinking phases 0-6
+   - Apply frontend-design skill for Phase 6 design spec
+   - Output: `docs/features/landing-page-architecture.md`
+
+1. **generalPurpose** → Implement following design spec from architecture doc
+
+2. **tester** → Verify implementation matches design spec
+
+3. **context-keeper** → Document new landing page
+```
+
 ---
 
 ## Checklist
 
 Before marking implementation complete:
 
+### Design (for UI features)
+- [ ] Architecture doc exists at `docs/features/[feature]-architecture.md`
+- [ ] Architecture doc includes Frontend Design Specification section
+- [ ] `frontend-design` skill guidelines followed (see `.cursor/skills/frontend-design/SKILL.md`)
+
+### Implementation
 - [ ] Core implementation follows repository pattern
 - [ ] tRPC routes use Zod validation
 - [ ] Routes check authentication appropriately
 - [ ] Figma implementations use CSS variables (no hardcoded colors)
 - [ ] Structured logging added to key operations
+
+### Quality
 - [ ] E2E tests written and passing
 - [ ] Test documentation created with screenshots
 - [ ] context.md updated with new feature

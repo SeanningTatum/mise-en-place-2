@@ -34,7 +34,7 @@ export const createTRPCContext = async (opts: {
 }) => {
   const auth = await createAuth(
     opts.cfContext.DATABASE,
-    opts.cfContext.BETTER_AUTH_SECRET
+    opts.cfContext.BETTER_AUTH_SECRET,
   );
   const db = await getDb(opts.cfContext.DATABASE);
   const betterAuth = await auth.api.getSession({

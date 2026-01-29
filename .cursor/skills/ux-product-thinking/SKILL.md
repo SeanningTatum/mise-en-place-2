@@ -7,6 +7,15 @@ description: Guides UI/UX design decisions alongside product goals using competi
 
 A structured approach to UI/UX design that aligns interface decisions with product goals. Uses Tavily for competitive research and Cloudflare Browser Renderer for visual analysis/screenshots, produces mermaid diagrams for visualization, and integrates with context-keeper for documentation.
 
+## Rules Reference
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When implementing designs, ensure compliance with:
+- `tailwind.mdc` - CSS variables and semantic colors (no hardcoded hex values)
+- `modals.mdc` - Modal component patterns
+- `routes.mdc` - Route and page structure
+
 ## When to Use
 
 - Researching competitors and design inspiration
@@ -17,7 +26,7 @@ A structured approach to UI/UX design that aligns interface decisions with produ
 - Evaluating UX trade-offs
 - Documenting interface architecture
 
-## Core Framework: RESEARCH → GOALS → USERS → FLOWS → UI
+## Core Framework: RESEARCH → GOALS → USERS → FLOWS → DESIGN → UI
 
 ```mermaid
 flowchart LR
@@ -25,10 +34,11 @@ flowchart LR
     G --> U[User Needs]
     U --> F[User Flows]
     F --> C[Components]
-    C --> I[Implementation]
+    C --> D[Design Spec]
+    D --> I[Implementation]
 ```
 
-Work through each layer before moving to the next.
+Work through each layer before moving to the next. The **Design Spec** phase is critical for creating distinctive, memorable interfaces.
 
 ---
 
@@ -451,6 +461,52 @@ Text-based wireframe for AI implementation.
 
 ---
 
+## Phase 6: Frontend Design Specification
+
+Define the **distinctive visual identity** before implementation. This phase transforms wireframes into a memorable, production-ready design direction.
+
+**Read and apply the `frontend-design` skill** (`.cursor/skills/frontend-design/SKILL.md`) for detailed guidelines on:
+- Design thinking (purpose, tone, constraints, differentiation)
+- Typography (distinctive fonts, never Inter/Roboto/Arial)
+- Color & theme (dominant + sharp accent)
+- Motion (high-impact moments over scattered micro-interactions)
+- Spatial composition (asymmetry, overlap, grid-breaking)
+- Visual details (textures, gradients, depth)
+
+### Design Spec Output Template
+
+Document in the architecture doc:
+
+```markdown
+## Frontend Design Specification
+
+### Aesthetic Direction
+**Tone**: [e.g., brutally minimal, maximalist, retro-futuristic, editorial]
+**Memorable Element**: [The ONE thing users will remember]
+
+### Typography
+| Usage | Font | Weight |
+|-------|------|--------|
+| Display | [Distinctive font] | [Weight] |
+| Body | [Refined font] | [Weight] |
+
+### Color Palette
+| Token | Value | Usage |
+|-------|-------|-------|
+| --primary | #XXXXXX | [Usage] |
+| --accent | #XXXXXX | [Usage] |
+| --background | #XXXXXX | [Usage] |
+
+### Motion Design
+- **Page load**: [Animation approach]
+- **Key interaction**: [Signature moment]
+
+### Visual Effects
+[Background treatment, textures, shadows]
+```
+
+---
+
 ## Required Output: Architecture Document
 
 **IMPORTANT**: Always create a comprehensive architecture document in `docs/features/[feature-name]-architecture.md` that consolidates all UX research and design decisions.
@@ -485,8 +541,9 @@ A professional-grade [description of what it does].
 4. [Data Model](#data-model)
 5. [Feature Breakdown](#feature-breakdown)
 6. [UI Components](#ui-components)
-7. [Technical Stack](#technical-stack)
-8. [Future Roadmap](#future-roadmap)
+7. [Frontend Design Specification](#frontend-design-specification)
+8. [Technical Stack](#technical-stack)
+9. [Future Roadmap](#future-roadmap)
 
 ---
 
@@ -559,6 +616,33 @@ A professional-grade [description of what it does].
 
 ### Design System
 [Table of design tokens]
+
+---
+
+## Frontend Design Specification
+
+### Aesthetic Direction
+**Tone**: [e.g., "Brutally minimal with one playful accent"]
+**Memorable Element**: [The ONE thing users will remember]
+
+### Typography
+| Usage | Font | Weight |
+|-------|------|--------|
+| Display | [Font] | [Weight] |
+| Body | [Font] | [Weight] |
+
+### Color Palette
+| Token | Value | Usage |
+|-------|-------|-------|
+| Primary | #XXXXXX | [Usage] |
+| Accent | #XXXXXX | [Usage] |
+| Background | #XXXXXX | [Usage] |
+
+### Motion Design
+[Key animation moments and timing]
+
+### Visual Effects
+[Background treatments, textures, shadows]
 
 ---
 
@@ -680,11 +764,18 @@ UX Product Thinking Progress:
 - [ ] Phase 3: Design user flows (mermaid diagrams)
 - [ ] Phase 4: Plan component architecture
 - [ ] Phase 5: Create wireframe specifications
+- [ ] Phase 6: Frontend design specification (CRITICAL FOR DISTINCTIVE UI)
+  - [ ] Select tone/aesthetic direction
+  - [ ] Define memorable element
+  - [ ] Specify typography (distinctive fonts, not Inter/Roboto)
+  - [ ] Define color palette (dominant + sharp accent)
+  - [ ] Plan motion/animation moments
+  - [ ] Document spatial composition approach
 - [ ] **CREATE ARCHITECTURE DOC**: Write `docs/features/[feature]-architecture.md` (REQUIRED)
 - [ ] Document: Update context.md via context-keeper with summary + link to architecture doc
 ```
 
-**IMPORTANT**: The architecture document is a required deliverable. Do not skip this step.
+**IMPORTANT**: The architecture document is a required deliverable. Phase 6 (Frontend Design) ensures the implementation will be distinctive, not generic "AI slop". Do not skip these steps.
 
 ---
 
@@ -725,3 +816,4 @@ For extended examples and templates, see:
 - [mermaid-templates.md](mermaid-templates.md) - Copy-paste diagram templates
 - [examples.md](examples.md) - Complete feature design examples
 - [competitive-research.md](competitive-research.md) - Tavily research examples and queries
+- `.cursor/skills/frontend-design/SKILL.md` - Distinctive frontend design skill (read and apply during Phase 6)

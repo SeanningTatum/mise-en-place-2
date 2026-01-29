@@ -1,6 +1,10 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createLayerLogger } from "./logger";
-import type { ExtractedRecipe, ExtractedIngredient, ExtractedStep } from "./gemini";
+import type {
+  ExtractedRecipe,
+  ExtractedIngredient,
+  ExtractedStep,
+} from "./gemini";
 import type { TranscriptSegment } from "./youtube";
 
 const log = createLayerLogger("server");
@@ -32,25 +36,63 @@ const recipeExtractionTool = {
     type: "object" as const,
     properties: {
       title: { type: "string", description: "Recipe title" },
-      description: { type: "string", description: "Brief description of the recipe" },
+      description: {
+        type: "string",
+        description: "Brief description of the recipe",
+      },
       servings: { type: "number", description: "Number of servings" },
-      prepTimeMinutes: { type: "number", description: "Preparation time in minutes" },
-      cookTimeMinutes: { type: "number", description: "Cooking time in minutes" },
-      calories: { type: "number", description: "Estimated calories per serving" },
-      protein: { type: "number", description: "Estimated grams of protein per serving" },
-      carbs: { type: "number", description: "Estimated grams of carbohydrates per serving" },
-      fat: { type: "number", description: "Estimated grams of fat per serving" },
-      fiber: { type: "number", description: "Estimated grams of fiber per serving" },
+      prepTimeMinutes: {
+        type: "number",
+        description: "Preparation time in minutes",
+      },
+      cookTimeMinutes: {
+        type: "number",
+        description: "Cooking time in minutes",
+      },
+      calories: {
+        type: "number",
+        description: "Estimated calories per serving",
+      },
+      protein: {
+        type: "number",
+        description: "Estimated grams of protein per serving",
+      },
+      carbs: {
+        type: "number",
+        description: "Estimated grams of carbohydrates per serving",
+      },
+      fat: {
+        type: "number",
+        description: "Estimated grams of fat per serving",
+      },
+      fiber: {
+        type: "number",
+        description: "Estimated grams of fiber per serving",
+      },
       ingredients: {
         type: "array",
         description: "List of ingredients",
         items: {
           type: "object",
           properties: {
-            name: { type: "string", description: "Normalized ingredient name (e.g., 'chicken breasts' not '2 lbs boneless skinless chicken breasts')" },
-            quantity: { type: "string", description: "Amount (e.g., '2', '1/2')" },
-            unit: { type: "string", description: "Measurement unit (e.g., 'cups', 'lbs', 'tbsp')" },
-            notes: { type: "string", description: "Preparation notes (e.g., 'diced', 'room temperature')" },
+            name: {
+              type: "string",
+              description:
+                "Normalized ingredient name (e.g., 'chicken breasts' not '2 lbs boneless skinless chicken breasts')",
+            },
+            quantity: {
+              type: "string",
+              description: "Amount (e.g., '2', '1/2')",
+            },
+            unit: {
+              type: "string",
+              description: "Measurement unit (e.g., 'cups', 'lbs', 'tbsp')",
+            },
+            notes: {
+              type: "string",
+              description:
+                "Preparation notes (e.g., 'diced', 'room temperature')",
+            },
           },
           required: ["name"],
         },
@@ -61,10 +103,23 @@ const recipeExtractionTool = {
         items: {
           type: "object",
           properties: {
-            stepNumber: { type: "number", description: "1-indexed step number" },
-            instruction: { type: "string", description: "Clear cooking instruction" },
-            timestampSeconds: { type: "number", description: "Video timestamp in seconds when this step is discussed" },
-            durationSeconds: { type: "number", description: "Estimated duration of this step in seconds" },
+            stepNumber: {
+              type: "number",
+              description: "1-indexed step number",
+            },
+            instruction: {
+              type: "string",
+              description: "Clear cooking instruction",
+            },
+            timestampSeconds: {
+              type: "number",
+              description:
+                "Video timestamp in seconds when this step is discussed",
+            },
+            durationSeconds: {
+              type: "number",
+              description: "Estimated duration of this step in seconds",
+            },
           },
           required: ["stepNumber", "instruction"],
         },
@@ -118,10 +173,13 @@ function formatTranscriptForClaude(segments: TranscriptSegment[]): string {
 export async function extractRecipeFromTranscript(
   client: ClaudeClient,
   transcriptSegments: TranscriptSegment[],
-  metadata: { title: string; author?: string }
+  metadata: { title: string; author?: string },
 ): Promise<ExtractedRecipe> {
   const startTime = Date.now();
-  log.info({ model: CLAUDE_MODEL, segmentCount: transcriptSegments.length }, "Starting YouTube recipe extraction with Claude");
+  log.info(
+    { model: CLAUDE_MODEL, segmentCount: transcriptSegments.length },
+    "Starting YouTube recipe extraction with Claude",
+  );
 
   const formattedTranscript = formatTranscriptForClaude(transcriptSegments);
 
@@ -146,7 +204,7 @@ Extract the recipe using the extract_recipe tool. Make sure timestamps match the
 
     // Extract tool use result
     const toolUse = response.content.find((block) => block.type === "tool_use");
-    
+
     if (!toolUse || toolUse.type !== "tool_use") {
       throw new Error("Claude did not return a tool use response");
     }
@@ -165,12 +223,14 @@ Extract the recipe using the extract_recipe tool. Make sure timestamps match the
       carbs: extracted.carbs ?? null,
       fat: extracted.fat ?? null,
       fiber: extracted.fiber ?? null,
-      ingredients: (extracted.ingredients || []).map((ing: ExtractedIngredient) => ({
-        name: ing.name,
-        quantity: ing.quantity ?? null,
-        unit: ing.unit ?? null,
-        notes: ing.notes ?? null,
-      })),
+      ingredients: (extracted.ingredients || []).map(
+        (ing: ExtractedIngredient) => ({
+          name: ing.name,
+          quantity: ing.quantity ?? null,
+          unit: ing.unit ?? null,
+          notes: ing.notes ?? null,
+        }),
+      ),
       steps: (extracted.steps || []).map((step: ExtractedStep) => ({
         stepNumber: step.stepNumber,
         instruction: step.instruction,
@@ -187,9 +247,11 @@ Extract the recipe using the extract_recipe tool. Make sure timestamps match the
         title: normalizedRecipe.title,
         ingredientCount: normalizedRecipe.ingredients.length,
         stepCount: normalizedRecipe.steps.length,
-        stepsWithTimestamps: normalizedRecipe.steps.filter(s => s.timestampSeconds !== null).length,
+        stepsWithTimestamps: normalizedRecipe.steps.filter(
+          (s) => s.timestampSeconds !== null,
+        ).length,
       },
-      "Claude recipe extraction complete"
+      "Claude recipe extraction complete",
     );
 
     return normalizedRecipe;
@@ -197,7 +259,7 @@ Extract the recipe using the extract_recipe tool. Make sure timestamps match the
     const durationMs = Date.now() - startTime;
     log.error({ error, durationMs }, "Failed to extract recipe with Claude");
     throw new Error(
-      `Failed to extract recipe: ${error instanceof Error ? error.message : "Unknown error"}`
+      `Failed to extract recipe: ${error instanceof Error ? error.message : "Unknown error"}`,
     );
   }
 }
