@@ -84,3 +84,79 @@ export const verification = sqliteTable("verification", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+// Recipe tables
+export const recipe = sqliteTable("recipe", {
+  id: text("id").primaryKey(),
+  createdById: text("created_by_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  sourceUrl: text("source_url").notNull(),
+  sourceType: text("source_type", { enum: ["youtube", "blog"] }).notNull(),
+  youtubeVideoId: text("youtube_video_id"),
+  thumbnailUrl: text("thumbnail_url"),
+  servings: integer("servings"),
+  prepTimeMinutes: integer("prep_time_minutes"),
+  cookTimeMinutes: integer("cook_time_minutes"),
+  // Macros per serving
+  calories: integer("calories"),
+  protein: integer("protein"), // grams
+  carbs: integer("carbs"), // grams
+  fat: integer("fat"), // grams
+  fiber: integer("fiber"), // grams
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export type Recipe = typeof recipe.$inferSelect;
+export type InsertRecipe = typeof recipe.$inferInsert;
+
+export const recipeStep = sqliteTable("recipe_step", {
+  id: text("id").primaryKey(),
+  recipeId: text("recipe_id")
+    .notNull()
+    .references(() => recipe.id, { onDelete: "cascade" }),
+  stepNumber: integer("step_number").notNull(),
+  instruction: text("instruction").notNull(),
+  timestampSeconds: integer("timestamp_seconds"),
+  durationSeconds: integer("duration_seconds"),
+});
+
+export type RecipeStep = typeof recipeStep.$inferSelect;
+export type InsertRecipeStep = typeof recipeStep.$inferInsert;
+
+export const ingredient = sqliteTable("ingredient", {
+  id: text("id").primaryKey(),
+  // Unique constraint is case-sensitive; repository normalizes to lowercase
+  name: text("name").notNull().unique(),
+  category: text("category"),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+});
+
+export type Ingredient = typeof ingredient.$inferSelect;
+export type InsertIngredient = typeof ingredient.$inferInsert;
+
+export const recipeIngredient = sqliteTable("recipe_ingredient", {
+  id: text("id").primaryKey(),
+  recipeId: text("recipe_id")
+    .notNull()
+    .references(() => recipe.id, { onDelete: "cascade" }),
+  ingredientId: text("ingredient_id")
+    .notNull()
+    .references(() => ingredient.id, { onDelete: "cascade" }),
+  quantity: text("quantity"), // stored as text to handle fractions like "1/2"
+  unit: text("unit"),
+  notes: text("notes"),
+});
+
+export type RecipeIngredient = typeof recipeIngredient.$inferSelect;
+export type InsertRecipeIngredient = typeof recipeIngredient.$inferInsert;

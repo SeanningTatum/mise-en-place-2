@@ -7,6 +7,25 @@ description: Create implementation plans with subagent assignments for each task
 
 Create structured implementation plans that assign appropriate subagents to each task and include PR validation.
 
+## Before Planning: Rules Index
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When planning tasks that touch specific areas, note which rules apply:
+
+| File Pattern | Rule to Include in Plan |
+|--------------|------------------------|
+| `app/repositories/*.ts` | `repository-pattern.mdc` |
+| `app/trpc/routes/*.ts` | `repository-pattern.mdc` |
+| `app/routes/**/*.tsx` | `routes.mdc` |
+| `app/db/schema.ts` | `database.mdc` |
+| `app/components/*-modal.tsx` | `modals.mdc` |
+| `**/stripe*`, `**/payment*` | `stripe.mdc` |
+| `e2e/**/*` | `playwright-rules.mdc` |
+| `docs/**/*.md` | `docs.mdc` |
+
+Include rule requirements in task descriptions so subagents know what patterns to follow.
+
 ## When to Use
 
 - User requests a plan for feature implementation
@@ -231,13 +250,13 @@ exposing via tRPC and creating a settings page.
 **IMPORTANT**: Every implementation plan MUST include testing that follows this workflow:
 
 1. **Browser Verification** - Use Playwright MCP to verify the feature works
-2. **Capture Evidence** - Take screenshots during verification
+2. **Capture Evidence** - Take screenshots to `docs/testing/{feature}/screenshots/`
 3. **Write E2E Tests** - Convert browser actions to `e2e/{feature}.spec.ts`
-4. **Document Tests** - Create `docs/features/{feature}-testing.md` with:
-   - Test results summary table
+4. **Document Tests** - Create `docs/testing/{feature}/{feature}.md` with:
+   - Test scenarios and descriptions
+   - Screenshots for each scenario
+   - Test IDs reference table
    - E2E test coverage list
-   - Key test IDs for the feature
-   - Instructions for running tests
 
 ### Testing Task Example
 
@@ -245,13 +264,15 @@ exposing via tRPC and creating a settings page.
 #### Task: Test Implementation
 **Subagent:** `tester`
 **Description:** 
-1. Verify feature with Playwright MCP browser tools
-2. Write e2e tests in `e2e/{feature}.spec.ts`
-3. Add data-testid attributes to key elements
-4. Create test documentation in `docs/features/{feature}-testing.md`
+1. Create testing plan at `docs/testing/{feature}/{feature}.md`
+2. Verify feature with Playwright MCP browser tools
+3. Save screenshots to `docs/testing/{feature}/screenshots/`
+4. Write e2e tests in `e2e/{feature}.spec.ts`
+5. Add data-testid attributes to key elements
 **Outputs:**
+- Testing plan: `docs/testing/{feature}/{feature}.md`
+- Screenshots: `docs/testing/{feature}/screenshots/`
 - E2E test file: `e2e/{feature}.spec.ts`
-- Test documentation: `docs/features/{feature}-testing.md`
 - Data-testid attributes on all interactive elements
 ```
 

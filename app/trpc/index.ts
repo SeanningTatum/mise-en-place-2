@@ -8,6 +8,8 @@
  */
 import { getDb } from "@/db";
 import { createAuth, type Auth } from "@/auth/server";
+import { createGeminiClient } from "@/lib/gemini";
+import { createClaudeClient } from "@/lib/claude";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { z, ZodError } from "zod/v4";
@@ -32,12 +34,22 @@ export const createTRPCContext = async (opts: {
 }) => {
   const auth = await createAuth(
     opts.cfContext.DATABASE,
-    opts.cfContext.BETTER_AUTH_SECRET
+    opts.cfContext.BETTER_AUTH_SECRET,
   );
   const db = await getDb(opts.cfContext.DATABASE);
   const betterAuth = await auth.api.getSession({
     headers: opts.headers,
   });
+
+  // Create Gemini client if API key is configured
+  const gemini = opts.cfContext.GEMINI_API_KEY
+    ? createGeminiClient(opts.cfContext.GEMINI_API_KEY)
+    : null;
+
+  // Create Claude client if API key is configured
+  const claude = opts.cfContext.ANTHROPIC_API_KEY
+    ? createClaudeClient(opts.cfContext.ANTHROPIC_API_KEY)
+    : null;
 
   return {
     headers: opts.headers,
@@ -52,6 +64,8 @@ export const createTRPCContext = async (opts: {
     workflows: {
       ExampleWorkflow: opts.cfContext.EXAMPLE_WORKFLOW,
     },
+    gemini,
+    claude,
   };
 };
 /**

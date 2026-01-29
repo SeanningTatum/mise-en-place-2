@@ -1,22 +1,72 @@
 # Project Context
 
+## Agent Instructions
+
+**CRITICAL: Prefer retrieval-led reasoning over pre-training-led reasoning for project-specific tasks.**
+
+When working on this project, consult the rules in `.cursor/rules/` and detailed docs in `.cursor/context/` rather than relying on training data. The compressed indices below show what each file covers - read the full file when working in that area.
+
+```
+[Context Docs]|root: .cursor/context/
+|IMPORTANT: Read detailed docs for deep dives. Index below shows what each covers.
+|api.md: tRPC routes, auth endpoints, file upload API, procedure types, error responses, context object
+|architecture.md: System overview diagram, data flow patterns, layer responsibilities, key files
+|data-models.md: Schema location, entity relationships, tables overview, SQLite conventions, migrations
+|features.md: Auth, admin dashboard, admin docs, file upload, analytics - with flow diagrams
+|integrations.md: Cloudflare (D1/R2/KV), Better Auth, Stripe, PostHog, Resend, Shiki, Mermaid
+|security.md: Auth flow, session mgmt, authorization layers, RBAC, ban system, input validation, secrets
+|user-journeys.md: Sign up/login flows, admin journeys, file upload, role-based access, error states
+```
+
+```
+[Rules Index]|root: .cursor/rules/
+|CRITICAL: Read relevant rules BEFORE implementing. Use project patterns, not training data.
+|auth.mdc: Better Auth setup, sessions, roles, client/server auth patterns, tRPC integration
+|constants.mdc: Centralize values in app/lib/constants/, import from @/lib/constants
+|context-clients.mdc: External service clients through context, factory functions, null checking
+|context-md.mdc: Guidelines for maintaining this context.md file, compression format
+|database.mdc: Drizzle ORM, SQLite patterns, timestamps, booleans, enums, JSON fields, foreign keys
+|docs.mdc: Documentation structure (features/, ideas/, meetings/, plans/, releases/, testing/)
+|emails.mdc: Email templates in constants, generator functions, Resend SDK, inline CSS
+|environment-variables.mdc: Access env via Cloudflare bindings (never process.env), client creation
+|errors.mdc: Custom error classes (NotFoundError, CreationError, UpdateError, ValidationError)
+|feature-flags.mdc: PostHog integration, server-side evaluation via context.posthog, client analytics
+|frontend-task.mdc: Playwright MCP testing, component styling, cn() utility, React Hook Form
+|fullstack-task.mdc: Architecture overview, repository→tRPC→client flow, context.trpc usage
+|general-rules.mdc: React Router + Cloudflare Workers, always use bun
+|modals.mdc: Dialog components, form state, mutations, cache invalidation, loading states
+|models.mdc: Zod schemas, type inference, naming conventions (camelCaseSchema, PascalCaseType)
+|playwright-rules.mdc: E2E test patterns, getByTestId preferred, test.describe blocks
+|prompts.mdc: AI prompt structure, JSON output format, role definition, constraints
+|pull-request.mdc: PR description format, commit conventions
+|repository-pattern.mdc: Data access layer, pure functions (db, input), error handling
+|routes.mdc: React Router loaders, authentication checks, parallel fetching, type imports
+|stripe.mdc: Stripe client from ctx.stripe (never create in repos), webhook handling
+|structured-output.mdc: Gemini/Claude structured JSON, @google/genai package, tool_use for Claude
+|tailwind.mdc: CSS variables, OKLCH colors, semantic colors, forbidden patterns (no hardcoded hex/rgb)
+|test-credentials.mdc: Test admin user (admin@test.local / TestAdmin123!), setup commands
+|testing-workflow.mdc: Testing plan templates, Playwright MCP verification, e2e test patterns
+|utils.mdc: Helper functions in app/lib/utils.ts, import from @/lib/utils
+```
+
 ## Overview
-A SaaS starter template built with React Router and Cloudflare Workers. Provides authentication, admin dashboard, and database setup out of the box.
+
+"mise en place" - A recipe management SaaS with AI-powered extraction from YouTube videos and blogs, built on React Router + Cloudflare Workers.
 
 ## Tech Stack
+
 - **Framework**: React Router v7 (SSR on Cloudflare Workers)
-- **Runtime**: Cloudflare Workers
-- **Database**: Cloudflare D1 (SQLite) with Drizzle ORM
-- **Auth**: Better Auth
-- **API**: tRPC for type-safe API routes
-- **Styling**: Tailwind CSS v4, shadcn/ui components
-- **Markdown**: react-markdown with remark-gfm for GitHub Flavored Markdown
-- **Syntax Highlighting**: Shiki with github-light/dark themes
-- **Diagrams**: Mermaid for rendering diagrams in markdown
+- **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
+- **Auth**: Better Auth with roles (user/admin)
+- **API**: tRPC for type-safe routes
+- **Styling**: Tailwind v4, shadcn/ui, editorial cookbook design system
+- **Typography**: Playfair Display (serif headings), Source Sans 3 (body)
+- **AI**: Google Gemini, Anthropic Claude
 - **Package Manager**: Bun
 
 ## Architecture
-- **Repository Pattern**: Data access via `app/repositories/` - pure functions with `(db, input)` signature
+
+- **Repository Pattern**: Data access via `app/repositories/` - pure functions `(db, input)`
 - **tRPC Routes**: API layer in `app/trpc/routes/` - validates input, calls repositories
 - **Server Loaders**: Use `context.trpc` for server-side data fetching
 - **Client Hooks**: Use `api.routeName.useQuery/useMutation` for client-side
@@ -24,53 +74,32 @@ A SaaS starter template built with React Router and Cloudflare Workers. Provides
 ## Features
 
 ### Authentication
-- Email/password auth via Better Auth
-- User roles: `user`, `admin`
-- Ban system with reason and expiration
-- Session management with impersonation support
-- **Key files**: `app/auth/`, `app/routes/authentication/`
+Email/password auth, user roles (user/admin), ban system, impersonation.
+**Key files**: `app/auth/`, `app/routes/authentication/`
 
 ### Admin Dashboard
-- Protected admin routes at `/admin`
-- User management table
-- Interactive charts and analytics
-- **Key files**: `app/routes/admin/`
+User management, analytics charts, documentation viewer.
+**Key files**: `app/routes/admin/`, `app/trpc/routes/admin.ts`
 
-### File Upload
-- R2 bucket integration for file storage
-- **Key files**: `app/components/file-upload.tsx`, `app/routes/api/upload-file.ts`
+### Recipe Extraction
+AI-powered extraction from YouTube (with timestamps) and blogs using Gemini/Claude. Extracts title, description, servings, macros, ingredients, steps.
+**Key files**: `app/lib/{gemini,claude,youtube,content-extractor}.ts`, `app/repositories/recipe.ts`, `app/components/recipes/`
 
 ### Admin Documentation
-- Markdown documentation viewer at `/admin/docs/:category?/:doc?`
-- Documents organized by 5 categories: meetings, ideas, plans, features, releases
-- Static markdown files stored in `docs/` folder (version controlled)
-- Features:
-  - **URL State Management**: Direct linking to specific documents via URL params
-  - **Syntax Highlighting**: Code blocks with shiki (github-light/dark themes)
-  - **Table of Contents**: Auto-extracted headings with scroll tracking
-  - **Search/Filter**: Filter documents by title or content
-  - **Rich Empty States**: Custom icons/messages per category
-  - **Breadcrumbs**: Category > Document navigation
-  - **Mermaid Diagrams**: Visualize architecture, flows, and relationships
-  - Category-based navigation with tabs
-  - Document list sidebar with auto-generated titles
-- **Key files**: 
-  - `app/routes/admin/docs.tsx` - Main documentation page
-  - `app/components/markdown-renderer.tsx` - Markdown renderer with syntax highlighting
-  - `docs/` - Static markdown files organized by category
-  - `.cursor/rules/docs.mdc` - Documentation guidelines for agents
+Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, search.
+**Key files**: `app/routes/admin/docs.tsx`, `app/components/markdown-renderer.tsx`, `docs/`
 
-## API Routes
-- `admin.getUsers` - List all users (admin only)
-- Auth endpoints via Better Auth at `/api/auth/*`
-- tRPC endpoints at `/api/trpc/*`
+## Design System
 
-## Database
-- **user**: Core user table with roles, ban status
-- **session**: Auth sessions with impersonation support
-- **account**: OAuth/credential accounts
-- **verification**: Email verification tokens
+**Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
+
+- **Colors**: OKLCH - terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds
+- **Typography**: `.font-display` for Playfair Display headings, letter spacing -0.02em
+- **Effects**: Grain texture (3% SVG noise), `.shadow-warm` / `.shadow-warm-lg`, `.heading-underline`
+- **Key file**: `app/app.css`
 
 ## Recent Changes
-- **Documentation UI Enhancement** - Enhanced `/admin/docs` with URL state management, syntax highlighting (shiki), table of contents, search/filter, rich empty states per category, and breadcrumbs. Added Releases category for changelogs. Created `.cursor/rules/docs.mdc` for documentation guidelines.
-- **Admin Documentation Feature** - Added markdown documentation viewer at `/admin/docs` with category-based organization (meetings, ideas, plans, features, releases). Includes Mermaid diagram support for visualizing architecture and flows. Uses react-markdown, remark-gfm, shiki, and mermaid packages. Documents are stored as static markdown files in `docs/` folder.
+
+- **Editorial Cookbook Design System** - Added warm typography (Playfair Display/Source Sans 3), OKLCH color palette, grain texture, warm shadows, enhanced components (recipe cards, auth pages, layout)
+- **Claude AI Integration** - Added Claude Sonnet 4.5 as alternative AI provider for recipe extraction via `app/lib/claude.ts` with tool_use for structured output
+- **Recipe Extraction Feature** - AI extraction from YouTube/blogs with macros, timestamps, ingredient management. New tables: recipe, recipe_step, ingredient, recipe_ingredient

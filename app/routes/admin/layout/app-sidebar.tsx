@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   IconCamera,
   IconChartBar,
+  IconChefHat,
   IconDashboard,
   IconDatabase,
   IconFileAi,
@@ -10,6 +11,7 @@ import {
   IconFolder,
   IconHelp,
   IconInnerShadowTop,
+  IconLeaf,
   IconListDetails,
   IconReport,
   IconSearch,
@@ -48,6 +50,16 @@ const data = {
       title: "Users",
       url: "/admin/users",
       icon: IconUsers,
+    },
+    {
+      title: "Recipes",
+      url: "/admin/recipes",
+      icon: IconChefHat,
+    },
+    {
+      title: "Ingredients",
+      url: "/admin/ingredients",
+      icon: IconLeaf,
     },
     {
       title: "Docs",

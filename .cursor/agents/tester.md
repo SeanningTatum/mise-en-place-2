@@ -11,7 +11,18 @@ When invoked to test a feature:
 
 ### Step 1: Generate Testing Plan
 
-Create a testing plan file at `.cursor/testing-plans/{feature-name}.md`:
+Create a testing plan folder and file at `docs/testing/{feature-name}/{feature-name}.md`:
+
+```
+docs/testing/{feature-name}/
+├── {feature-name}.md      # Testing plan with embedded screenshot references
+└── screenshots/           # Playwright screenshots folder
+    ├── scenario-1.png
+    ├── scenario-2.png
+    └── ...
+```
+
+**Testing Plan Template:**
 
 ```markdown
 # Testing Plan: {Feature Name}
@@ -34,6 +45,8 @@ Brief description of what was implemented and what needs to be tested.
 3. {Action}
 **Expected Result:** {What should happen}
 
+**Screenshot:** ![{Description}](./screenshots/scenario-1.png)
+
 ### Scenario 2: {Edge Case}
 **Description:** {What this scenario tests}
 **Steps:**
@@ -41,12 +54,16 @@ Brief description of what was implemented and what needs to be tested.
 2. {Action}
 **Expected Result:** {What should happen}
 
+**Screenshot:** ![{Description}](./screenshots/scenario-2.png)
+
 ### Scenario 3: {Error Handling}
 **Description:** {What this scenario tests}
 **Steps:**
 1. {Action}
 2. {Action}
 **Expected Result:** {Error message or validation}
+
+**Screenshot:** ![{Description}](./screenshots/scenario-3.png)
 
 ## UI Elements to Verify
 - [ ] {Element} renders correctly
@@ -63,6 +80,26 @@ Brief description of what was implemented and what needs to be tested.
 - [ ] Keyboard navigation works
 - [ ] Focus states visible
 - [ ] ARIA labels present
+
+## Test IDs Reference
+
+| Element | Test ID |
+|---------|---------|
+| {Element} | `{data-testid}` |
+
+## E2E Test Coverage
+
+Test file: `e2e/{feature-name}.spec.ts`
+
+### Running Tests
+
+\`\`\`bash
+# Run all tests
+bun run test:e2e
+
+# Run specific feature tests
+bunx playwright test e2e/{feature-name}.spec.ts
+\`\`\`
 ```
 
 ### Step 2: Manual Verification with Playwright MCP
@@ -75,6 +112,14 @@ Use the browser MCP tools to verify each scenario:
 3. `browser_click/type` → Interact with elements using refs from snapshot
 4. `browser_snapshot` → Verify state changed
 5. `browser_take_screenshot` → Visual verification
+
+**Save Screenshots to Testing Plan Folder:**
+```typescript
+// Save directly to the testing plan's screenshots folder
+browser_take_screenshot({
+  filename: "docs/testing/{feature-name}/screenshots/scenario-1.png"
+})
+```
 
 **Common Verification Patterns:**
 
@@ -118,7 +163,7 @@ When verification reveals issues:
 
 ### Step 4: Write E2E Test
 
-After manual verification passes, create `tests/e2e/{feature-name}.spec.ts`:
+After manual verification passes, create `e2e/{feature-name}.spec.ts`:
 
 ```typescript
 import { test, expect } from "@playwright/test";
@@ -165,131 +210,47 @@ test.describe("{Feature Name}", () => {
 <Dialog data-testid="confirm-modal">
 ```
 
-### Step 5: Create Test Results Document
+### Step 5: Update Testing Plan with Results
 
-Create test results in two locations:
+After completing verification, update the testing plan with:
+- Check off completed scenarios
+- Add screenshots for each scenario
+- Note any issues found and fixed
+- Update E2E test coverage section
 
-1. **Testing Results**: `.cursor/testing-results/{feature-name}-results.md` (internal tracking)
-2. **Feature Documentation**: `docs/features/{feature-name}-testing.md` (permanent documentation with screenshots)
+## Screenshot Naming Convention
 
-#### Internal Testing Results
+Save screenshots with descriptive names in the feature's screenshots folder:
 
-Create `.cursor/testing-results/{feature-name}-results.md`:
-
-```markdown
-# Test Results: {Feature Name}
-
-**Date:** {YYYY-MM-DD}
-**Tester:** AI Agent
-**Status:** ✅ Passed / ⚠️ Passed with fixes / ❌ Failed
-
-## Summary
-{Brief summary of what was tested and the overall outcome}
-
-- **Total Scenarios:** {X}
-- **Passed:** {X}
-- **Fixed During Testing:** {X}
-- **Known Issues:** {X}
-
-## Test Results by Scenario
-
-### Scenario 1: {Scenario Name}
-**Status:** ✅ Passed
-
-**What was tested:**
-{Explanation of what this scenario verifies}
-
-**Steps performed:**
-1. {Step description}
-2. {Step description}
-
-**Screenshot:**
-![{Description}](./screenshots/{feature-name}-scenario-1.png)
-
-**Observations:**
-- {What was observed}
-
-## Issues Fixed During Testing
-
-### Issue 1: {Issue Title}
-- **File:** `{path/to/file}`
-- **Problem:** {Description}
-- **Solution:** {What was changed}
-
-## E2E Test Coverage
-
-Test file: `tests/e2e/{feature-name}.spec.ts`
-
-| Test Case | Description |
-|-----------|-------------|
-| `should {test name}` | {What it verifies} |
 ```
+docs/testing/{feature-name}/screenshots/
+├── {feature-name}-initial-load.png
+├── {feature-name}-form-filled.png
+├── {feature-name}-success-state.png
+├── {feature-name}-error-state.png
+└── {feature-name}-empty-state.png
 
-#### Feature Documentation with Screenshots
-
-Create `docs/features/{feature-name}-testing.md` with images:
-
-```markdown
-# {Feature Name} - Test Summary
-
-## Overview
-Summary of the feature and what was tested.
-
-## Test Results
-
-| Test Case | Status | Description |
-|-----------|--------|-------------|
-| {Test name} | ✅ | {What it verifies} |
-
-## Screenshots
-
-### {Scenario 1 Name}
-![{Description}](../assets/{feature-name}-scenario-1.png)
-
-{Description of what this screenshot shows}
-
-### {Scenario 2 Name}
-![{Description}](../assets/{feature-name}-scenario-2.png)
-
-{Description of what this screenshot shows}
-
-## E2E Test Coverage
-
-Test file: `e2e/{feature-name}.spec.ts`
-
-### Running Tests
-
-\`\`\`bash
-# Run all tests
-bun run test:e2e
-
-# Run specific feature tests
-bunx playwright test e2e/{feature-name}.spec.ts
-\`\`\`
-
-## Key Test IDs
-
-| Element | Test ID |
-|---------|---------|
-| {Element} | `{data-testid}` |
+Examples for recipes:
+├── recipe-list-page.png
+├── recipe-detail.png
+├── recipe-ingredients.png
+├── recipe-delete-dialog.png
+└── recipe-empty-state.png
 ```
-
-**Screenshots should be saved to:** `docs/assets/` folder
 
 ## Checklist
 
 Before marking testing complete:
 
-- [ ] Testing plan created in `.cursor/testing-plans/`
+- [ ] Testing plan created at `docs/testing/{feature-name}/{feature-name}.md`
+- [ ] Screenshots folder created at `docs/testing/{feature-name}/screenshots/`
 - [ ] All scenarios manually verified with Playwright MCP
-- [ ] Screenshots taken for each scenario
+- [ ] Screenshots taken and saved to testing plan folder
 - [ ] Issues found during testing have been fixed
 - [ ] E2E test file created in `e2e/`
 - [ ] All e2e tests pass locally
 - [ ] Data-testid attributes added to key elements
-- [ ] Test results document created in `.cursor/testing-results/`
-- [ ] **Feature documentation with screenshots created in `docs/features/`**
-- [ ] **Screenshots saved to `docs/assets/`**
+- [ ] Testing plan updated with results
 
 ## Quick Reference: Playwright MCP Tools
 
@@ -306,3 +267,26 @@ Before marking testing complete:
 | `browser_take_screenshot` | Capture visual state |
 | `browser_console_messages` | Check for JS errors |
 | `browser_network_requests` | Verify API calls |
+
+## File Structure
+
+Testing documentation lives in `docs/testing/`:
+
+```
+docs/
+├── features/      # Feature documentation
+├── testing/       # Testing plans with screenshots
+│   ├── recipes/
+│   │   ├── recipes.md
+│   │   └── screenshots/
+│   ├── authentication/
+│   │   ├── authentication.md
+│   │   └── screenshots/
+│   └── {feature}/
+│       ├── {feature}.md
+│       └── screenshots/
+├── ideas/
+├── meetings/
+├── plans/
+└── releases/
+```

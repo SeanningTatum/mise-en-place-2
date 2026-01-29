@@ -7,6 +7,12 @@ description: Create a GitHub pull request with a properly formatted description.
 
 Create GitHub PRs with descriptions following the team's template structure.
 
+## Before Creating PR
+
+**IMPORTANT: Run the `pr-checker` skill first** to validate changes follow project rules.
+
+Read `.cursor/context.md` for the compressed Rules Index. Ensure all touched files comply with their respective rules before creating the PR.
+
 ## Workflow
 
 ### Step 1: Gather Context
@@ -44,8 +50,8 @@ Pattern: Look for `LAN-` followed by numbers.
 Look for any generated testing plans in these locations:
 
 - `e2e/*.spec.ts` - E2E test files
-- `docs/features/*-testing.md` - Test documentation
-- `.cursor/testing-results/` directory
+- `docs/testing/{feature}/{feature}.md` - Testing plans with screenshots
+- `docs/testing/{feature}/screenshots/` - Playwright screenshots
 - Recent conversation context mentioning test scenarios
 
 If a testing plan exists, include its test cases in the PR description.

@@ -18,6 +18,7 @@ import {
   IconSearch,
   IconX,
   IconRocket,
+  IconTestPipe,
 } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -113,6 +114,7 @@ const categories = [
   { id: "plans", label: "Plans", icon: IconMap },
   { id: "features", label: "Features", icon: IconApps },
   { id: "releases", label: "Releases", icon: IconRocket },
+  { id: "testing", label: "Testing", icon: IconTestPipe },
 ] as const;
 
 type CategoryId = (typeof categories)[number]["id"];
@@ -147,11 +149,28 @@ const emptyStateConfig: Record<
     description: "Document changelogs, release notes, and shipped features.",
     icon: IconRocket,
   },
+  testing: {
+    title: "No testing plans yet",
+    description: "Create testing plans with Playwright screenshots to verify feature implementations.",
+    icon: IconTestPipe,
+  },
 };
 
 // Parse file path to extract category and document info
 function parseFilePath(path: string) {
-  // Path format: /docs/{category}/{filename}.md
+  // Handle testing folder structure: /docs/testing/{feature}/{feature}.md
+  const testingMatch = path.match(/^\/docs\/testing\/([^/]+)\/([^/]+)\.md$/);
+  if (testingMatch) {
+    const [, folder, filename] = testingMatch;
+    // Use folder name as the unique identifier, filename for title
+    const title = filename
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+    return { category: "testing", filename: `${folder}/${filename}`, title, path };
+  }
+
+  // Standard path format: /docs/{category}/{filename}.md
   const match = path.match(/^\/docs\/([^/]+)\/(.+)\.md$/);
   if (!match) return null;
 
@@ -173,6 +192,7 @@ function getDocumentsByCategory() {
     plans: [],
     features: [],
     releases: [],
+    testing: [],
   };
 
   for (const [path, content] of Object.entries(markdownFiles)) {
@@ -231,7 +251,10 @@ export default function DocsPage() {
   // Determine selected doc from URL or default to first
   const selectedDoc = useMemo(() => {
     if (params.doc) {
-      const docPath = `/docs/${activeCategory}/${params.doc}.md`;
+      // Handle testing category's nested path: docs/testing/{folder}/{file}.md
+      const docPath = activeCategory === "testing"
+        ? `/docs/testing/${params.doc}.md`
+        : `/docs/${activeCategory}/${params.doc}.md`;
       if (currentDocs.some((d) => d.path === docPath)) {
         return docPath;
       }
@@ -316,7 +339,15 @@ export default function DocsPage() {
 
   // Handle document selection
   const handleDocSelect = (docPath: string) => {
-    // Extract filename from path (e.g., "/docs/features/authentication.md" -> "authentication")
+    // Handle testing category: /docs/testing/{folder}/{file}.md -> {folder}/{file}
+    const testingMatch = docPath.match(/^\/docs\/testing\/([^/]+)\/([^/]+)\.md$/);
+    if (testingMatch) {
+      const [, folder, file] = testingMatch;
+      navigateToDoc(activeCategory, `${folder}/${file}`);
+      return;
+    }
+    
+    // Standard path: /docs/{category}/{filename}.md -> {filename}
     const match = docPath.match(/^\/docs\/([^/]+)\/(.+)\.md$/);
     if (match) {
       const [, , filename] = match;

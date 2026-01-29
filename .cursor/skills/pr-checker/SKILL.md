@@ -7,6 +7,12 @@ description: Validate pull requests against project standards before submission.
 
 Validate that changes follow project standards before creating a pull request.
 
+## Rules Reference
+
+**IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
+
+Read `.cursor/context.md` for the compressed Rules Index. When validating files, read the full rule from `.cursor/rules/` to verify compliance:
+
 ## When to Run
 
 **Run this skill proactively** before using the `create-pull-request` skill. This ensures all requirements are met before PR creation.
@@ -134,11 +140,9 @@ Check for testing artifacts:
 # Check for e2e test files
 ls -la e2e/*.spec.ts 2>/dev/null
 
-# Check for test documentation
-ls -la docs/features/*-testing.md 2>/dev/null
-
-# Check for testing plan files
-ls -la .cursor/testing-plans/*.md 2>/dev/null
+# Check for testing plans with screenshots
+ls -la docs/testing/*/*.md 2>/dev/null
+ls -la docs/testing/*/screenshots/ 2>/dev/null
 ```
 
 ### Required Testing Artifacts
@@ -150,20 +154,22 @@ For feature PRs, the following should exist:
    - Tests for edge cases
    - Tests for error states
 
-2. **Test Documentation**: `docs/features/{feature}-testing.md`
-   - Test results summary
-   - E2E test coverage list
-   - Key test IDs used
+2. **Testing Plan**: `docs/testing/{feature}/{feature}.md`
+   - Test scenarios with descriptions
+   - UI elements checklist
+   - Test IDs reference table
+   - Screenshots in `docs/testing/{feature}/screenshots/`
 
 3. **Data-testid Attributes**: Key elements should have `data-testid` for reliable testing
 
 ### If No Testing Found
 
 **Prompt user:** "No e2e tests found. Before creating the PR, run the `tester` subagent to:
-1. Verify the implementation with Playwright MCP
-2. Write e2e tests in `e2e/`
-3. Create test documentation in `docs/features/`
-4. Add data-testid attributes to key elements"
+1. Create testing plan at `docs/testing/{feature}/{feature}.md`
+2. Verify the implementation with Playwright MCP
+3. Save screenshots to `docs/testing/{feature}/screenshots/`
+4. Write e2e tests in `e2e/`
+5. Add data-testid attributes to key elements"
 
 ---
 
@@ -244,7 +250,7 @@ Generate a summary:
 
 ### Documentation
 - [✅/❌] context.md updated
-- [✅/❌] Test documentation exists (`docs/features/*-testing.md`)
+- [✅/❌] Testing plan exists (`docs/testing/{feature}/{feature}.md`)
 
 ### Testing
 - [✅/❌] E2E tests exist (`e2e/*.spec.ts`)
