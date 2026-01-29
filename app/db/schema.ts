@@ -134,6 +134,7 @@ export type InsertRecipeStep = typeof recipeStep.$inferInsert;
 
 export const ingredient = sqliteTable("ingredient", {
   id: text("id").primaryKey(),
+  // Unique constraint is case-sensitive; repository normalizes to lowercase
   name: text("name").notNull().unique(),
   category: text("category"),
   createdAt: integer("created_at", { mode: "timestamp_ms" })

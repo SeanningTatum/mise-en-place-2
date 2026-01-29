@@ -153,16 +153,35 @@ async function extractCaptionTrackUrl(videoId: string): Promise<string | null> {
   const html = await response.text();
 
   // Look for captions in the ytInitialPlayerResponse
-  const playerResponseMatch = html.match(
-    /ytInitialPlayerResponse\s*=\s*({.+?});/,
-  );
-  if (!playerResponseMatch) {
+  const startMarker = "ytInitialPlayerResponse";
+  const startIdx = html.indexOf(startMarker);
+  if (startIdx === -1) {
     log.debug({ videoId }, "No ytInitialPlayerResponse found");
     return null;
   }
 
+  // Find the opening brace and extract JSON using bracket matching
+  const jsonStart = html.indexOf("{", startIdx);
+  if (jsonStart === -1) {
+    log.debug({ videoId }, "No JSON object found after ytInitialPlayerResponse");
+    return null;
+  }
+
+  let depth = 0;
+  let jsonEnd = jsonStart;
+  for (let i = jsonStart; i < html.length; i++) {
+    if (html[i] === "{") depth++;
+    else if (html[i] === "}") depth--;
+    if (depth === 0) {
+      jsonEnd = i + 1;
+      break;
+    }
+  }
+
+  const jsonStr = html.slice(jsonStart, jsonEnd);
+
   try {
-    const playerResponse = JSON.parse(playerResponseMatch[1]);
+    const playerResponse = JSON.parse(jsonStr);
     const captions =
       playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
 

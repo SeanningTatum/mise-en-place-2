@@ -1,4 +1,4 @@
-import { eq, and, count, desc, or, like } from "drizzle-orm";
+import { eq, and, count, desc, or, like, inArray } from "drizzle-orm";
 import {
   recipe,
   recipeStep,
@@ -123,29 +123,48 @@ async function findOrCreateIngredients(
   ingredients: ExtractedIngredient[]
 ): Promise<Map<string, string>> {
   const ingredientMap = new Map<string, string>();
+  if (ingredients.length === 0) return ingredientMap;
 
-  for (const ing of ingredients) {
-    const normalizedName = ing.name.toLowerCase().trim();
+  // Normalize all names upfront
+  const normalizedNames = ingredients.map((ing) => ({
+    original: ing.name,
+    normalized: ing.name.toLowerCase().trim(),
+  }));
+  const uniqueNormalized = [...new Set(normalizedNames.map((n) => n.normalized))];
 
-    // Try to find existing ingredient
-    const existing = await db
-      .select({ id: ingredient.id })
-      .from(ingredient)
-      .where(eq(ingredient.name, normalizedName))
-      .limit(1);
+  // Batch fetch existing ingredients using IN clause
+  const existing = await db
+    .select({ id: ingredient.id, name: ingredient.name })
+    .from(ingredient)
+    .where(inArray(ingredient.name, uniqueNormalized));
 
-    if (existing.length > 0) {
-      ingredientMap.set(ing.name, existing[0].id);
-    } else {
-      // Create new ingredient
-      const newId = generateId();
-      await db.insert(ingredient).values({
-        id: newId,
-        name: normalizedName,
-        category: null,
-      });
-      ingredientMap.set(ing.name, newId);
+  const existingByName = new Map(existing.map((e) => [e.name, e.id]));
+
+  // Identify missing ingredients
+  const missingNames = uniqueNormalized.filter((name) => !existingByName.has(name));
+
+  // Batch insert missing ingredients
+  if (missingNames.length > 0) {
+    const newIngredients = missingNames.map((name) => ({
+      id: generateId(),
+      name,
+      category: null,
+    }));
+
+    const chunks = chunkArray(newIngredients, MAX_ROWS_PER_INSERT);
+    for (const chunk of chunks) {
+      await db.insert(ingredient).values(chunk);
     }
+
+    // Add new IDs to the lookup map
+    for (const ing of newIngredients) {
+      existingByName.set(ing.name, ing.id);
+    }
+  }
+
+  // Build final map using original names as keys
+  for (const { original, normalized } of normalizedNames) {
+    ingredientMap.set(original, existingByName.get(normalized)!);
   }
 
   return ingredientMap;

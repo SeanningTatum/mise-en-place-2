@@ -99,46 +99,63 @@ async function captureScreenshots() {
 
     // Try to create a recipe if none exist, or use existing one
     if (hasRecipes === 0) {
-      console.log("📝 No recipes found, attempting to extract one for screenshots...");
+      console.log(
+        "📝 No recipes found, attempting to extract one for screenshots...",
+      );
       await page.goto(`${BASE_URL}/recipes/new`, { waitUntil: "networkidle" });
       await page.waitForTimeout(1000);
 
       const urlInput = page.locator('[data-testid="recipe-url-input"]');
       if (await urlInput.isVisible()) {
         // Use a simple blog recipe URL that should extract quickly
-        await urlInput.fill("https://www.allrecipes.com/recipe/213742/cheesy-ham-and-hash-brown-casserole/");
+        await urlInput.fill(
+          "https://www.allrecipes.com/recipe/213742/cheesy-ham-and-hash-brown-casserole/",
+        );
         await page.waitForTimeout(500);
-        const extractButton = page.locator('[data-testid="extract-recipe-button"]');
+        const extractButton = page.locator(
+          '[data-testid="extract-recipe-button"]',
+        );
         if (await extractButton.isEnabled()) {
           await extractButton.click();
-          
+
           // Wait for extraction to complete (with timeout)
           console.log("⏳ Waiting for recipe extraction...");
           try {
             // Wait for either success (redirect to recipe detail) or preview to appear
             await Promise.race([
               page.waitForURL(/\/recipes\/[^/]+$/, { timeout: 60000 }),
-              page.waitForSelector('[data-testid="recipe-preview"], button:has-text("Save")', { timeout: 60000 }),
+              page.waitForSelector(
+                '[data-testid="recipe-preview"], button:has-text("Save")',
+                { timeout: 60000 },
+              ),
             ]);
-            
+
             // If we got a preview, save it
             const saveButton = page.locator('button:has-text("Save")');
-            if (await saveButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+            if (
+              await saveButton.isVisible({ timeout: 2000 }).catch(() => false)
+            ) {
               await saveButton.click();
               await page.waitForURL(/\/recipes\/[^/]+$/, { timeout: 10000 });
             }
-            
+
             // Wait for recipe detail page to load
-            await page.waitForSelector('[data-testid="recipe-title"]', { timeout: 10000 }).catch(() => null);
+            await page
+              .waitForSelector('[data-testid="recipe-title"]', {
+                timeout: 10000,
+              })
+              .catch(() => null);
             await page.waitForTimeout(3000);
             console.log("✅ Recipe extracted successfully");
             hasRecipes = 1; // Update flag
-            
+
             // If we're already on the detail page, capture it now
             const currentUrl = page.url();
             if (currentUrl.match(/\/recipes\/[^/]+$/)) {
-              console.log("📸 Already on detail page, capturing screenshots...");
-              
+              console.log(
+                "📸 Already on detail page, capturing screenshots...",
+              );
+
               await page.screenshot({
                 path: `${SCREENSHOTS_DIR}/recipe-detail.png`,
                 fullPage: true,
@@ -151,10 +168,14 @@ async function captureScreenshots() {
 
               // Capture ingredients
               console.log("📸 Looking for ingredients section...");
-              const ingredientsList = page.locator('[data-testid="ingredients-list"]');
-              const isVisible = await ingredientsList.isVisible({ timeout: 10000 }).catch(() => false);
+              const ingredientsList = page.locator(
+                '[data-testid="ingredients-list"]',
+              );
+              const isVisible = await ingredientsList
+                .isVisible({ timeout: 10000 })
+                .catch(() => false);
               console.log(`Ingredients list visible: ${isVisible}`);
-              
+
               if (isVisible) {
                 await ingredientsList.scrollIntoViewIfNeeded();
                 await page.waitForTimeout(1000);
@@ -169,10 +190,12 @@ async function captureScreenshots() {
                 console.log("✅ Ingredients screenshot captured");
 
                 // Check checkboxes
-                const checkboxes = page.locator('[data-testid^="ingredient-checkbox-"]');
+                const checkboxes = page.locator(
+                  '[data-testid^="ingredient-checkbox-"]',
+                );
                 const checkboxCount = await checkboxes.count();
                 console.log(`Found ${checkboxCount} ingredient checkboxes`);
-                
+
                 if (checkboxCount > 0) {
                   for (let i = 0; i < Math.min(3, checkboxCount); i++) {
                     try {
@@ -192,12 +215,16 @@ async function captureScreenshots() {
                     path: `${PUBLIC_SCREENSHOTS_DIR}/recipe-ingredients-checked.png`,
                     fullPage: false,
                   });
-                  console.log("✅ Ingredients with checkboxes screenshot captured");
+                  console.log(
+                    "✅ Ingredients with checkboxes screenshot captured",
+                  );
                 } else {
                   console.log("⚠️  No checkboxes found");
                 }
               } else {
-                console.log("⚠️  Ingredients list not found, taking full page screenshot");
+                console.log(
+                  "⚠️  Ingredients list not found, taking full page screenshot",
+                );
                 await page.screenshot({
                   path: `${SCREENSHOTS_DIR}/recipe-ingredients.png`,
                   fullPage: true,
@@ -207,12 +234,14 @@ async function captureScreenshots() {
                   fullPage: true,
                 });
               }
-              
+
               // Skip the detail page capture below since we already did it
               hasRecipes = 2; // Use 2 to indicate we already captured detail
             }
           } catch (error) {
-            console.log("⚠️  Recipe extraction timed out or failed, using existing recipes if any");
+            console.log(
+              "⚠️  Recipe extraction timed out or failed, using existing recipes if any",
+            );
           }
         }
       }
@@ -225,8 +254,12 @@ async function captureScreenshots() {
       await page.waitForTimeout(2000);
 
       // Click on the first recipe card
-      const firstRecipeCard = page.locator('[data-testid^="recipe-card"], a[href*="/recipes/"]').first();
-      if (await firstRecipeCard.isVisible({ timeout: 5000 }).catch(() => false)) {
+      const firstRecipeCard = page
+        .locator('[data-testid^="recipe-card"], a[href*="/recipes/"]')
+        .first();
+      if (
+        await firstRecipeCard.isVisible({ timeout: 5000 }).catch(() => false)
+      ) {
         await firstRecipeCard.click();
         await page.waitForURL(/\/recipes\/[^/]+$/, { timeout: 10000 });
         await page.waitForTimeout(3000); // Wait for detail page to load
@@ -242,8 +275,12 @@ async function captureScreenshots() {
         console.log("✅ Recipe detail screenshot captured");
 
         // Scroll to ingredients section
-        const ingredientsList = page.locator('[data-testid="ingredients-list"], [data-testid="ingredients"]');
-        if (await ingredientsList.isVisible({ timeout: 5000 }).catch(() => false)) {
+        const ingredientsList = page.locator(
+          '[data-testid="ingredients-list"], [data-testid="ingredients"]',
+        );
+        if (
+          await ingredientsList.isVisible({ timeout: 5000 }).catch(() => false)
+        ) {
           await ingredientsList.scrollIntoViewIfNeeded();
           await page.waitForTimeout(1000);
           await page.screenshot({
@@ -257,7 +294,16 @@ async function captureScreenshots() {
           console.log("✅ Ingredients screenshot captured");
 
           // Check a few ingredient checkboxes
-          const checkboxes = page.locator('[data-testid^="ingredient-checkbox"], input[type="checkbox"]').filter({ hasText: /ingredient/i }).or(page.locator('label:has-text("ingredient") input[type="checkbox"]'));
+          const checkboxes = page
+            .locator(
+              '[data-testid^="ingredient-checkbox"], input[type="checkbox"]',
+            )
+            .filter({ hasText: /ingredient/i })
+            .or(
+              page.locator(
+                'label:has-text("ingredient") input[type="checkbox"]',
+              ),
+            );
           const allCheckboxes = page.locator('input[type="checkbox"]');
           const checkboxCount = await allCheckboxes.count();
           if (checkboxCount > 0) {
@@ -304,22 +350,35 @@ async function captureScreenshots() {
     console.log("📸 Attempting to capture extraction state...");
     const extractionPage = await context.newPage();
     try {
-      await extractionPage.goto(`${BASE_URL}/recipes/new`, { waitUntil: "networkidle" });
+      await extractionPage.goto(`${BASE_URL}/recipes/new`, {
+        waitUntil: "networkidle",
+      });
       await extractionPage.waitForTimeout(1000);
 
-      const urlInput = extractionPage.locator('[data-testid="recipe-url-input"]');
+      const urlInput = extractionPage.locator(
+        '[data-testid="recipe-url-input"]',
+      );
       if (await urlInput.isVisible({ timeout: 5000 }).catch(() => false)) {
         await urlInput.fill("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         await extractionPage.waitForTimeout(500);
-        const extractButton = extractionPage.locator('[data-testid="extract-recipe-button"]');
-        if (await extractButton.isEnabled({ timeout: 2000 }).catch(() => false)) {
+        const extractButton = extractionPage.locator(
+          '[data-testid="extract-recipe-button"]',
+        );
+        if (
+          await extractButton.isEnabled({ timeout: 2000 }).catch(() => false)
+        ) {
           // Take screenshot right after clicking (loading state)
           await extractButton.click();
           await extractionPage.waitForTimeout(500); // Immediate wait for loading state
-          
+
           // Try multiple times to catch the loading state
           for (let attempt = 0; attempt < 5; attempt++) {
-            const loadingState = await extractionPage.locator('button:has-text("Extracting"), button:disabled, [data-testid="extract-recipe-button"]:disabled').isVisible({ timeout: 500 }).catch(() => false);
+            const loadingState = await extractionPage
+              .locator(
+                'button:has-text("Extracting"), button:disabled, [data-testid="extract-recipe-button"]:disabled',
+              )
+              .isVisible({ timeout: 500 })
+              .catch(() => false);
             if (loadingState) {
               await extractionPage.screenshot({
                 path: `${SCREENSHOTS_DIR}/recipe-extracting.png`,

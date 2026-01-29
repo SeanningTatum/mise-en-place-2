@@ -140,7 +140,23 @@ export const recipesRouter = createTRPCRouter({
 
           // Use Gemini 3 Pro to process the YouTube video directly
           // This passes the YouTube URL to Gemini which can watch and understand the video
-          extractedRecipe = await extractRecipeFromYouTube(ctx.gemini, url);
+          try {
+            extractedRecipe = await extractRecipeFromYouTube(ctx.gemini, url);
+          } catch (geminiError) {
+            // Fallback to Claude with transcript if Gemini fails
+            if (ctx.claude) {
+              log.warn({ error: geminiError, url }, "Gemini extraction failed, falling back to Claude with transcript");
+              const { getTranscript } = await import("@/lib/youtube");
+              const { extractRecipeFromTranscript } = await import("@/lib/claude");
+              const transcriptSegments = await getTranscript(youtubeVideoId);
+              if (transcriptSegments.length === 0) {
+                throw new Error("No transcript available for this video");
+              }
+              extractedRecipe = await extractRecipeFromTranscript(ctx.claude, transcriptSegments, { title: metadata.title, author: metadata.author });
+            } else {
+              throw geminiError;
+            }
+          }
         } catch (error) {
           log.error({ error, url }, "Failed to extract from YouTube video");
           throw new TRPCError({
