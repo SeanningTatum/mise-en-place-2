@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { MealSlot, MealSlotSkeleton } from "./meal-slot";
+import { MacroSummary, calculateMacroTotals } from "./macro-summary";
 
 interface RecipeData {
   id: string;
@@ -8,6 +9,9 @@ interface RecipeData {
   sourceType: "youtube" | "blog";
   calories: number | null;
   protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  fiber: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
 }
@@ -54,6 +58,9 @@ export function DayColumn({
     return entries.find((e) => e.mealType === mealType);
   };
 
+  // Calculate daily macro totals
+  const dailyTotals = calculateMacroTotals(entries);
+
   return (
     <div
       className={cn(
@@ -75,6 +82,12 @@ export function DayColumn({
         >
           {dayNumber}
         </div>
+        {/* Daily macro totals */}
+        <MacroSummary
+          totals={dailyTotals}
+          variant="compact"
+          className="justify-center mt-1"
+        />
       </div>
 
       {/* Meal slots */}

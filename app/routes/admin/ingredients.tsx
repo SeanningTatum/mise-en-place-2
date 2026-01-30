@@ -112,7 +112,8 @@ export default function AdminIngredients({ loaderData }: Route.ComponentProps) {
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchInput !== searchParams.get("search")) {
+      const currentSearch = searchParams.get("search") || "";
+      if (searchInput !== currentSearch) {
         updateSearchParams({ search: searchInput || undefined, page: "1" });
       }
     }, 500);

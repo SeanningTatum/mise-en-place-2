@@ -1,8 +1,28 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 import { AppSidebar } from "./layout/app-sidebar";
+import type { Route } from "./+types/_layout";
 
-export default function AdminLayout() {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const session = await context.auth.api.getSession({
+    headers: request.headers,
+  });
+
+  if (!session) {
+    return redirect("/login");
+  }
+
+  // Ensure user is an admin
+  if (session.user.role !== "admin") {
+    return redirect("/recipes");
+  }
+
+  return { user: session.user };
+}
+
+export default function AdminLayout({ loaderData }: Route.ComponentProps) {
+  const { user } = loaderData;
+
   return (
     <SidebarProvider
       style={
@@ -12,7 +32,7 @@ export default function AdminLayout() {
         } as React.CSSProperties
       }
     >
-      <AppSidebar variant="inset" />
+      <AppSidebar variant="inset" user={user} />
       <SidebarInset>
         <Outlet />
       </SidebarInset>

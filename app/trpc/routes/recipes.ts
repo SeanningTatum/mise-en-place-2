@@ -63,6 +63,14 @@ const deleteRecipeInput = z.object({
 });
 
 // Response types for extraction
+export interface ExistingRecipeInfo {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  sourceUrl: string;
+  sourceType: "youtube" | "blog";
+}
+
 export interface ExtractedRecipeResponse {
   title: string;
   description: string | null;
@@ -90,17 +98,50 @@ export interface ExtractedRecipeResponse {
     timestampSeconds: number | null;
     durationSeconds: number | null;
   }>;
+  // If set, indicates this URL was already saved
+  existingRecipe?: ExistingRecipeInfo;
 }
 
 export const recipesRouter = createTRPCRouter({
   /**
    * Extract recipe from URL (returns preview, not saved)
+   * Checks for existing recipes first to avoid duplicates
    */
   extract: protectedProcedure
     .input(extractRecipeInput)
     .mutation(async ({ input, ctx }): Promise<ExtractedRecipeResponse> => {
       const { url } = input;
       log.info({ url }, "Extracting recipe from URL");
+
+      // Check for existing recipe with this URL before expensive extraction
+      const existingRecipe = await recipeRepository.findRecipeBySourceUrl(ctx.db, {
+        userId: ctx.auth.user.id,
+        sourceUrl: url,
+      });
+
+      if (existingRecipe) {
+        log.info({ url, existingRecipeId: existingRecipe.id }, "Found existing recipe with same URL");
+        // Return minimal response with existing recipe info
+        return {
+          title: existingRecipe.title,
+          description: null,
+          sourceUrl: existingRecipe.sourceUrl,
+          sourceType: existingRecipe.sourceType,
+          youtubeVideoId: null,
+          thumbnailUrl: existingRecipe.thumbnailUrl,
+          servings: null,
+          prepTimeMinutes: null,
+          cookTimeMinutes: null,
+          calories: null,
+          protein: null,
+          carbs: null,
+          fat: null,
+          fiber: null,
+          ingredients: [],
+          steps: [],
+          existingRecipe,
+        };
+      }
 
       // Check Gemini client is configured
       if (!ctx.gemini) {

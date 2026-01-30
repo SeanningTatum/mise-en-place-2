@@ -15,7 +15,7 @@ import {
 } from "@/models/errors";
 import type { Context } from "@/trpc";
 import type { ExtractedRecipe, ExtractedIngredient, ExtractedStep } from "@/lib/gemini";
-import { generateId, chunkArray } from "@/lib/utils";
+import { generateId, chunkArray, normalizeRecipeUrl } from "@/lib/utils";
 
 type Database = Context["db"];
 
@@ -168,6 +168,62 @@ async function findOrCreateIngredients(
   }
 
   return ingredientMap;
+}
+
+/**
+ * Find an existing recipe by source URL for a specific user
+ * Uses normalized URL comparison for deduplication
+ */
+interface FindRecipeBySourceUrlInput {
+  userId: string;
+  sourceUrl: string;
+}
+
+interface ExistingRecipeSummary {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  sourceUrl: string;
+  sourceType: "youtube" | "blog";
+}
+
+export async function findRecipeBySourceUrl(
+  db: Database,
+  input: FindRecipeBySourceUrlInput
+): Promise<ExistingRecipeSummary | null> {
+  try {
+    const normalizedInputUrl = normalizeRecipeUrl(input.sourceUrl);
+    
+    // Get all user's recipes and compare normalized URLs
+    // Note: For better performance at scale, consider adding a normalized_url column
+    const userRecipes = await db
+      .select({
+        id: recipe.id,
+        title: recipe.title,
+        thumbnailUrl: recipe.thumbnailUrl,
+        sourceUrl: recipe.sourceUrl,
+        sourceType: recipe.sourceType,
+      })
+      .from(recipe)
+      .where(eq(recipe.createdById, input.userId));
+    
+    // Find matching recipe by normalized URL
+    for (const r of userRecipes) {
+      if (normalizeRecipeUrl(r.sourceUrl) === normalizedInputUrl) {
+        return {
+          id: r.id,
+          title: r.title,
+          thumbnailUrl: r.thumbnailUrl,
+          sourceUrl: r.sourceUrl,
+          sourceType: r.sourceType as "youtube" | "blog",
+        };
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    throw new QueryError("recipe", "Failed to find recipe by URL", error);
+  }
 }
 
 /**

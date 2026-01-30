@@ -102,7 +102,9 @@ export async function getAllIngredients(
       conditions.push(eq(ingredient.category, input.category));
     }
 
-    // Get ingredients with usage count using a subquery
+    // Get ingredients with usage count using a correlated subquery
+    // Note: Using raw SQL table/column names because Drizzle template literals
+    // don't correctly reference the outer query's column in correlated subqueries
     const ingredientsWithUsage = await db
       .select({
         id: ingredient.id,
@@ -110,8 +112,8 @@ export async function getAllIngredients(
         category: ingredient.category,
         createdAt: ingredient.createdAt,
         usageCount: sql<number>`(
-          SELECT COUNT(*) FROM ${recipeIngredient} 
-          WHERE ${recipeIngredient.ingredientId} = ${ingredient.id}
+          SELECT COUNT(*) FROM recipe_ingredient 
+          WHERE recipe_ingredient.ingredient_id = ingredient.id
         )`.as("usage_count"),
       })
       .from(ingredient)

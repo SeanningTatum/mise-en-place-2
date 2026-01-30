@@ -64,6 +64,9 @@ export interface MealPlanWithEntries {
       sourceType: "youtube" | "blog";
       calories: number | null;
       protein: number | null;
+      carbs: number | null;
+      fat: number | null;
+      fiber: number | null;
       prepTimeMinutes: number | null;
       cookTimeMinutes: number | null;
     };
@@ -141,6 +144,9 @@ export async function getOrCreateMealPlan(
         recipeSourceType: recipe.sourceType,
         recipeCalories: recipe.calories,
         recipeProtein: recipe.protein,
+        recipeCarbs: recipe.carbs,
+        recipeFat: recipe.fat,
+        recipeFiber: recipe.fiber,
         recipePrepTime: recipe.prepTimeMinutes,
         recipeCookTime: recipe.cookTimeMinutes,
       })
@@ -161,6 +167,9 @@ export async function getOrCreateMealPlan(
           sourceType: e.recipeSourceType,
           calories: e.recipeCalories,
           protein: e.recipeProtein,
+          carbs: e.recipeCarbs,
+          fat: e.recipeFat,
+          fiber: e.recipeFiber,
           prepTimeMinutes: e.recipePrepTime,
           cookTimeMinutes: e.recipeCookTime,
         },
