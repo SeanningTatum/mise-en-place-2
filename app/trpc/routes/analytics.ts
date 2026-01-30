@@ -81,4 +81,38 @@ export const analyticsRouter = createTRPCRouter({
   getIngredientCategoryDistribution: adminProcedure.query(({ ctx }) =>
     analyticsRepository.getIngredientCategoryDistribution(ctx.db)
   ),
+
+  // Meal plan analytics
+  getMealPlanGrowth: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      })
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getMealPlanGrowth(ctx.db, input)
+    ),
+
+  getMealPlanStats: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getMealPlanStats(ctx.db)
+  ),
+
+  getMealTypeDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getMealTypeDistribution(ctx.db)
+  ),
+
+  getDayOfWeekDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getDayOfWeekDistribution(ctx.db)
+  ),
+
+  getMostPlannedRecipes: adminProcedure
+    .input(
+      z.object({
+        limit: z.number().int().min(1).max(50).default(10),
+      })
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getMostPlannedRecipes(ctx.db, input)
+    ),
 });

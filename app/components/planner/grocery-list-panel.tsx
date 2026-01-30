@@ -41,6 +41,14 @@ interface GroceryListPanelProps {
   isLoading?: boolean;
 }
 
+function parseFraction(str: string): number {
+  if (str.includes("/")) {
+    const [numerator, denominator] = str.split("/").map(parseFloat);
+    return numerator / denominator;
+  }
+  return parseFloat(str);
+}
+
 function formatQuantities(quantities: GroceryQuantity[]): string {
   // Aggregate quantities with same unit
   const aggregated: Record<string, { total: number; unit: string }> = {};
@@ -55,7 +63,7 @@ function formatQuantities(quantities: GroceryQuantity[]): string {
     // Try to parse the quantity as a number
     const numMatch = q.quantity.match(/^[\d.\/]+/);
     if (numMatch) {
-      const num = parseFloat(eval(numMatch[0].replace(/\//g, "/"))) || 0;
+      const num = parseFraction(numMatch[0]) || 0;
       const unit = q.unit || "units";
       if (aggregated[unit]) {
         aggregated[unit].total += num;
