@@ -589,9 +589,11 @@ interface MarkdownRendererProps {
   content: string;
   className?: string;
   hideFirstH1?: boolean;
+  /** Base path for resolving relative image URLs (e.g., "/docs/testing/meal-planner") */
+  basePath?: string;
 }
 
-export function MarkdownRenderer({ content, className, hideFirstH1 = true }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, className, hideFirstH1 = true, basePath }: MarkdownRendererProps) {
   // Preprocess content to remove the first H1 if requested
   const processedContent = hideFirstH1
     ? content.replace(/^#\s+[^\n]+\n?/, "")
@@ -786,6 +788,40 @@ export function MarkdownRenderer({ content, className, hideFirstH1 = true }: Mar
           // Horizontal rule
           hr({ ...props }) {
             return <hr className="my-8 border-border" {...props} />;
+          },
+          // Image with path resolution
+          img({ src, alt, ...props }) {
+            let resolvedSrc = src || "";
+            
+            // Transform relative paths when basePath is provided
+            if (basePath && src) {
+              if (src.startsWith("./")) {
+                // ./screenshots/image.png -> /docs/testing/feature/screenshots/image.png
+                resolvedSrc = `${basePath}/${src.slice(2)}`;
+              } else if (src.startsWith("../")) {
+                // Handle parent directory references
+                const baseParts = basePath.split("/").filter(Boolean);
+                let srcPath = src;
+                while (srcPath.startsWith("../")) {
+                  baseParts.pop();
+                  srcPath = srcPath.slice(3);
+                }
+                resolvedSrc = `/${baseParts.join("/")}/${srcPath}`;
+              } else if (!src.startsWith("/") && !src.startsWith("http")) {
+                // Relative path without ./ prefix
+                resolvedSrc = `${basePath}/${src}`;
+              }
+            }
+            
+            return (
+              <img
+                src={resolvedSrc}
+                alt={alt || ""}
+                className="rounded-xl border my-6 max-w-full"
+                loading="lazy"
+                {...props}
+              />
+            );
           },
         }}
       >

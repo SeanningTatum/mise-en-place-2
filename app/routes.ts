@@ -23,6 +23,7 @@ export default [
     layout("routes/recipes/_layout.tsx", [
       index("routes/recipes/_index.tsx"),
       route("/new", "routes/recipes/new.tsx"),
+      route("/planner", "routes/recipes/planner.tsx"),
       route("/:id", "routes/recipes/[id].tsx"),
     ]),
   ]),

@@ -1,3 +1,8 @@
+---
+title: Documentation Feature
+date: 2026-01-24
+---
+
 # Documentation Feature - Test Summary
 
 ## Overview

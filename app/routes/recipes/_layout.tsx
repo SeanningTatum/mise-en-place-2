@@ -1,11 +1,12 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
-import { ChefHat, Plus, ArrowLeft } from "lucide-react";
+import { ChefHat, Plus, ArrowLeft, CalendarDays } from "lucide-react";
 
 export default function RecipesLayout() {
   const location = useLocation();
   const isNewPage = location.pathname === "/recipes/new";
-  const isDetailPage = location.pathname.match(/^\/recipes\/[^/]+$/);
+  const isPlannerPage = location.pathname === "/recipes/planner";
+  const isDetailPage = location.pathname.match(/^\/recipes\/[a-f0-9-]+$/);
 
   return (
     <div className="min-h-screen bg-background">
@@ -13,7 +14,7 @@ export default function RecipesLayout() {
       <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="flex items-center gap-4">
-            {(isNewPage || isDetailPage) && (
+            {(isNewPage || isDetailPage || isPlannerPage) && (
               <Link to="/recipes">
                 <Button variant="ghost" size="icon" className="hover:bg-secondary/80">
                   <ArrowLeft className="h-4 w-4" />
@@ -34,15 +35,25 @@ export default function RecipesLayout() {
               </div>
             </Link>
           </div>
-          {!isNewPage && (
-            <Link to="/recipes/new">
-              <Button size="sm" className="gap-2 shadow-warm hover:shadow-warm-lg transition-shadow">
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Extract Recipe</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
-            </Link>
-          )}
+          <div className="flex items-center gap-2">
+            {!isPlannerPage && (
+              <Link to="/recipes/planner">
+                <Button variant="outline" size="sm" className="gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  <span className="hidden sm:inline">Meal Planner</span>
+                </Button>
+              </Link>
+            )}
+            {!isNewPage && !isPlannerPage && (
+              <Link to="/recipes/new">
+                <Button size="sm" className="gap-2 shadow-warm hover:shadow-warm-lg transition-shadow">
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Extract Recipe</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 

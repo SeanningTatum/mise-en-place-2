@@ -89,6 +89,11 @@ AI-powered extraction from YouTube (with timestamps) and blogs using Gemini/Clau
 Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, search.
 **Key files**: `app/routes/admin/docs.tsx`, `app/components/markdown-renderer.tsx`, `docs/`
 
+### Week Meal Planner
+Plan meals for a week by assigning recipes to breakfast/lunch/dinner/snack slots across 7 days. Navigate between weeks, generate aggregated grocery lists with clipboard/print export.
+**Data model**: `meal_plan` (week_start_date, user_id) → `meal_plan_entry` (day_of_week 0-6, meal_type enum, recipe_id)
+**Key files**: `app/routes/recipes/planner.tsx`, `app/components/planner/`, `app/repositories/meal-plan.ts`, `app/trpc/routes/meal-plan.ts`
+
 ## Design System
 
 **Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
@@ -100,6 +105,6 @@ Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, 
 
 ## Recent Changes
 
+- **Week Meal Planner** - Full-featured weekly meal planning with 7-day × 4-meal grid, recipe picker modal, aggregated grocery list with clipboard/print export. New tables: meal_plan, meal_plan_entry
 - **Editorial Cookbook Design System** - Added warm typography (Playfair Display/Source Sans 3), OKLCH color palette, grain texture, warm shadows, enhanced components (recipe cards, auth pages, layout)
 - **Claude AI Integration** - Added Claude Sonnet 4.5 as alternative AI provider for recipe extraction via `app/lib/claude.ts` with tool_use for structured output
-- **Recipe Extraction Feature** - AI extraction from YouTube/blogs with macros, timestamps, ingredient management. New tables: recipe, recipe_step, ingredient, recipe_ingredient

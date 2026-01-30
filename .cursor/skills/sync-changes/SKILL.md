@@ -142,6 +142,9 @@ Task({
        - Add data-testid attributes if missing
     3. Run tests to verify they pass: bun run test:e2e
     4. Save Playwright screenshots to docs/testing/{feature}/screenshots/
+    5. CRITICAL: Copy screenshots to public folder for docs viewer:
+       mkdir -p public/docs/testing/{feature}/screenshots
+       cp docs/testing/{feature}/screenshots/*.png public/docs/testing/{feature}/screenshots/
   `,
   model: "fast"
 })
@@ -236,6 +239,7 @@ After sync completes, verify:
 - [ ] Analytics dashboard shows relevant metrics (if applicable)
 - [ ] E2E tests exist for all user-facing features
 - [ ] Test documentation with screenshots at `docs/testing/{feature}/`
+- [ ] **Screenshots copied to `public/docs/testing/{feature}/screenshots/`** (required for docs viewer)
 - [ ] No broken tests (run `bun run test:e2e`)
 
 ---

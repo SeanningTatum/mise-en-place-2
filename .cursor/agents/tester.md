@@ -106,20 +106,50 @@ bunx playwright test e2e/{feature-name}.spec.ts
 
 Use the browser MCP tools to verify each scenario:
 
+**CRITICAL: Screenshots are MANDATORY for every scenario. The testing documentation is incomplete without visual evidence.**
+
 **Navigation & Snapshot Pattern:**
 1. `browser_navigate` → Navigate to the page
 2. `browser_snapshot` → Get accessibility tree of elements
-3. `browser_click/type` → Interact with elements using refs from snapshot
-4. `browser_snapshot` → Verify state changed
-5. `browser_take_screenshot` → Visual verification
+3. **`browser_take_screenshot`** → **ALWAYS capture screenshot IMMEDIATELY after navigation**
+4. `browser_click/type` → Interact with elements using refs from snapshot
+5. `browser_snapshot` → Verify state changed
+6. **`browser_take_screenshot`** → **ALWAYS capture screenshot after state changes**
 
-**Save Screenshots to Testing Plan Folder:**
+**Save Screenshots to Testing Plan Folder (REQUIRED):**
 ```typescript
-// Save directly to the testing plan's screenshots folder
+// ALWAYS save screenshots with FULL ABSOLUTE PATHS to the workspace
+// Use the exact pattern below - this is REQUIRED for every scenario
 browser_take_screenshot({
-  filename: "docs/testing/{feature-name}/screenshots/scenario-1.png"
+  filename: "/Users/sean/Desktop/mise-en-place-2/docs/testing/{feature-name}/screenshots/scenario-1.png"
 })
 ```
+
+**Screenshot Requirements:**
+- Take AT LEAST one screenshot per scenario (more for multi-step scenarios)
+- Use descriptive filenames: `initial-state.png`, `form-filled.png`, `success-message.png`
+- If a screenshot fails, RETRY with different timing (wait 1-2 seconds first)
+- Screenshots MUST be saved before marking any scenario as complete
+
+**If Screenshots Time Out:**
+The standalone `browser_take_screenshot` tool may timeout. Use these more reliable methods:
+
+1. **PREFERRED:** Use `take_screenshot_afterwards: true` parameter with other tools:
+   ```typescript
+   // More reliable - screenshot taken as part of navigation
+   browser_navigate({ url: "...", take_screenshot_afterwards: true })
+   
+   // More reliable - screenshot taken after snapshot
+   browser_snapshot({ take_screenshot_afterwards: true })
+   ```
+   Screenshots are saved to temp folder - copy them to the testing plan folder after.
+
+2. Use Playwright e2e tests to capture screenshots programmatically:
+   ```typescript
+   await page.screenshot({ path: 'docs/testing/{feature}/screenshots/scenario.png' });
+   ```
+
+3. Use `bunx playwright test --headed` to run tests visually and capture manually
 
 **Common Verification Patterns:**
 
@@ -238,6 +268,26 @@ Examples for recipes:
 └── recipe-empty-state.png
 ```
 
+## CRITICAL: Copy Screenshots to Public Folder
+
+**Screenshots MUST be copied to the `public/` folder for the documentation viewer to display them.**
+
+The docs viewer serves static assets from `public/`, so after saving screenshots:
+
+```bash
+# Create the public folder structure
+mkdir -p public/docs/testing/{feature-name}/screenshots
+
+# Copy all screenshots to public folder
+cp docs/testing/{feature-name}/screenshots/*.png public/docs/testing/{feature-name}/screenshots/
+```
+
+**Why both locations?**
+- `docs/testing/` - Source of truth, organized with testing plans
+- `public/docs/testing/` - Required for the web-based documentation viewer to display images
+
+**ALWAYS do this after taking screenshots, or images will appear broken in the docs viewer.**
+
 ## Checklist
 
 Before marking testing complete:
@@ -246,6 +296,7 @@ Before marking testing complete:
 - [ ] Screenshots folder created at `docs/testing/{feature-name}/screenshots/`
 - [ ] All scenarios manually verified with Playwright MCP
 - [ ] Screenshots taken and saved to testing plan folder
+- [ ] **Screenshots copied to `public/docs/testing/{feature-name}/screenshots/`** (REQUIRED for docs viewer)
 - [ ] Issues found during testing have been fixed
 - [ ] E2E test file created in `e2e/`
 - [ ] All e2e tests pass locally

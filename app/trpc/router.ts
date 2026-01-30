@@ -7,6 +7,7 @@ import { adminRouter } from "./routes/admin";
 import { analyticsRouter } from "./routes/analytics";
 import { recipesRouter } from "./routes/recipes";
 import { ingredientsRouter } from "./routes/ingredients";
+import { mealPlanRouter } from "./routes/meal-plan";
 
 const userRouter = createTRPCRouter({
   getUsers: publicProcedure.query(async ({ ctx }) => {
@@ -46,6 +47,7 @@ export const appRouter = createTRPCRouter({
   analytics: analyticsRouter,
   recipes: recipesRouter,
   ingredients: ingredientsRouter,
+  mealPlan: mealPlanRouter,
 });
 
 export type AppRouter = typeof appRouter;

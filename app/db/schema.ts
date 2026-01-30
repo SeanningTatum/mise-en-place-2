@@ -160,3 +160,40 @@ export const recipeIngredient = sqliteTable("recipe_ingredient", {
 
 export type RecipeIngredient = typeof recipeIngredient.$inferSelect;
 export type InsertRecipeIngredient = typeof recipeIngredient.$inferInsert;
+
+// Meal planning tables
+export const mealPlan = sqliteTable("meal_plan", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  weekStartDate: text("week_start_date").notNull(), // ISO date string (Monday)
+  name: text("name"), // Optional custom name
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export type MealPlan = typeof mealPlan.$inferSelect;
+export type InsertMealPlan = typeof mealPlan.$inferInsert;
+
+export const mealPlanEntry = sqliteTable("meal_plan_entry", {
+  id: text("id").primaryKey(),
+  mealPlanId: text("meal_plan_id")
+    .notNull()
+    .references(() => mealPlan.id, { onDelete: "cascade" }),
+  recipeId: text("recipe_id")
+    .notNull()
+    .references(() => recipe.id, { onDelete: "cascade" }),
+  dayOfWeek: integer("day_of_week").notNull(), // 0=Monday, 6=Sunday
+  mealType: text("meal_type", {
+    enum: ["breakfast", "lunch", "dinner", "snacks"],
+  }).notNull(),
+});
+
+export type MealPlanEntry = typeof mealPlanEntry.$inferSelect;
+export type InsertMealPlanEntry = typeof mealPlanEntry.$inferInsert;
