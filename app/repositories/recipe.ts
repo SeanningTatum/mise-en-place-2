@@ -193,10 +193,9 @@ export async function findRecipeBySourceUrl(
 ): Promise<ExistingRecipeSummary | null> {
   try {
     const normalizedInputUrl = normalizeRecipeUrl(input.sourceUrl);
-    
-    // Get all user's recipes and compare normalized URLs
-    // Note: For better performance at scale, consider adding a normalized_url column
-    const userRecipes = await db
+
+    // Use indexed normalized_url column for efficient lookup
+    const result = await db
       .select({
         id: recipe.id,
         title: recipe.title,
@@ -205,22 +204,26 @@ export async function findRecipeBySourceUrl(
         sourceType: recipe.sourceType,
       })
       .from(recipe)
-      .where(eq(recipe.createdById, input.userId));
-    
-    // Find matching recipe by normalized URL
-    for (const r of userRecipes) {
-      if (normalizeRecipeUrl(r.sourceUrl) === normalizedInputUrl) {
-        return {
-          id: r.id,
-          title: r.title,
-          thumbnailUrl: r.thumbnailUrl,
-          sourceUrl: r.sourceUrl,
-          sourceType: r.sourceType as "youtube" | "blog",
-        };
-      }
+      .where(
+        and(
+          eq(recipe.createdById, input.userId),
+          eq(recipe.normalizedUrl, normalizedInputUrl)
+        )
+      )
+      .limit(1);
+
+    if (result.length === 0) {
+      return null;
     }
-    
-    return null;
+
+    const r = result[0];
+    return {
+      id: r.id,
+      title: r.title,
+      thumbnailUrl: r.thumbnailUrl,
+      sourceUrl: r.sourceUrl,
+      sourceType: r.sourceType as "youtube" | "blog",
+    };
   } catch (error) {
     throw new QueryError("recipe", "Failed to find recipe by URL", error);
   }
@@ -243,6 +246,7 @@ export async function createRecipe(
       title: input.title,
       description: input.description,
       sourceUrl: input.sourceUrl,
+      normalizedUrl: normalizeRecipeUrl(input.sourceUrl),
       sourceType: input.sourceType,
       youtubeVideoId: input.youtubeVideoId,
       thumbnailUrl: input.thumbnailUrl,
