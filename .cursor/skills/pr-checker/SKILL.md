@@ -24,11 +24,14 @@ Copy and track progress:
 ```
 PR Validation:
 - [ ] 1. Code rules compliance
-- [ ] 2. context.md updated (if feature/architecture change)
-- [ ] 3. Testing plan exists
-- [ ] 4. Migrations use db-migration skill (if applicable)
-- [ ] 5. Analytics considered (if schema/feature change)
-- [ ] 6. Ready for create-pull-request skill
+- [ ] 2. Implementation plan saved (docs/plans/)
+- [ ] 3. Research doc exists (if new user-facing feature)
+- [ ] 4. Feature architecture doc exists (if new feature)
+- [ ] 5. context.md updated (if feature/architecture change)
+- [ ] 6. Testing plan exists
+- [ ] 7. Migrations use db-migration skill (if applicable)
+- [ ] 8. Analytics considered (if schema/feature change)
+- [ ] 9. Ready for create-pull-request skill
 ```
 
 ---
@@ -95,7 +98,65 @@ For each changed file, verify it follows the appropriate rule based on file loca
 
 ---
 
-## Step 3: Check context.md Updates
+## Step 3: Check Implementation Plan Saved
+
+**Required when:** Implementing new features from a plan.
+
+### Verify Plan Doc Exists
+
+```bash
+# Check if implementation plan was saved
+ls -la docs/plans/*-implementation.md 2>/dev/null
+```
+
+**The implementation plan should be saved from the Cursor plan file to `docs/plans/{feature}-implementation.md` and include:**
+- Overview of the feature
+- Implementation tasks with status
+- Architecture diagrams
+- Key files created/modified
+- Links to related docs (research, architecture, testing)
+
+### When NOT Required
+
+- Bug fixes without a formal plan
+- Minor changes
+- Documentation-only updates
+
+---
+
+## Step 4: Check Research Documentation
+
+**Required when:** Adding new user-facing features that involve UX decisions.
+
+### Verify Research Doc Exists
+
+```bash
+# Check if research doc was created
+ls -la docs/research/*-research.md 2>/dev/null
+```
+
+**For new user-facing features, `docs/research/{feature}-research.md` should include:**
+- Executive summary of findings
+- Competitive landscape analysis
+- Common UX patterns observed
+- Differentiation opportunities
+- Recommendations
+
+### When NOT Required
+
+- Backend-only features
+- Bug fixes
+- Refactoring
+- Minor UI tweaks without UX decisions
+- Features where patterns are already established
+
+### If Missing
+
+**Prompt user:** "Research doc not found for this user-facing feature. Consider using Tavily MCP to research competitors and UX patterns, then document in `docs/research/{feature}-research.md`."
+
+---
+
+## Step 5: Check context.md Updates
 
 **Required when:** Adding features, changing architecture, modifying API routes, or updating database schema.
 
@@ -132,7 +193,41 @@ Add to the `## Recent Changes` section:
 
 ---
 
-## Step 4: Verify Testing Exists
+## Step 6: Check Feature Architecture Doc
+
+**Required when:** Adding new features with multiple files/layers.
+
+### Verify Feature Architecture Doc Exists
+
+```bash
+# Check if feature architecture doc was created
+ls -la docs/features/*-architecture.md 2>/dev/null
+```
+
+**For new features, `docs/features/{feature}-architecture.md` should include:**
+- Overview and vision
+- User flow diagrams (mermaid)
+- System architecture diagram
+- Data model (ER diagram + TypeScript interfaces)
+- Feature breakdown with specifications
+- UI component hierarchy
+- Frontend design specification
+- API endpoints table
+
+### When NOT Required
+
+- Bug fixes
+- Refactoring without new features
+- Minor UI changes
+- Documentation-only updates
+
+### If Missing
+
+**Prompt user:** "Feature architecture doc not found. Create `docs/features/{feature}-architecture.md` with user flows, data model, and component hierarchy."
+
+---
+
+## Step 7: Verify Testing Exists
 
 Check for testing artifacts:
 
@@ -173,7 +268,7 @@ For feature PRs, the following should exist:
 
 ---
 
-## Step 5: Check Migration Compliance
+## Step 8: Check Migration Compliance
 
 **Only if `drizzle/` files were changed or `app/db/schema.ts` was modified.**
 
@@ -195,7 +290,7 @@ ls -la drizzle/*.sql | tail -5
 
 ---
 
-## Step 6: Check Analytics Considerations
+## Step 9: Check Analytics Considerations
 
 **Required when:** Adding database schema changes, new features with user data, or modifying existing data models.
 
@@ -236,7 +331,7 @@ git diff main...HEAD --name-only | grep -E "(analytics|dashboard)"
 
 ---
 
-## Step 7: Final Validation Report
+## Step 10: Final Validation Report
 
 Generate a summary:
 
@@ -249,6 +344,9 @@ Generate a summary:
 - [✅/❌] Route conventions
 
 ### Documentation
+- [✅/❌] Implementation plan saved (`docs/plans/{feature}-implementation.md`)
+- [✅/❌/N/A] Research doc (`docs/research/{feature}-research.md`) - for user-facing features
+- [✅/❌] Feature architecture doc (`docs/features/{feature}-architecture.md`)
 - [✅/❌] context.md updated
 - [✅/❌] Testing plan exists (`docs/testing/{feature}/{feature}.md`)
 
@@ -276,10 +374,13 @@ Generate a summary:
 
 If checks fail, address the issues first:
 1. Fix code rule violations
-2. Update context.md
-3. Generate testing plan with tester subagent
-4. Generate migrations with db-migration skill
-5. Create analytics dashboards with data-analytics subagent
+2. Save implementation plan to `docs/plans/{feature}-implementation.md`
+3. Create research doc at `docs/research/{feature}-research.md` (use Tavily MCP)
+4. Create feature architecture doc at `docs/features/{feature}-architecture.md`
+5. Update context.md via context-keeper subagent
+6. Generate testing plan with tester subagent
+7. Generate migrations with db-migration skill
+8. Create analytics dashboards with data-analytics subagent
 
 ---
 

@@ -1,6 +1,6 @@
-import { sql, count, eq, gte, lte, and, isNotNull, desc } from "drizzle-orm";
+import { sql, count, eq, gte, lte, and, isNotNull, desc, countDistinct } from "drizzle-orm";
 import type { Context } from "@/trpc";
-import { user, recipe, ingredient } from "@/db/schema";
+import { user, recipe, ingredient, mealPlan, mealPlanEntry } from "@/db/schema";
 
 type Database = Context["db"];
 
@@ -341,6 +341,158 @@ export async function getIngredientCategoryDistribution(db: Database) {
     }));
   } catch (error) {
     console.error("Failed to get ingredient category distribution:", error);
+    return [];
+  }
+}
+
+// ============================================
+// Meal Plan Analytics
+// ============================================
+
+const DAY_OF_WEEK_LABELS = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+] as const;
+
+/**
+ * Get meal plan growth data grouped by day
+ */
+export async function getMealPlanGrowth(db: Database, input: DateRangeInput) {
+  try {
+    return await db
+      .select({
+        date: sql<string>`date(${mealPlan.createdAt} / 1000, 'unixepoch')`,
+        count: count(),
+      })
+      .from(mealPlan)
+      .where(
+        and(
+          gte(mealPlan.createdAt, input.startDate),
+          lte(mealPlan.createdAt, input.endDate)
+        )
+      )
+      .groupBy(sql`date(${mealPlan.createdAt} / 1000, 'unixepoch')`)
+      .orderBy(sql`date(${mealPlan.createdAt} / 1000, 'unixepoch')`);
+  } catch (error) {
+    console.error("Failed to get meal plan growth:", error);
+    return [];
+  }
+}
+
+/**
+ * Get summary statistics for meal plans
+ */
+export async function getMealPlanStats(db: Database) {
+  try {
+    const [totalPlansResult] = await db.select({ count: count() }).from(mealPlan);
+    const [totalEntriesResult] = await db.select({ count: count() }).from(mealPlanEntry);
+    const [uniquePlannersResult] = await db
+      .select({ count: countDistinct(mealPlan.userId) })
+      .from(mealPlan);
+
+    const totalMealPlans = totalPlansResult?.count ?? 0;
+    const totalMealPlanEntries = totalEntriesResult?.count ?? 0;
+    const uniquePlanners = uniquePlannersResult?.count ?? 0;
+    const avgEntriesPerPlan =
+      totalMealPlans > 0
+        ? Math.round((totalMealPlanEntries / totalMealPlans) * 10) / 10
+        : 0;
+
+    return {
+      totalMealPlans,
+      totalMealPlanEntries,
+      uniquePlanners,
+      avgEntriesPerPlan,
+    };
+  } catch (error) {
+    console.error("Failed to get meal plan stats:", error);
+    return {
+      totalMealPlans: 0,
+      totalMealPlanEntries: 0,
+      uniquePlanners: 0,
+      avgEntriesPerPlan: 0,
+    };
+  }
+}
+
+/**
+ * Get distribution of meal plan entries by meal type
+ */
+export async function getMealTypeDistribution(db: Database) {
+  try {
+    const results = await db
+      .select({
+        name: mealPlanEntry.mealType,
+        value: count(),
+      })
+      .from(mealPlanEntry)
+      .groupBy(mealPlanEntry.mealType);
+
+    // Capitalize meal type names for display
+    return results.map((r) => ({
+      name: r.name.charAt(0).toUpperCase() + r.name.slice(1),
+      value: r.value,
+    }));
+  } catch (error) {
+    console.error("Failed to get meal type distribution:", error);
+    return [];
+  }
+}
+
+/**
+ * Get distribution of meal plan entries by day of week
+ */
+export async function getDayOfWeekDistribution(db: Database) {
+  try {
+    const results = await db
+      .select({
+        dayOfWeek: mealPlanEntry.dayOfWeek,
+        value: count(),
+      })
+      .from(mealPlanEntry)
+      .groupBy(mealPlanEntry.dayOfWeek)
+      .orderBy(mealPlanEntry.dayOfWeek);
+
+    // Map day numbers to labels
+    return results.map((r) => ({
+      name: DAY_OF_WEEK_LABELS[r.dayOfWeek] ?? `Day ${r.dayOfWeek}`,
+      value: r.value,
+    }));
+  } catch (error) {
+    console.error("Failed to get day of week distribution:", error);
+    return [];
+  }
+}
+
+/**
+ * Get most frequently planned recipes
+ */
+export async function getMostPlannedRecipes(db: Database, input: { limit: number }) {
+  try {
+    const results = await db
+      .select({
+        recipeId: mealPlanEntry.recipeId,
+        recipeTitle: recipe.title,
+        planCount: count(),
+      })
+      .from(mealPlanEntry)
+      .innerJoin(recipe, eq(mealPlanEntry.recipeId, recipe.id))
+      .groupBy(mealPlanEntry.recipeId, recipe.title)
+      .orderBy(desc(count()))
+      .limit(input.limit);
+
+    return results.map((r) => ({
+      recipeId: r.recipeId,
+      recipeTitle: r.recipeTitle,
+      planCount: r.planCount,
+    }));
+  } catch (error) {
+    console.error("Failed to get most planned recipes:", error);
     return [];
   }
 }

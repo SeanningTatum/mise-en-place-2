@@ -1,3 +1,8 @@
+---
+title: Recipe Extraction Implementation
+date: 2026-01-26
+---
+
 # Implementation Plan: Recipe Extraction App (Phase 1)
 
 ## Overview

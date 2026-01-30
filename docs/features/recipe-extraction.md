@@ -1,3 +1,8 @@
+---
+title: Recipe Extraction
+date: 2026-01-26
+---
+
 # Recipe Extraction App - UX Documentation
 
 > **Full Architecture Document**: See [recipe-extraction-architecture.md](./recipe-extraction-architecture.md) for complete system architecture, data models, and technical specifications.

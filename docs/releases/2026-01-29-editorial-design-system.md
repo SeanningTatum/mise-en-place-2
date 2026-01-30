@@ -1,3 +1,8 @@
+---
+title: Editorial Design System Release
+date: 2026-01-29
+---
+
 # Editorial Cookbook Design System Release
 
 **Date:** 2026-01-29

@@ -1,3 +1,8 @@
+---
+title: Recipe Extraction Testing
+date: 2026-01-28
+---
+
 # Testing Plan: Recipe Extraction Feature
 
 ## Overview

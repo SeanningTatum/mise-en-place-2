@@ -1,3 +1,8 @@
+---
+title: Feature Brainstorm
+date: 2026-01-20
+---
+
 # Feature Brainstorm
 
 A collection of feature ideas for future development.

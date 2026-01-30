@@ -1,3 +1,8 @@
+---
+title: Recipe Extraction Architecture
+date: 2026-01-26
+---
+
 # Recipe Extraction App: Information Architecture
 
 A professional-grade application that transforms YouTube cooking videos and blog posts into structured, actionable recipes with nutritional data and precise timestamps.

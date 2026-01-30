@@ -8,11 +8,12 @@ The documentation is organized into categories:
 
 ```
 docs/
-├── features/   # Technical feature documentation
+├── features/   # Technical feature documentation and architecture
 ├── ideas/      # Brainstorming and feature ideas
 ├── meetings/   # Meeting notes (date-prefixed)
 ├── plans/      # Roadmaps and project plans
 ├── releases/   # Changelog and release notes
+├── research/   # Competitive research and UX analysis
 └── testing/    # Testing plans with screenshots
     └── {feature}/
         ├── {feature}.md
@@ -24,6 +25,8 @@ docs/
 - **meetings:** `YYYY-MM-DD-description.md` (e.g., `2026-01-24-kickoff.md`)
 - **releases:** `vX.Y.Z.md` or `YYYY-MM-DD-release.md` (e.g., `v1.0.0.md`)
 - **testing:** `{feature-name}/{feature-name}.md` (e.g., `recipes/recipes.md`)
+- **research:** `{topic}-research.md` (e.g., `meal-planning-app-ux-research.md`)
+- **features:** `{feature-name}.md` or `{feature-name}-architecture.md` for architecture docs
 - **others:** `kebab-case.md` (e.g., `authentication.md`, `feature-brainstorm.md`)
 
 ## Testing Documentation Structure
@@ -43,6 +46,45 @@ Screenshots are referenced with relative paths in the testing plan:
 ```markdown
 **Screenshot:** ![Description](./screenshots/scenario-1.png)
 ```
+
+### CRITICAL: Copy Screenshots to Public Folder
+
+**Screenshots MUST also be copied to `public/docs/testing/` for the documentation viewer to display them.**
+
+```bash
+# After saving screenshots, copy to public folder
+mkdir -p public/docs/testing/{feature-name}/screenshots
+cp docs/testing/{feature-name}/screenshots/*.png public/docs/testing/{feature-name}/screenshots/
+```
+
+Without this step, images will appear broken in the admin docs viewer.
+
+## Frontmatter
+
+All documents support YAML frontmatter for metadata. The documentation viewer uses this for sorting and display.
+
+```markdown
+---
+title: Human-Readable Title
+date: 2026-01-29
+---
+
+# Document Content
+```
+
+### Supported Fields
+
+| Field | Description | Example |
+|-------|-------------|---------|
+| `title` | Display title (overrides filename-derived title) | `Recipe Extraction Feature` |
+| `date` | Document date for sorting (YYYY-MM-DD format) | `2026-01-29` |
+
+### Sorting Behavior
+
+Documents are sorted by date (newest first):
+1. Documents with `date` frontmatter appear first, sorted descending
+2. Documents with date-prefixed filenames (e.g., `2026-01-24-meeting.md`) use that date
+3. Documents without dates are sorted alphabetically by filename
 
 ## Formatting Standards
 
@@ -219,6 +261,50 @@ Phases or milestones with Gantt chart if helpful.
 How we'll measure success.
 ```
 
+### Research/Competitive Analysis
+
+```markdown
+# {Feature/Topic} Research & Competitive Analysis
+
+**Research Date:** YYYY-MM-DD  
+**Research Method:** {Tavily/Manual/etc}  
+**Focus Areas:** {Areas of focus}
+
+---
+
+## Executive Summary
+Brief overview of key findings and recommendations.
+
+## 1. Competitive Landscape
+### Competitors Analyzed
+| Competitor | URL | Strengths | Weaknesses |
+|------------|-----|-----------|------------|
+| {Name} | {URL} | {Strengths} | {Weaknesses} |
+
+### Market Positioning
+{Quadrant chart or competitive analysis}
+
+## 2. UX Patterns Observed
+### Common Patterns
+- Pattern 1: Description and examples
+- Pattern 2: Description and examples
+
+### Best Practices
+- Best practice 1
+- Best practice 2
+
+## 3. Differentiation Opportunities
+- Opportunity 1: Description
+- Opportunity 2: Description
+
+## 4. Recommendations
+Actionable recommendations based on research.
+
+## Sources
+- {Source 1}
+- {Source 2}
+```
+
 ## Best Practices
 
 1. **Be concise:** Write for clarity, not length
@@ -226,4 +312,4 @@ How we'll measure success.
 3. **Link related docs:** Reference other relevant documentation
 4. **Keep updated:** Remove outdated information
 5. **Version awareness:** Note which version features apply to
-6. **Screenshots in testing:** Save to `docs/testing/{feature}/screenshots/` folder
+6. **Screenshots in testing:** Save to `docs/testing/{feature}/screenshots/` folder AND copy to `public/docs/testing/{feature}/screenshots/`

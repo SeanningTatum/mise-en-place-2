@@ -7,7 +7,7 @@ import {
   InsightsCard,
   type Insight,
 } from "@/components/analytics";
-import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText } from "lucide-react";
+import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays } from "lucide-react";
 import type { Route } from "./+types/_index";
 
 export const loader = async ({ context }: Route.LoaderArgs) => {
@@ -24,6 +24,11 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     recipeGrowthData,
     sourceTypeDistribution,
     topCreators,
+    mealPlanStats,
+    mealPlanGrowthData,
+    mealTypeDistribution,
+    dayOfWeekDistribution,
+    mostPlannedRecipes,
   ] = await Promise.all([
     context.trpc.analytics.getUserStats(),
     context.trpc.analytics.getUserGrowth({ startDate, endDate }),
@@ -33,6 +38,11 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     context.trpc.analytics.getRecipeGrowth({ startDate, endDate }),
     context.trpc.analytics.getSourceTypeDistribution(),
     context.trpc.analytics.getTopRecipeCreators({ limit: 5 }),
+    context.trpc.analytics.getMealPlanStats(),
+    context.trpc.analytics.getMealPlanGrowth({ startDate, endDate }),
+    context.trpc.analytics.getMealTypeDistribution(),
+    context.trpc.analytics.getDayOfWeekDistribution(),
+    context.trpc.analytics.getMostPlannedRecipes({ limit: 5 }),
   ]);
 
   return {
@@ -44,6 +54,11 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     recipeGrowthData,
     sourceTypeDistribution,
     topCreators,
+    mealPlanStats,
+    mealPlanGrowthData,
+    mealTypeDistribution,
+    dayOfWeekDistribution,
+    mostPlannedRecipes,
   };
 };
 
@@ -69,6 +84,11 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
     recipeGrowthData,
     sourceTypeDistribution,
     topCreators,
+    mealPlanStats,
+    mealPlanGrowthData,
+    mealTypeDistribution,
+    dayOfWeekDistribution,
+    mostPlannedRecipes,
   } = loaderData;
 
   // Generate insights based on the data
@@ -159,6 +179,41 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
   } else {
     recipeInsights.push({
       text: "No recipes yet - start adding recipes to see analytics",
+      type: "neutral",
+    });
+  }
+
+  // Meal planner insights
+  const mealPlanInsights: Insight[] = [];
+  if (mealPlanStats.totalMealPlans > 0) {
+    mealPlanInsights.push({
+      text: `${mealPlanStats.uniquePlanners} user${mealPlanStats.uniquePlanners !== 1 ? "s" : ""} actively planning meals`,
+      type: "positive",
+    });
+
+    mealPlanInsights.push({
+      text: `Average of ${mealPlanStats.avgEntriesPerPlan} meals per weekly plan`,
+      type: mealPlanStats.avgEntriesPerPlan >= 7 ? "positive" : "neutral",
+    });
+
+    if (mealPlanGrowthData.length > 0) {
+      const recentPlans = mealPlanGrowthData.slice(-7).reduce((sum, d) => sum + d.count, 0);
+      mealPlanInsights.push({
+        text: `${recentPlans} new meal plan${recentPlans !== 1 ? "s" : ""} created in the last 7 days`,
+        type: recentPlans > 0 ? "positive" : "neutral",
+      });
+    }
+
+    if (mostPlannedRecipes.length > 0) {
+      const topRecipe = mostPlannedRecipes[0];
+      mealPlanInsights.push({
+        text: `"${topRecipe.recipeTitle}" is the most planned recipe (${topRecipe.planCount} times)`,
+        type: "positive",
+      });
+    }
+  } else {
+    mealPlanInsights.push({
+      text: "No meal plans yet - users can start planning their weekly meals",
       type: "neutral",
     });
   }
@@ -326,6 +381,107 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Meal Planner Analytics Section */}
+            <div className="px-4 lg:px-6 border-t pt-6">
+              <h2 className="text-2xl font-semibold mb-4">Meal Planner Analytics</h2>
+              
+              {/* Meal Plan Stats Cards */}
+              <div className="mb-6">
+                <StatCardGrid columns={4}>
+                  <StatCard
+                    label="Total Meal Plans"
+                    value={mealPlanStats.totalMealPlans}
+                    icon={Calendar}
+                    description="Weekly plans created"
+                  />
+                  <StatCard
+                    label="Active Planners"
+                    value={mealPlanStats.uniquePlanners}
+                    icon={Users}
+                    description="Users with meal plans"
+                  />
+                  <StatCard
+                    label="Total Meals Planned"
+                    value={mealPlanStats.totalMealPlanEntries}
+                    icon={Utensils}
+                    description="Individual meal slots filled"
+                  />
+                  <StatCard
+                    label="Avg Meals/Plan"
+                    value={mealPlanStats.avgEntriesPerPlan}
+                    icon={CalendarDays}
+                    description="Average meals per weekly plan"
+                  />
+                </StatCardGrid>
+              </div>
+
+              {/* Meal Plan Charts Row */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6 mb-6">
+                <TimeSeriesChart
+                  title="Meal Planning Activity"
+                  description="New meal plans created over time"
+                  data={mealPlanGrowthData}
+                  dataKey="count"
+                  dataLabel="New Plans"
+                  type="area"
+                  showTimeRangeSelector
+                />
+                <DistributionChart
+                  title="Meals by Type"
+                  description="Distribution by breakfast, lunch, dinner, snacks"
+                  data={mealTypeDistribution}
+                  type="donut"
+                />
+              </div>
+
+              {/* Second Row: Day Distribution + Insights */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+                <DistributionChart
+                  title="Meals by Day"
+                  description="Which days are planned most"
+                  data={dayOfWeekDistribution}
+                  type="bar"
+                />
+                <InsightsCard
+                  title="Meal Planning Insights"
+                  description="Key observations about meal planning"
+                  insights={mealPlanInsights}
+                />
+              </div>
+
+              {/* Most Planned Recipes */}
+              {mostPlannedRecipes.length > 0 && (
+                <div className="mt-6">
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="text-lg font-semibold mb-2">Most Planned Recipes</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Recipes that appear most frequently in meal plans
+                    </p>
+                    <div className="space-y-3">
+                      {mostPlannedRecipes.map((recipe, index) => (
+                        <div
+                          key={recipe.recipeId}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
+                              {index + 1}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{recipe.recipeTitle}</p>
+                            </div>
+                          </div>
+                          <div className="text-sm font-semibold">
+                            {recipe.planCount} time{recipe.planCount !== 1 ? "s" : ""}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

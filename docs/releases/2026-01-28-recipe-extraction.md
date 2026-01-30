@@ -1,3 +1,8 @@
+---
+title: Recipe Extraction Release
+date: 2026-01-28
+---
+
 # Recipe Extraction Feature Release
 
 **Date:** 2026-01-28

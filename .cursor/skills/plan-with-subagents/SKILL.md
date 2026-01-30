@@ -46,14 +46,18 @@ Identify:
 Create tasks following the data flow pattern:
 
 ```
-1. Schema/Database changes
-2. Repository layer
-3. tRPC routes
-4. UI Components
-5. Route pages
-6. Documentation
-7. Testing
-8. PR Validation
+1. Competitive Research (if new feature with UX decisions)
+2. Schema/Database changes
+3. Repository layer
+4. tRPC routes
+5. UI Components
+6. Route pages
+7. Feature Architecture Documentation (docs/features/)
+8. Debug Logging (for complex logic/integrations)
+9. Testing
+10. Context Documentation (context.md)
+11. Analytics Dashboard (if new data to track)
+12. PR Validation
 ```
 
 Skip layers not affected by the work.
@@ -129,6 +133,19 @@ When a task touches certain files, note the validation requirement:
 
 ## Subagent Task Templates
 
+### Competitive Research Task (when applicable)
+```markdown
+#### Task: Competitive Research
+**Subagent:** `generalPurpose`
+**Files:** `docs/research/{feature}-research.md`
+**Description:** Use Tavily MCP to research competitors and UX patterns:
+  - Search for similar products/features
+  - Analyze common UI patterns
+  - Identify differentiation opportunities
+  - Document findings in research file
+**When to include:** New user-facing features requiring UX decisions
+```
+
 ### Explore Task
 ```markdown
 #### Task: Explore {Area}
@@ -165,11 +182,27 @@ The testing task MUST follow this workflow:
 3. **Write E2E Tests** - Convert successful browser actions into Playwright e2e tests
 4. **Create Test Summary** - Document test cases with screenshots in `docs/features/`
 
-### Documentation Task
+### Feature Architecture Documentation Task
 ```markdown
-#### Task: Update Documentation
+#### Task: Create Feature Architecture Doc
+**Subagent:** `generalPurpose`
+**Files:** `docs/features/{feature}-architecture.md`
+**Description:** Create comprehensive architecture document with:
+  - Overview and vision
+  - User flow diagrams (mermaid)
+  - System architecture diagram
+  - Data model (ER diagram + TypeScript interfaces)
+  - Feature breakdown
+  - UI component hierarchy
+  - Frontend design specification
+  - API endpoints table
+```
+
+### Context Documentation Task
+```markdown
+#### Task: Update Context Documentation
 **Subagent:** `context-keeper`
-**Description:** Update context.md with new feature/routes/schema
+**Description:** Update context.md with new feature/routes/schema summary
 ```
 
 ### Analytics Task (when applicable)
@@ -177,7 +210,20 @@ The testing task MUST follow this workflow:
 #### Task: Create Analytics Dashboard
 **Subagent:** `data-analytics`
 **Description:** Create growth charts/metrics for new data
-**Trigger:** Schema adds timestamp/enum/boolean fields
+**Trigger:** Schema adds timestamp/enum/boolean fields, new features with trackable user actions
+```
+
+### Logger Task (when applicable)
+```markdown
+#### Task: Add Debug Logging
+**Subagent:** `logger`
+**Files:** `{files being implemented}`
+**Description:** Add structured debug logs to trace execution flow
+**When to include:** Complex business logic, async operations, error-prone code paths, third-party integrations
+**Outputs:**
+  - Structured logs with appropriate levels (debug, info, warn, error)
+  - Trace logging for request flows
+  - Context-rich error logging
 ```
 
 ---
@@ -222,15 +268,29 @@ exposing via tRPC and creating a settings page.
 **Description:** Form for updating theme and notification preferences
 **PR Checks:** Loader auth check, context.trpc usage
 
-#### Task 6: Test Implementation
+#### Task 6: Create Feature Architecture Doc
+**Subagent:** `generalPurpose`
+**Files:** `docs/features/user-preferences-architecture.md`
+**Description:** Create architecture doc with user flows, data model, component hierarchy
+
+#### Task 7: Add Debug Logging
+**Subagent:** `logger`
+**Files:** `app/repositories/user-preferences.ts`, `app/trpc/routes/user-preferences.ts`
+**Description:** Add structured logs for preference operations (create, update, validation errors)
+
+#### Task 8: Test Implementation
 **Subagent:** `tester`
 **Description:** Generate testing plan, verify with Playwright MCP, write e2e tests
 
-#### Task 7: Update Documentation
+#### Task 9: Update Context Documentation
 **Subagent:** `context-keeper`
-**Description:** Add preferences feature to context.md
+**Description:** Add preferences feature summary to context.md
 
-#### Task 8: PR Validation
+#### Task 10: Create Analytics Dashboard
+**Subagent:** `data-analytics`
+**Description:** Create metrics dashboard for preference usage (theme distribution, notification opt-ins)
+
+#### Task 11: PR Validation
 **Subagent:** None (use pr-checker skill)
 **Description:** Run validation checklist before creating PR
 
@@ -239,8 +299,11 @@ exposing via tRPC and creating a settings page.
 - [ ] tRPC Zod validation (Task 4)
 - [ ] Route auth checks (Task 5)
 - [ ] Migration naming convention (Task 2)
-- [ ] context.md updated (Task 7)
-- [ ] Testing plan exists (Task 6)
+- [ ] Feature architecture doc exists (Task 6)
+- [ ] Debug logging added (Task 7)
+- [ ] context.md updated (Task 9)
+- [ ] Testing plan exists (Task 8)
+- [ ] Analytics dashboard created (Task 10)
 ```
 
 ---
@@ -288,12 +351,15 @@ Always include this at the end of every plan:
 Run the `pr-checker` skill which validates:
 
 - [ ] Code rules compliance (per file patterns above)
+- [ ] **Implementation plan saved** (`docs/plans/{feature}-implementation.md`)
+- [ ] **Research doc exists** (`docs/research/{feature}-research.md`) - if new user-facing feature
+- [ ] **Feature architecture doc exists** (`docs/features/{feature}-architecture.md`)
 - [ ] context.md updated (if feature/architecture change)
-- [ ] Testing plan exists
+- [ ] Testing plan exists (`docs/testing/{feature}/`)
 - [ ] **E2E tests written in `e2e/`**
-- [ ] **Test documentation in `docs/features/`**
 - [ ] Migrations use db-migration skill (if applicable)
-- [ ] Analytics considered (if schema/feature change)
+- [ ] **Debug logging added** (if complex logic/integrations)
+- [ ] **Analytics dashboard created** (if new trackable data)
 ```
 
 ---
@@ -302,9 +368,25 @@ Run the `pr-checker` skill which validates:
 
 | Work Type | Typical Subagents |
 |-----------|-------------------|
-| New feature | explore → generalPurpose → tester → context-keeper |
-| Bug fix | explore → generalPurpose → tester |
+| New feature (user-facing) | research (Tavily) → explore → generalPurpose → logger → tester → context-keeper → data-analytics |
+| New feature (backend) | explore → generalPurpose → logger → tester → context-keeper → data-analytics |
+| Bug fix | explore → generalPurpose → logger → tester |
 | Refactor | explore → generalPurpose → tester |
 | UI-only change | generalPurpose → tester |
 | Analytics addition | data-analytics |
-| Schema change | generalPurpose → data-analytics (optional) → tester |
+| Schema change | generalPurpose → data-analytics → tester |
+| Complex integration | explore → generalPurpose → logger → tester → context-keeper |
+
+## Documentation Checklist
+
+| Doc Type | Location | When Required |
+|----------|----------|---------------|
+| **Plan** | `docs/plans/{feature}-implementation.md` | All new features |
+| Research | `docs/research/{feature}-research.md` | New user-facing features |
+| Architecture | `docs/features/{feature}-architecture.md` | New features with multiple layers |
+| Testing | `docs/testing/{feature}/{feature}.md` | All features |
+| Context | `.cursor/context.md` | All features/changes |
+
+**Important:** After implementation is complete, save the plan to `docs/plans/` for future reference.
+| Debug Logs | In implementation files | Complex logic, integrations, error-prone paths |
+| Analytics | Admin dashboard | Features with trackable data (signups, usage, conversions) |

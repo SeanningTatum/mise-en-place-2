@@ -1,3 +1,8 @@
+---
+title: Authentication System
+date: 2026-01-20
+---
+
 # Authentication System
 
 ## Overview

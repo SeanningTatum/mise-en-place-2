@@ -1,3 +1,8 @@
+---
+title: Documentation Viewer Release
+date: 2026-01-24
+---
+
 # Documentation Viewer Release
 
 **Date:** 2026-01-24

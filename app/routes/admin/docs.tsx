@@ -44,6 +44,43 @@ const markdownFiles = import.meta.glob("/docs/**/*.md", {
   eager: true,
 }) as Record<string, string>;
 
+// Types for frontmatter
+interface DocFrontmatter {
+  title?: string;
+  date?: string;
+}
+
+// Parse YAML frontmatter from markdown content
+function parseFrontmatter(content: string): { frontmatter: DocFrontmatter; content: string } {
+  const frontmatterRegex = /^---\n([\s\S]*?)\n---\n/;
+  const match = content.match(frontmatterRegex);
+  
+  if (!match) {
+    return { frontmatter: {}, content };
+  }
+  
+  const frontmatterStr = match[1];
+  const frontmatter: DocFrontmatter = {};
+  
+  // Parse simple YAML key: value pairs
+  for (const line of frontmatterStr.split('\n')) {
+    const [key, ...valueParts] = line.split(':');
+    if (key && valueParts.length > 0) {
+      const value = valueParts.join(':').trim();
+      if (key.trim() === 'title') {
+        frontmatter.title = value;
+      } else if (key.trim() === 'date') {
+        frontmatter.date = value;
+      }
+    }
+  }
+  
+  // Remove frontmatter from content
+  const contentWithoutFrontmatter = content.slice(match[0].length);
+  
+  return { frontmatter, content: contentWithoutFrontmatter };
+}
+
 // Types for table of contents
 interface TocHeading {
   id: string;
@@ -184,9 +221,18 @@ function parseFilePath(path: string) {
   return { category, filename, title, path };
 }
 
+// Document with parsed frontmatter
+interface ParsedDoc {
+  filename: string;
+  title: string;
+  path: string;
+  content: string;
+  date: string | null;
+}
+
 // Group documents by category
 function getDocumentsByCategory() {
-  const docs: Record<CategoryId, Array<{ filename: string; title: string; path: string; content: string }>> = {
+  const docs: Record<CategoryId, ParsedDoc[]> = {
     meetings: [],
     ideas: [],
     plans: [],
@@ -195,21 +241,41 @@ function getDocumentsByCategory() {
     testing: [],
   };
 
-  for (const [path, content] of Object.entries(markdownFiles)) {
+  for (const [path, rawContent] of Object.entries(markdownFiles)) {
     const parsed = parseFilePath(path);
     if (parsed && parsed.category in docs) {
+      const { frontmatter, content } = parseFrontmatter(rawContent as string);
+      
+      // Use frontmatter title if available, otherwise use filename-derived title
+      const title = frontmatter.title || parsed.title;
+      
+      // Use frontmatter date, or try to extract from filename (YYYY-MM-DD prefix)
+      const dateFromFilename = parsed.filename.match(/^(\d{4}-\d{2}-\d{2})/)?.[1] || null;
+      const date = frontmatter.date || dateFromFilename;
+      
       docs[parsed.category as CategoryId].push({
         filename: parsed.filename,
-        title: parsed.title,
+        title,
         path: parsed.path,
-        content: content as string,
+        content,
+        date,
       });
     }
   }
 
-  // Sort documents by filename (which includes date for meetings)
+  // Sort documents by date (newest first), then by filename for docs without dates
   for (const category of Object.keys(docs) as CategoryId[]) {
-    docs[category].sort((a, b) => b.filename.localeCompare(a.filename));
+    docs[category].sort((a, b) => {
+      // If both have dates, sort by date descending
+      if (a.date && b.date) {
+        return b.date.localeCompare(a.date);
+      }
+      // Documents with dates come before those without
+      if (a.date && !b.date) return -1;
+      if (!a.date && b.date) return 1;
+      // Fall back to filename comparison for docs without dates
+      return b.filename.localeCompare(a.filename);
+    });
   }
 
   return docs;
@@ -252,8 +318,9 @@ export default function DocsPage() {
   const selectedDoc = useMemo(() => {
     if (params.doc) {
       // Handle testing category's nested path: docs/testing/{folder}/{file}.md
+      // URL uses -- separator to avoid router issues with slashes
       const docPath = activeCategory === "testing"
-        ? `/docs/testing/${params.doc}.md`
+        ? `/docs/testing/${params.doc.replace("--", "/")}.md`
         : `/docs/${activeCategory}/${params.doc}.md`;
       if (currentDocs.some((d) => d.path === docPath)) {
         return docPath;
@@ -339,11 +406,12 @@ export default function DocsPage() {
 
   // Handle document selection
   const handleDocSelect = (docPath: string) => {
-    // Handle testing category: /docs/testing/{folder}/{file}.md -> {folder}/{file}
+    // Handle testing category: /docs/testing/{folder}/{file}.md -> {folder}--{file}
+    // Use -- separator to avoid router issues with slashes in URL params
     const testingMatch = docPath.match(/^\/docs\/testing\/([^/]+)\/([^/]+)\.md$/);
     if (testingMatch) {
       const [, folder, file] = testingMatch;
-      navigateToDoc(activeCategory, `${folder}/${file}`);
+      navigateToDoc(activeCategory, `${folder}--${file}`);
       return;
     }
     
@@ -439,7 +507,18 @@ export default function DocsPage() {
                         data-testid={`docs-item-${doc.filename}`}
                       >
                         <IconFileText className="size-4 shrink-0 text-muted-foreground" />
-                        <span className="truncate text-left">{doc.title}</span>
+                        <div className="flex flex-col items-start min-w-0">
+                          <span className="truncate text-left w-full">{doc.title}</span>
+                          {doc.date && (
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(doc.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
+                            </span>
+                          )}
+                        </div>
                       </Button>
                     ))
                   )}
@@ -476,7 +555,15 @@ export default function DocsPage() {
                         {currentDoc.title}
                       </h1>
                       <p className="text-sm text-muted-foreground">
-                        {currentDoc.filename}
+                        {currentDoc.date 
+                          ? new Date(currentDoc.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                              weekday: 'long',
+                              month: 'long', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            })
+                          : currentDoc.filename
+                        }
                       </p>
                     </header>
 
@@ -484,7 +571,10 @@ export default function DocsPage() {
 
                     {/* Document Content */}
                     <article className="pb-16">
-                      <MarkdownRenderer content={currentDoc.content} />
+                      <MarkdownRenderer 
+                        content={currentDoc.content} 
+                        basePath={currentDoc.path.replace(/\/[^/]+\.md$/, "")}
+                      />
                     </article>
                   </div>
                 ) : allDocsInCategory.length === 0 ? (
