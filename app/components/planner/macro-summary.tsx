@@ -126,7 +126,7 @@ interface MacroItemProps {
 
 function MacroItem({ icon, label, value, unit }: MacroItemProps) {
   if (value === 0) return null;
-  
+
   return (
     <div className="flex items-center gap-2">
       {icon}
