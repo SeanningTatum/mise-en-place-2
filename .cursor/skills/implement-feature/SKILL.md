@@ -7,6 +7,14 @@ description: Executes feature implementation with automatic subagent delegation 
 
 Execute feature implementations by automatically delegating to specialized subagents based on what the feature requires.
 
+## Project Context
+
+**mise en place** — A recipe management app for home cooks who save recipes from YouTube cooking videos and food blogs. Instead of manually copying ingredients and steps, users paste a URL and AI extracts everything automatically—including video timestamps for easy reference. The app also features weekly meal planning with aggregated grocery lists.
+
+**Target Audience**: Home cooks who frequently discover recipes online and want a single place to organize, plan, and shop for their meals.
+
+**Design Direction**: Editorial cookbook aesthetic—warm, artisanal design inspired by classic cookbooks. Playfair Display for headings, Source Sans 3 for body text. Terracotta and sage color palette with grain textures and warm shadows.
+
 ## Before You Start: Rules Index
 
 **IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**

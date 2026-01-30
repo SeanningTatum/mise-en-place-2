@@ -51,7 +51,11 @@ When working on this project, consult the rules in `.cursor/rules/` and detailed
 
 ## Overview
 
-"mise en place" - A recipe management SaaS with AI-powered extraction from YouTube videos and blogs, built on React Router + Cloudflare Workers.
+**mise en place** — A recipe management app for home cooks who save recipes from YouTube cooking videos and food blogs. Instead of manually copying ingredients and steps, users paste a URL and AI extracts everything automatically—including video timestamps for easy reference. The app also features weekly meal planning with aggregated grocery lists.
+
+**Target Audience**: Home cooks who frequently discover recipes online and want a single place to organize, plan, and shop for their meals.
+
+**Built with**: React Router + Cloudflare Workers
 
 ## Tech Stack
 
