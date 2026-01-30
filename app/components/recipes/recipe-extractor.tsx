@@ -1,13 +1,22 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Link as LinkIcon, AlertCircle, Youtube, Globe, Clipboard, ArrowRight } from "lucide-react";
+import { Loader2, Link as LinkIcon, AlertCircle, Youtube, Globe, Clipboard, ArrowRight, BookOpen, ExternalLink } from "lucide-react";
 import { api } from "@/trpc/client";
 
 interface RecipeExtractorProps {
   onExtracted: (recipe: ExtractedRecipeData) => void;
+}
+
+export interface ExistingRecipeInfo {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  sourceUrl: string;
+  sourceType: "youtube" | "blog";
 }
 
 export interface ExtractedRecipeData {
@@ -37,21 +46,35 @@ export interface ExtractedRecipeData {
     timestampSeconds: number | null;
     durationSeconds: number | null;
   }>;
+  existingRecipe?: ExistingRecipeInfo;
 }
 
 export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [existingRecipe, setExistingRecipe] = useState<ExistingRecipeInfo | null>(null);
 
   const extractMutation = api.recipes.extract.useMutation({
     onSuccess: (data) => {
       setError(null);
-      onExtracted(data);
+      // Check if this is a duplicate recipe
+      if (data.existingRecipe) {
+        setExistingRecipe(data.existingRecipe);
+      } else {
+        setExistingRecipe(null);
+        onExtracted(data);
+      }
     },
     onError: (err) => {
       setError(err.message);
+      setExistingRecipe(null);
     },
   });
+
+  const handleDismissDuplicate = () => {
+    setExistingRecipe(null);
+    setUrl("");
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,8 +202,89 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
             </Alert>
           )}
 
+          {/* Duplicate recipe detected */}
+          {existingRecipe && (
+            <div 
+              className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-4"
+              data-testid="duplicate-recipe-alert"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-display font-medium text-foreground">
+                    Recipe Already Saved
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    You&apos;ve already added this recipe to your collection
+                  </p>
+                </div>
+              </div>
+              
+              {/* Recipe preview card */}
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border/50">
+                {existingRecipe.thumbnailUrl ? (
+                  <img
+                    src={existingRecipe.thumbnailUrl}
+                    alt={existingRecipe.title}
+                    className="w-16 h-16 rounded-lg object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                    {existingRecipe.sourceType === "youtube" ? (
+                      <Youtube className="h-6 w-6 text-muted-foreground" />
+                    ) : (
+                      <Globe className="h-6 w-6 text-muted-foreground" />
+                    )}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-foreground truncate">
+                    {existingRecipe.title}
+                  </h4>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                    {existingRecipe.sourceType === "youtube" ? (
+                      <>
+                        <Youtube className="h-3 w-3" />
+                        YouTube
+                      </>
+                    ) : (
+                      <>
+                        <Globe className="h-3 w-3" />
+                        Blog
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
+                  asChild
+                  className="flex-1 gap-2"
+                  data-testid="view-existing-recipe-button"
+                >
+                  <Link to={`/recipes/${existingRecipe.id}`}>
+                    View Recipe
+                    <ExternalLink className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleDismissDuplicate}
+                  className="flex-1"
+                  data-testid="try-different-url-button"
+                >
+                  Try Different URL
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Supported sources */}
-          {!extractMutation.isPending && (
+          {!extractMutation.isPending && !existingRecipe && (
             <div className="flex items-center justify-center gap-6 pt-2 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Youtube className="h-4 w-4 text-red-500/70" />

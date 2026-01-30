@@ -7,6 +7,7 @@ import {
   WeeklyPlannerGridSkeleton,
   RecipePicker,
   GroceryListPanel,
+  WeeklyMacroSummary,
 } from "@/components/planner";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
@@ -226,6 +227,11 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
           onRemoveMeal={handleRemoveMeal}
           isLoading={addEntryMutation.isPending || removeEntryMutation.isPending}
         />
+      )}
+
+      {/* Weekly Macro Summary */}
+      {!isPlanLoading && mealPlan?.entries && mealPlan.entries.length > 0 && (
+        <WeeklyMacroSummary entries={mealPlan.entries} />
       )}
 
       {/* Grocery List */}

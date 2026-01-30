@@ -15,7 +15,7 @@ import {
 } from "@/models/errors";
 import type { Context } from "@/trpc";
 import type { ExtractedRecipe, ExtractedIngredient, ExtractedStep } from "@/lib/gemini";
-import { generateId, chunkArray } from "@/lib/utils";
+import { generateId, chunkArray, normalizeRecipeUrl } from "@/lib/utils";
 
 type Database = Context["db"];
 
@@ -171,6 +171,65 @@ async function findOrCreateIngredients(
 }
 
 /**
+ * Find an existing recipe by source URL for a specific user
+ * Uses normalized URL comparison for deduplication
+ */
+interface FindRecipeBySourceUrlInput {
+  userId: string;
+  sourceUrl: string;
+}
+
+interface ExistingRecipeSummary {
+  id: string;
+  title: string;
+  thumbnailUrl: string | null;
+  sourceUrl: string;
+  sourceType: "youtube" | "blog";
+}
+
+export async function findRecipeBySourceUrl(
+  db: Database,
+  input: FindRecipeBySourceUrlInput
+): Promise<ExistingRecipeSummary | null> {
+  try {
+    const normalizedInputUrl = normalizeRecipeUrl(input.sourceUrl);
+
+    // Use indexed normalized_url column for efficient lookup
+    const result = await db
+      .select({
+        id: recipe.id,
+        title: recipe.title,
+        thumbnailUrl: recipe.thumbnailUrl,
+        sourceUrl: recipe.sourceUrl,
+        sourceType: recipe.sourceType,
+      })
+      .from(recipe)
+      .where(
+        and(
+          eq(recipe.createdById, input.userId),
+          eq(recipe.normalizedUrl, normalizedInputUrl)
+        )
+      )
+      .limit(1);
+
+    if (result.length === 0) {
+      return null;
+    }
+
+    const r = result[0];
+    return {
+      id: r.id,
+      title: r.title,
+      thumbnailUrl: r.thumbnailUrl,
+      sourceUrl: r.sourceUrl,
+      sourceType: r.sourceType as "youtube" | "blog",
+    };
+  } catch (error) {
+    throw new QueryError("recipe", "Failed to find recipe by URL", error);
+  }
+}
+
+/**
  * Create a new recipe with all related data
  */
 export async function createRecipe(
@@ -187,6 +246,7 @@ export async function createRecipe(
       title: input.title,
       description: input.description,
       sourceUrl: input.sourceUrl,
+      normalizedUrl: normalizeRecipeUrl(input.sourceUrl),
       sourceType: input.sourceType,
       youtubeVideoId: input.youtubeVideoId,
       thumbnailUrl: input.thumbnailUrl,

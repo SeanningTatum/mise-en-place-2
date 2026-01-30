@@ -94,6 +94,7 @@ export const recipe = sqliteTable("recipe", {
   title: text("title").notNull(),
   description: text("description"),
   sourceUrl: text("source_url").notNull(),
+  normalizedUrl: text("normalized_url").notNull(),
   sourceType: text("source_type", { enum: ["youtube", "blog"] }).notNull(),
   youtubeVideoId: text("youtube_video_id"),
   thumbnailUrl: text("thumbnail_url"),

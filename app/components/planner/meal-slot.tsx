@@ -10,6 +10,9 @@ interface RecipeData {
   sourceType: "youtube" | "blog";
   calories: number | null;
   protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  fiber: number | null;
   prepTimeMinutes: number | null;
   cookTimeMinutes: number | null;
 }
