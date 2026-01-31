@@ -38,7 +38,6 @@ import {
   Globe,
   Clock,
   Users,
-  Calendar,
   UtensilsCrossed,
   ListOrdered,
   ChevronDown,
@@ -46,6 +45,7 @@ import {
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/lib/hooks";
 import type { Route } from "./+types/[id]";
 
 export const loader = async ({ request, context, params }: Route.LoaderArgs) => {
@@ -68,6 +68,9 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [ingredientsOpen, setIngredientsOpen] = useState(true);
+  // Use media query to conditionally render only ONE YouTube player
+  // lg breakpoint = 1024px
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const deleteMutation = api.recipes.delete.useMutation({
     onSuccess: () => {
@@ -201,115 +204,41 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   );
 
   // YouTube recipe: Side-by-side layout with sticky video
+  // IMPORTANT: Only render ONE layout to avoid duplicate YouTube iframes
   if (isYouTubeRecipe) {
     return (
       <div className="mx-auto max-w-7xl">
-        {/* Mobile: Stacked layout */}
-        <div className="lg:hidden space-y-6">
-          <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
-            <YouTubePlayer
-              videoId={recipe.youtubeVideoId!}
-              seekTo={seekTo}
-              onTimeUpdate={handleTimeUpdate}
-              onSeeked={handleSeeked}
-            />
-          </div>
-          <RecipeHeader />
-          <MacrosCard
-            calories={recipe.calories}
-            protein={recipe.protein}
-            carbs={recipe.carbs}
-            fat={recipe.fat}
-            fiber={recipe.fiber}
-            servings={recipe.servings}
-          />
-          <Card className="border-border/50 shadow-warm overflow-hidden">
-            <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <UtensilsCrossed className="h-5 w-5 text-primary" />
-                <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
-              </div>
-              <IngredientsList ingredients={recipe.ingredients} checkable />
-            </div>
-          </Card>
-          <Card className="border-border/50 shadow-warm overflow-hidden">
-            <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-5">
-                <ListOrdered className="h-5 w-5 text-primary" />
-                <h2 className="font-display text-lg font-semibold text-foreground">Instructions</h2>
-              </div>
-              <RecipeSteps
-                steps={recipe.steps}
-                onTimestampClick={handleTimestampClick}
-                activeStep={activeStep}
-                showYouTubeTimestamps
+        {/* Conditionally render mobile OR desktop layout - never both */}
+        {!isDesktop ? (
+          // Mobile: Stacked layout
+          <div className="space-y-6">
+            <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
+              <YouTubePlayer
+                videoId={recipe.youtubeVideoId!}
+                seekTo={seekTo}
+                onTimeUpdate={handleTimeUpdate}
+                onSeeked={handleSeeked}
               />
             </div>
-          </Card>
-        </div>
-
-        {/* Desktop: Side-by-side layout */}
-        <div className="hidden lg:grid lg:grid-cols-2 gap-6">
-          {/* Left column: Sticky video player */}
-          <div className="relative">
-            <div className="sticky top-4 space-y-4">
-              <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
-                <YouTubePlayer
-                  videoId={recipe.youtubeVideoId!}
-                  seekTo={seekTo}
-                  onTimeUpdate={handleTimeUpdate}
-                  onSeeked={handleSeeked}
-                />
-              </div>
-              
-              {/* Compact macros under video */}
-              <div data-testid="macros-card-container">
-                <MacrosCard
-                  calories={recipe.calories}
-                  protein={recipe.protein}
-                  carbs={recipe.carbs}
-                  fat={recipe.fat}
-                  fiber={recipe.fiber}
-                  servings={recipe.servings}
-                />
-              </div>
-
-              {/* Collapsible ingredients under video */}
-              <Collapsible open={ingredientsOpen} onOpenChange={setIngredientsOpen}>
-                <Card className="border-border/50 shadow-warm overflow-hidden">
-                  <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
-                  <CollapsibleTrigger asChild>
-                    <button className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
-                      <div className="flex items-center gap-2">
-                        <UtensilsCrossed className="h-5 w-5 text-primary" />
-                        <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
-                        <Badge variant="secondary" className="ml-2">
-                          {recipe.ingredients.length}
-                        </Badge>
-                      </div>
-                      <ChevronDown className={cn(
-                        "h-5 w-5 text-muted-foreground transition-transform duration-200",
-                        ingredientsOpen && "rotate-180"
-                      )} />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <div className="px-4 pb-4">
-                      <IngredientsList ingredients={recipe.ingredients} checkable />
-                    </div>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            </div>
-          </div>
-
-          {/* Right column: Scrollable content */}
-          <div className="space-y-6">
             <RecipeHeader />
-            
-            {/* Steps - Full height for scrolling through timestamps */}
+            <MacrosCard
+              calories={recipe.calories}
+              protein={recipe.protein}
+              carbs={recipe.carbs}
+              fat={recipe.fat}
+              fiber={recipe.fiber}
+              servings={recipe.servings}
+            />
+            <Card className="border-border/50 shadow-warm overflow-hidden">
+              <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <UtensilsCrossed className="h-5 w-5 text-primary" />
+                  <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
+                </div>
+                <IngredientsList ingredients={recipe.ingredients} checkable />
+              </div>
+            </Card>
             <Card className="border-border/50 shadow-warm overflow-hidden">
               <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
               <div className="p-6">
@@ -326,7 +255,85 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               </div>
             </Card>
           </div>
-        </div>
+        ) : (
+          // Desktop: Side-by-side layout
+          <div className="grid grid-cols-2 gap-6">
+            {/* Left column: Sticky video player */}
+            <div className="relative">
+              <div className="sticky top-4 space-y-4">
+                <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
+                  <YouTubePlayer
+                    videoId={recipe.youtubeVideoId!}
+                    seekTo={seekTo}
+                    onTimeUpdate={handleTimeUpdate}
+                    onSeeked={handleSeeked}
+                  />
+                </div>
+                
+                {/* Compact macros under video */}
+                <div data-testid="macros-card-container">
+                  <MacrosCard
+                    calories={recipe.calories}
+                    protein={recipe.protein}
+                    carbs={recipe.carbs}
+                    fat={recipe.fat}
+                    fiber={recipe.fiber}
+                    servings={recipe.servings}
+                  />
+                </div>
+
+                {/* Collapsible ingredients under video */}
+                <Collapsible open={ingredientsOpen} onOpenChange={setIngredientsOpen}>
+                  <Card className="border-border/50 shadow-warm overflow-hidden">
+                    <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
+                    <CollapsibleTrigger asChild>
+                      <button className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center gap-2">
+                          <UtensilsCrossed className="h-5 w-5 text-primary" />
+                          <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
+                          <Badge variant="secondary" className="ml-2">
+                            {recipe.ingredients.length}
+                          </Badge>
+                        </div>
+                        <ChevronDown className={cn(
+                          "h-5 w-5 text-muted-foreground transition-transform duration-200",
+                          ingredientsOpen && "rotate-180"
+                        )} />
+                      </button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="px-4 pb-4">
+                        <IngredientsList ingredients={recipe.ingredients} checkable />
+                      </div>
+                    </CollapsibleContent>
+                  </Card>
+                </Collapsible>
+              </div>
+            </div>
+
+            {/* Right column: Scrollable content */}
+            <div className="space-y-6">
+              <RecipeHeader />
+              
+              {/* Steps - Full height for scrolling through timestamps */}
+              <Card className="border-border/50 shadow-warm overflow-hidden">
+                <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-5">
+                    <ListOrdered className="h-5 w-5 text-primary" />
+                    <h2 className="font-display text-lg font-semibold text-foreground">Instructions</h2>
+                  </div>
+                  <RecipeSteps
+                    steps={recipe.steps}
+                    onTimestampClick={handleTimestampClick}
+                    activeStep={activeStep}
+                    showYouTubeTimestamps
+                  />
+                </div>
+              </Card>
+            </div>
+          </div>
+        )}
 
         {/* Delete Confirmation Dialog */}
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
