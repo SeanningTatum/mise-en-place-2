@@ -112,7 +112,24 @@ bunx playwright test e2e/{feature-name}.spec.ts
 
 Use the browser MCP tools to verify each scenario:
 
-**CRITICAL: Screenshots are MANDATORY for every scenario. The testing documentation is incomplete without visual evidence.**
+## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
+
+**TESTING IS INCOMPLETE WITHOUT SCREENSHOTS.**
+
+Every testing session MUST include:
+1. **At least one screenshot per major scenario** - Happy path, error states, empty states
+2. **Screenshots saved to the workspace** - NOT just temp folder
+3. **Screenshots embedded in test documentation** - With markdown image links
+4. **Screenshots copied to public folder** - For documentation viewer
+
+**If you complete testing without screenshots, you have NOT completed testing.**
+**A test summary without screenshots will be rejected.**
+
+The tester MUST NOT mark testing as complete until:
+- [ ] Screenshots are taken with Playwright MCP
+- [ ] Screenshots are saved to `docs/testing/{feature}/screenshots/`
+- [ ] Screenshots are copied to `public/docs/testing/{feature}/screenshots/`
+- [ ] Screenshots are embedded in the test documentation markdown
 
 **Navigation & Snapshot Pattern:**
 1. `browser_navigate` → Navigate to the page

@@ -8,6 +8,7 @@ import { analyticsRouter } from "./routes/analytics";
 import { recipesRouter } from "./routes/recipes";
 import { ingredientsRouter } from "./routes/ingredients";
 import { mealPlanRouter } from "./routes/meal-plan";
+import { profileRouter } from "./routes/profile";
 
 const userRouter = createTRPCRouter({
   getUsers: publicProcedure.query(async ({ ctx }) => {
@@ -32,7 +33,7 @@ const userRouter = createTRPCRouter({
       z.object({
         email: z.string(),
         metadata: z.record(z.string(), z.any()),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await ctx.workflows.ExampleWorkflow.create({
@@ -48,6 +49,7 @@ export const appRouter = createTRPCRouter({
   recipes: recipesRouter,
   ingredients: ingredientsRouter,
   mealPlan: mealPlanRouter,
+  profile: profileRouter,
 });
 
 export type AppRouter = typeof appRouter;

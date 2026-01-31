@@ -98,6 +98,82 @@ Plan meals for a week by assigning recipes to breakfast/lunch/dinner/snack slots
 **Data model**: `meal_plan` (week_start_date, user_id) → `meal_plan_entry` (day_of_week 0-6, meal_type enum, recipe_id)
 **Key files**: `app/routes/recipes/planner.tsx`, `app/components/planner/`, `app/repositories/meal-plan.ts`, `app/trpc/routes/meal-plan.ts`
 
+### Profile Sharing
+Public profile pages at `/u/[username]` for sharing recipe collections. Users create profiles with unique usernames, toggle profile/recipe visibility, and share via links/QR codes. Visitors can import (clone) public recipes to their own collections.
+**Data model**: `user_profile` (username, displayName, bio, avatarUrl, isPublic, viewCount) → `recipe` (slug, isPublic, saveCount) → `recipe_import` (tracks recipe cloning)
+**Key files**: `app/routes/u.[username].tsx`, `app/routes/recipes/profile.tsx`, `app/repositories/profile.ts`, `app/trpc/routes/profile.ts`, `app/components/profile/`
+
+## Database
+
+**Schema**: `app/db/schema.ts` using Drizzle ORM
+
+**Core Tables**:
+- `user` - User accounts with roles (user/admin), ban system
+- `recipe` - Recipes with extraction metadata, slugs, visibility flags (`is_public`, `save_count`)
+- `meal_plan` / `meal_plan_entry` - Weekly meal planning
+- `user_profile` - Public profiles (username, displayName, bio, avatarUrl, isPublic, viewCount)
+- `recipe_import` - Tracks when users clone recipes from other profiles
+
+**Relationships**:
+```mermaid
+erDiagram
+    USER ||--o| USER_PROFILE : has
+    USER ||--o{ RECIPE : creates
+    RECIPE ||--o{ RECIPE_IMPORT : "source for"
+    RECIPE ||--o{ RECIPE_IMPORT : "cloned as"
+    USER ||--o{ RECIPE_IMPORT : imports
+    USER ||--o{ MEAL_PLAN : plans
+    MEAL_PLAN ||--o{ MEAL_PLAN_ENTRY : contains
+    MEAL_PLAN_ENTRY }o--|| RECIPE : references
+```
+
+## API Routes
+
+**tRPC Router**: `app/trpc/router.ts`
+
+**Route Modules**:
+- `admin.ts` - User management, analytics, docs
+- `recipes.ts` - Recipe CRUD, extraction, visibility
+- `meal-plan.ts` - Weekly planning, grocery lists
+- `profile.ts` - Profile management, public profiles, recipe import
+- `ingredients.ts` - Ingredient management
+- `analytics.ts` - Usage analytics
+
+**Profile Sharing Flow**:
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant P as Profile Settings
+    participant API as tRPC Profile API
+    participant DB as Database
+    participant V as Visitor
+    participant PP as Public Profile
+
+    U->>P: Create profile with username
+    P->>API: createProfile(username)
+    API->>DB: Insert user_profile
+    DB-->>API: Profile created
+    API-->>P: Success
+    
+    U->>P: Toggle profile/recipe visibility
+    P->>API: updateProfile(isPublic) / setRecipeVisibility()
+    API->>DB: Update visibility flags
+    DB-->>API: Updated
+    API-->>P: Success
+    
+    V->>PP: Visit /u/[username]
+    PP->>API: getPublicProfile(username)
+    API->>DB: Query user_profile + recipes (is_public=true)
+    DB-->>API: Profile + recipes
+    API-->>PP: Display profile
+    
+    V->>PP: Import recipe
+    PP->>API: importRecipe(recipeId)
+    API->>DB: Clone recipe + create recipe_import + increment save_count
+    DB-->>API: Recipe cloned
+    API-->>PP: Success
+```
+
 ## Design System
 
 **Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
@@ -109,6 +185,6 @@ Plan meals for a week by assigning recipes to breakfast/lunch/dinner/snack slots
 
 ## Recent Changes
 
+- **Profile Sharing** - Public profile pages at `/u/[username]` for sharing recipe collections. Users create profiles with unique usernames (3-30 chars, lowercase, numbers, hyphens), toggle profile/recipe visibility, share via links/QR codes. Visitors can import (clone) public recipes. New tables: user_profile, recipe_import. Schema additions: recipe.slug, recipe.is_public, recipe.save_count
 - **Week Meal Planner** - Full-featured weekly meal planning with 7-day × 4-meal grid, recipe picker modal, aggregated grocery list with clipboard/print export. New tables: meal_plan, meal_plan_entry
 - **Editorial Cookbook Design System** - Added warm typography (Playfair Display/Source Sans 3), OKLCH color palette, grain texture, warm shadows, enhanced components (recipe cards, auth pages, layout)
-- **Claude AI Integration** - Added Claude Sonnet 4.5 as alternative AI provider for recipe extraction via `app/lib/claude.ts` with tool_use for structured output

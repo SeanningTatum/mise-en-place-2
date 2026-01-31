@@ -268,6 +268,14 @@ Add logs for:
 
 **When:** After core implementation is complete
 
+## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
+
+**Testing is NOT complete without screenshots. The tester MUST:**
+1. Take screenshots with Playwright MCP for each scenario
+2. Save screenshots to the workspace (not just temp folder)
+3. Embed screenshots in test documentation
+4. Copy screenshots to public folder for docs viewer
+
 **Delegation Pattern:**
 ```markdown
 Test the {feature} implementation:
@@ -277,9 +285,14 @@ Test the {feature} implementation:
 3. Verify with Playwright MCP:
    - Navigate to {route}
    - Test happy path: {steps}
+   - **TAKE SCREENSHOT after each major state**
    - Test edge cases: {cases}
+   - **TAKE SCREENSHOT for edge cases**
    - Test error handling: {scenarios}
-4. Save screenshots to `docs/testing/{feature}/screenshots/`
+   - **TAKE SCREENSHOT for error states**
+4. **MANDATORY: Save screenshots to `docs/testing/{feature}/screenshots/`**
+5. **MANDATORY: Copy screenshots to `public/docs/testing/{feature}/screenshots/`**
+6. **MANDATORY: Embed screenshots in test documentation with markdown image links**
 5. Write E2E tests at `e2e/{feature}.spec.ts`
 6. Add data-testid attributes to interactive elements
 ```

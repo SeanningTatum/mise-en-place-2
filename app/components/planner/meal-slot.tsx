@@ -1,7 +1,12 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, X, Clock, Flame } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Plus, X, Clock, Flame, Beef, Wheat, Droplets, Leaf } from "lucide-react";
 
 interface RecipeData {
   id: string;
@@ -38,6 +43,38 @@ const mealTypeColors = {
   dinner: "bg-primary/10 text-primary",
   snacks: "bg-violet-500/10 text-violet-700 dark:text-violet-400",
 };
+
+function MacroItem({
+  icon,
+  label,
+  value,
+  unit,
+  className,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  unit: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-2 bg-secondary/50 rounded-md px-2 py-1.5",
+        className
+      )}
+    >
+      {icon}
+      <div className="flex flex-col">
+        <span className="text-xs text-muted-foreground">{label}</span>
+        <span className="text-sm font-medium">
+          {value}
+          <span className="text-xs text-muted-foreground ml-0.5">{unit}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function MealSlot({
   mealType,
@@ -77,69 +114,166 @@ export function MealSlot({
   }
 
   return (
-    <Card
-      className={cn(
-        "group relative overflow-hidden bg-card border-border/50 hover:shadow-warm transition-shadow",
-        slotHeight,
-        "py-0!" // Override Card's default padding
-      )}
-      data-testid={`meal-slot-${mealType}-filled`}
-    >
-      {/* Remove button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onRemove}
-        disabled={isLoading}
-        aria-label={`Remove ${mealTypeLabels[mealType]}`}
-        className={cn(
-          "absolute top-1 right-1 z-10 h-6 w-6",
-          "opacity-60 hover:opacity-100 transition-opacity",
-          "bg-background/80 hover:bg-destructive hover:text-destructive-foreground"
-        )}
-        data-testid={`meal-slot-${mealType}-remove`}
-      >
-        <X className="h-3 w-3" />
-      </Button>
+    <HoverCard openDelay={200} closeDelay={100}>
+      <HoverCardTrigger asChild>
+        <Card
+          className={cn(
+            "group relative overflow-hidden bg-card border-border/50 hover:shadow-warm transition-shadow cursor-pointer",
+            slotHeight,
+            "py-0!" // Override Card's default padding
+          )}
+          data-testid={`meal-slot-${mealType}-filled`}
+        >
+          {/* Remove button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            disabled={isLoading}
+            aria-label={`Remove ${mealTypeLabels[mealType]}`}
+            className={cn(
+              "absolute top-1 right-1 z-10 h-6 w-6",
+              "opacity-60 hover:opacity-100 transition-opacity",
+              "bg-background/80 hover:bg-destructive hover:text-destructive-foreground"
+            )}
+            data-testid={`meal-slot-${mealType}-remove`}
+          >
+            <X className="h-3 w-3" />
+          </Button>
 
-      <div className="flex gap-2 p-2 h-full">
-        {/* Thumbnail */}
+          <div className="flex gap-2 p-2 h-full">
+            {/* Thumbnail */}
+            {recipe.thumbnailUrl ? (
+              <div className="w-16 h-16 shrink-0 rounded overflow-hidden bg-secondary my-auto">
+                <img
+                  src={recipe.thumbnailUrl}
+                  alt={recipe.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-16 h-16 shrink-0 rounded bg-secondary flex items-center justify-center my-auto">
+                <span className="text-xs text-muted-foreground">No image</span>
+              </div>
+            )}
+
+            {/* Info - simplified for card view */}
+            <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
+              <h4 className="font-medium text-sm line-clamp-2 leading-tight">
+                {recipe.title}
+              </h4>
+              {recipe.calories && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                  <Flame className="h-3 w-3 text-orange-500" />
+                  <span>{recipe.calories} cal</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      </HoverCardTrigger>
+
+      <HoverCardContent
+        side="right"
+        align="start"
+        sideOffset={8}
+        className="w-72 p-0 overflow-hidden"
+      >
+        {/* Header with image */}
         {recipe.thumbnailUrl ? (
-          <div className="w-16 h-16 shrink-0 rounded overflow-hidden bg-secondary my-auto">
+          <div className="relative h-32 w-full">
             <img
               src={recipe.thumbnailUrl}
               alt={recipe.title}
               className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-2 left-3 right-3">
+              <h3 className="font-display font-semibold text-white text-sm leading-tight line-clamp-2">
+                {recipe.title}
+              </h3>
+            </div>
           </div>
         ) : (
-          <div className="w-16 h-16 shrink-0 rounded bg-secondary flex items-center justify-center my-auto">
-            <span className="text-xs text-muted-foreground">No image</span>
+          <div className="p-3 pb-2 border-b border-border/50">
+            <h3 className="font-display font-semibold text-sm leading-tight">
+              {recipe.title}
+            </h3>
           </div>
         )}
 
-        {/* Info */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-          <h4 className="font-medium text-sm line-clamp-2 leading-tight">
-            {recipe.title}
-          </h4>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-            {totalTime > 0 && (
-              <span className="flex items-center gap-0.5">
-                <Clock className="h-3 w-3" />
-                {totalTime}m
-              </span>
-            )}
-            {recipe.calories && (
-              <span className="flex items-center gap-0.5">
-                <Flame className="h-3 w-3" />
-                {recipe.calories}
-              </span>
-            )}
-          </div>
+        {/* Details */}
+        <div className="p-3 space-y-3">
+          {/* Time info */}
+          {totalTime > 0 && (
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              {recipe.prepTimeMinutes && recipe.prepTimeMinutes > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{recipe.prepTimeMinutes}m prep</span>
+                </div>
+              )}
+              {recipe.cookTimeMinutes && recipe.cookTimeMinutes > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <Flame className="h-3.5 w-3.5" />
+                  <span>{recipe.cookTimeMinutes}m cook</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Macro grid */}
+          {(recipe.calories || recipe.protein || recipe.carbs || recipe.fat || recipe.fiber) && (
+            <div className="grid grid-cols-2 gap-2">
+              {recipe.calories && (
+                <MacroItem
+                  icon={<Flame className="h-3.5 w-3.5 text-orange-500" />}
+                  label="Calories"
+                  value={recipe.calories}
+                  unit="kcal"
+                />
+              )}
+              {recipe.protein && (
+                <MacroItem
+                  icon={<Beef className="h-3.5 w-3.5 text-red-500" />}
+                  label="Protein"
+                  value={recipe.protein}
+                  unit="g"
+                />
+              )}
+              {recipe.carbs && (
+                <MacroItem
+                  icon={<Wheat className="h-3.5 w-3.5 text-amber-500" />}
+                  label="Carbs"
+                  value={recipe.carbs}
+                  unit="g"
+                />
+              )}
+              {recipe.fat && (
+                <MacroItem
+                  icon={<Droplets className="h-3.5 w-3.5 text-blue-500" />}
+                  label="Fat"
+                  value={recipe.fat}
+                  unit="g"
+                />
+              )}
+              {recipe.fiber && (
+                <MacroItem
+                  icon={<Leaf className="h-3.5 w-3.5 text-green-500" />}
+                  label="Fiber"
+                  value={recipe.fiber}
+                  unit="g"
+                  className="col-span-2"
+                />
+              )}
+            </div>
+          )}
         </div>
-      </div>
-    </Card>
+      </HoverCardContent>
+    </HoverCard>
   );
 }
 

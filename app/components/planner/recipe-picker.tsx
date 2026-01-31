@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Youtube, Globe, ChefHat } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/lib/hooks";
 import { api } from "@/trpc/client";
 
 interface RecipePickerProps {
@@ -36,9 +37,10 @@ export function RecipePicker({
   dayName,
 }: RecipePickerProps) {
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data: recipes, isLoading } = api.mealPlan.getRecipesForPicker.useQuery(
-    { search: search || undefined },
+    { search: debouncedSearch || undefined },
     { enabled: open }
   );
 
