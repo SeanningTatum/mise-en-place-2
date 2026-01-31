@@ -92,7 +92,6 @@ export const recipe = sqliteTable("recipe", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
-  slug: text("slug"), // URL-safe title for public URLs
   description: text("description"),
   sourceUrl: text("source_url").notNull(),
   normalizedUrl: text("normalized_url").notNull(),
@@ -108,9 +107,6 @@ export const recipe = sqliteTable("recipe", {
   carbs: integer("carbs"), // grams
   fat: integer("fat"), // grams
   fiber: integer("fiber"), // grams
-  // Public sharing fields
-  isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
-  saveCount: integer("save_count").default(0).notNull(), // Number of imports
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -202,48 +198,3 @@ export const mealPlanEntry = sqliteTable("meal_plan_entry", {
 
 export type MealPlanEntry = typeof mealPlanEntry.$inferSelect;
 export type InsertMealPlanEntry = typeof mealPlanEntry.$inferInsert;
-
-// Profile sharing tables
-export const userProfile = sqliteTable("user_profile", {
-  id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .unique()
-    .references(() => user.id, { onDelete: "cascade" }),
-  username: text("username").notNull().unique(), // URL-safe, lowercase
-  displayName: text("display_name"),
-  bio: text("bio"),
-  avatarUrl: text("avatar_url"),
-  isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
-  viewCount: integer("view_count").default(0).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp_ms" })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
-
-export type UserProfile = typeof userProfile.$inferSelect;
-export type InsertUserProfile = typeof userProfile.$inferInsert;
-
-// Recipe import tracking (for analytics and attribution)
-export const recipeImport = sqliteTable("recipe_import", {
-  id: text("id").primaryKey(),
-  sourceRecipeId: text("source_recipe_id")
-    .notNull()
-    .references(() => recipe.id, { onDelete: "cascade" }),
-  importedRecipeId: text("imported_recipe_id")
-    .notNull()
-    .references(() => recipe.id, { onDelete: "cascade" }),
-  importedById: text("imported_by_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  importedAt: integer("imported_at", { mode: "timestamp_ms" })
-    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-    .notNull(),
-});
-
-export type RecipeImport = typeof recipeImport.$inferSelect;
-export type InsertRecipeImport = typeof recipeImport.$inferInsert;

@@ -9,13 +9,6 @@ import {
 export default [
   index("routes/home.tsx"),
 
-  // Landing Pages
-  ...prefix("lp", [
-    route("/video-recipes", "routes/lp/video-recipes.tsx"),
-    route("/meal-planning", "routes/lp/meal-planning.tsx"),
-    route("/family-recipes", "routes/lp/family-recipes.tsx"),
-  ]),
-
   // API Routes
   route("/api/trpc/*", "routes/api/trpc.$.ts"),
   route("/api/auth/*", "routes/api/auth.$.ts"),
@@ -31,14 +24,9 @@ export default [
       index("routes/recipes/_index.tsx"),
       route("/new", "routes/recipes/new.tsx"),
       route("/planner", "routes/recipes/planner.tsx"),
-      route("/profile", "routes/recipes/profile.tsx"),
       route("/:id", "routes/recipes/[id].tsx"),
     ]),
   ]),
-
-  // Public Profile Routes (no auth required)
-  route("/u/:username", "routes/u.[username].tsx"),
-  route("/u/:username/recipe/:slug", "routes/u.[username].recipe.[slug].tsx"),
 
   // Admin Routes
   ...prefix("admin", [

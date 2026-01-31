@@ -1,12 +1,11 @@
 import { Outlet, Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
-import { ChefHat, Plus, ArrowLeft, CalendarDays, User } from "lucide-react";
+import { ChefHat, Plus, ArrowLeft, CalendarDays } from "lucide-react";
 
 export default function RecipesLayout() {
   const location = useLocation();
   const isNewPage = location.pathname === "/recipes/new";
   const isPlannerPage = location.pathname === "/recipes/planner";
-  const isProfilePage = location.pathname === "/recipes/profile";
   const isDetailPage = location.pathname.match(/^\/recipes\/[a-f0-9-]+$/);
 
   return (
@@ -37,14 +36,6 @@ export default function RecipesLayout() {
             </Link>
           </div>
           <div className="flex items-center gap-2">
-            {!isProfilePage && (
-              <Link to="/recipes/profile">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">Profile</span>
-                </Button>
-              </Link>
-            )}
             {!isPlannerPage && (
               <Link to="/recipes/planner">
                 <Button variant="outline" size="sm" className="gap-2">
@@ -53,7 +44,7 @@ export default function RecipesLayout() {
                 </Button>
               </Link>
             )}
-            {!isNewPage && !isPlannerPage && !isProfilePage && (
+            {!isNewPage && !isPlannerPage && (
               <Link to="/recipes/new">
                 <Button size="sm" className="gap-2 shadow-warm hover:shadow-warm-lg transition-shadow">
                   <Plus className="h-4 w-4" />

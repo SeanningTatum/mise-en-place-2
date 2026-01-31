@@ -1,9 +1,6 @@
 // Secrets to be set via 'wrangler secret put BETTER_AUTH_SECRET'
 {
   "name": "mise-en-place-2",
-  "vars": {
-    "POSTHOG_CLIENT_KEY": "phc_eYKXVHq3ELDw0Y4jz01jAlALIncChUSl6YvIfWO3hiA"
-  },
   "main": "workers/app.ts",
   "compatibility_date": "2025-03-25",
   "compatibility_flags": [

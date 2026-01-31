@@ -10,24 +10,6 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import { TRPCProvider } from "./trpc/client";
-import { PHProvider } from "./posthog/provider";
-
-export async function loader({ request, context }: Route.LoaderArgs) {
-  const session = await context.auth.api.getSession({
-    headers: request.headers,
-  });
-
-  return {
-    posthogApiKey: context.cloudflare.env.POSTHOG_CLIENT_KEY,
-    user: session?.user
-      ? {
-          id: session.user.id,
-          email: session.user.email,
-          name: session.user.name,
-        }
-      : null,
-  };
-}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -60,13 +42,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App({ loaderData }: Route.ComponentProps) {
+export default function App() {
   return (
-    <PHProvider apiKey={loaderData.posthogApiKey} user={loaderData.user}>
-      <TRPCProvider>
-        <Outlet />
-      </TRPCProvider>
-    </PHProvider>
+    <TRPCProvider>
+      <Outlet />
+    </TRPCProvider>
   );
 }
 

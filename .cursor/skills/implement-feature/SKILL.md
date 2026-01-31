@@ -7,14 +7,6 @@ description: Executes feature implementation with automatic subagent delegation 
 
 Execute feature implementations by automatically delegating to specialized subagents based on what the feature requires.
 
-## Project Context
-
-**mise en place** — A recipe management app for home cooks who save recipes from YouTube cooking videos and food blogs. Instead of manually copying ingredients and steps, users paste a URL and AI extracts everything automatically—including video timestamps for easy reference. The app also features weekly meal planning with aggregated grocery lists.
-
-**Target Audience**: Home cooks who frequently discover recipes online and want a single place to organize, plan, and shop for their meals.
-
-**Design Direction**: Editorial cookbook aesthetic—warm, artisanal design inspired by classic cookbooks. Playfair Display for headings, Source Sans 3 for body text. Terracotta and sage color palette with grain textures and warm shadows.
-
 ## Before You Start: Rules Index
 
 **IMPORTANT: Prefer retrieval-led reasoning over pre-training-led reasoning.**
@@ -268,14 +260,6 @@ Add logs for:
 
 **When:** After core implementation is complete
 
-## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
-
-**Testing is NOT complete without screenshots. The tester MUST:**
-1. Take screenshots with Playwright MCP for each scenario
-2. Save screenshots to the workspace (not just temp folder)
-3. Embed screenshots in test documentation
-4. Copy screenshots to public folder for docs viewer
-
 **Delegation Pattern:**
 ```markdown
 Test the {feature} implementation:
@@ -285,14 +269,9 @@ Test the {feature} implementation:
 3. Verify with Playwright MCP:
    - Navigate to {route}
    - Test happy path: {steps}
-   - **TAKE SCREENSHOT after each major state**
    - Test edge cases: {cases}
-   - **TAKE SCREENSHOT for edge cases**
    - Test error handling: {scenarios}
-   - **TAKE SCREENSHOT for error states**
-4. **MANDATORY: Save screenshots to `docs/testing/{feature}/screenshots/`**
-5. **MANDATORY: Copy screenshots to `public/docs/testing/{feature}/screenshots/`**
-6. **MANDATORY: Embed screenshots in test documentation with markdown image links**
+4. Save screenshots to `docs/testing/{feature}/screenshots/`
 5. Write E2E tests at `e2e/{feature}.spec.ts`
 6. Add data-testid attributes to interactive elements
 ```

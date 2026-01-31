@@ -4,12 +4,7 @@ import { createCallerFactory, createTRPCContext } from "../app/trpc";
 import { createAuth, type Auth } from "@/auth/server";
 import { createGeminiClient } from "@/lib/gemini";
 import { createClaudeClient, type ClaudeClient } from "@/lib/claude";
-import {
-  createPostHogClient,
-  shutdownPostHog,
-} from "@/posthog/server";
 import type { GenerativeModel } from "@google/generative-ai";
-import type { PostHog } from "posthog-node";
 
 const createCaller = createCallerFactory(appRouter);
 
@@ -23,7 +18,6 @@ declare module "react-router" {
     auth: Auth;
     gemini: GenerativeModel | null;
     claude: ClaudeClient | null;
-    posthog: PostHog | null;
   }
 }
 
@@ -53,22 +47,12 @@ export default {
       ? createClaudeClient(env.ANTHROPIC_API_KEY)
       : null;
 
-    // Create PostHog client for this request
-    const posthog = createPostHogClient(env.POSTHOG_CLIENT_KEY);
-
-    const response = await requestHandler(request, {
+    return requestHandler(request, {
       cloudflare: { env, ctx },
       trpc: trpcCaller,
       auth: await createAuth(env.DATABASE, env.BETTER_AUTH_SECRET),
       gemini,
       claude,
-      posthog,
     });
-
-    // IMPORTANT: Ensure PostHog events are flushed before worker terminates
-    // Using ctx.waitUntil() so it doesn't block the response
-    ctx.waitUntil(shutdownPostHog(posthog));
-
-    return response;
   },
 } satisfies ExportedHandler<Env>;

@@ -310,27 +310,16 @@ exposing via tRPC and creating a settings page.
 
 ## Testing Requirements
 
-## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
-
-**TESTING IS INCOMPLETE WITHOUT SCREENSHOTS.**
-
-Every implementation plan MUST include testing that follows this workflow:
+**IMPORTANT**: Every implementation plan MUST include testing that follows this workflow:
 
 1. **Browser Verification** - Use Playwright MCP to verify the feature works
-2. **Capture Evidence** - Take screenshots to `docs/testing/{feature}/screenshots/` **← MANDATORY**
-3. **Copy to Public** - Copy screenshots to `public/docs/testing/{feature}/screenshots/` **← MANDATORY**
-4. **Write E2E Tests** - Convert browser actions to `e2e/{feature}.spec.ts`
-5. **Document Tests** - Create `docs/testing/{feature}/{feature}.md` with:
+2. **Capture Evidence** - Take screenshots to `docs/testing/{feature}/screenshots/`
+3. **Write E2E Tests** - Convert browser actions to `e2e/{feature}.spec.ts`
+4. **Document Tests** - Create `docs/testing/{feature}/{feature}.md` with:
    - Test scenarios and descriptions
-   - **Screenshots embedded with markdown image links** **← MANDATORY**
+   - Screenshots for each scenario
    - Test IDs reference table
    - E2E test coverage list
-
-**Testing task is NOT complete until screenshots are:**
-- [ ] Taken with Playwright MCP browser tools
-- [ ] Saved to `docs/testing/{feature}/screenshots/`
-- [ ] Copied to `public/docs/testing/{feature}/screenshots/`
-- [ ] Embedded in test documentation markdown file
 
 ### Testing Task Example
 
@@ -340,20 +329,14 @@ Every implementation plan MUST include testing that follows this workflow:
 **Description:** 
 1. Create testing plan at `docs/testing/{feature}/{feature}.md`
 2. Verify feature with Playwright MCP browser tools
-3. **MANDATORY: Save screenshots to `docs/testing/{feature}/screenshots/`**
-4. **MANDATORY: Copy screenshots to `public/docs/testing/{feature}/screenshots/`**
-5. **MANDATORY: Embed screenshots in test documentation**
-6. Write e2e tests in `e2e/{feature}.spec.ts`
-7. Add data-testid attributes to key elements
-
-**CRITICAL OUTPUTS (all required):**
-- Testing plan: `docs/testing/{feature}/{feature}.md` with embedded screenshots
-- Screenshots: `docs/testing/{feature}/screenshots/*.png` (at least 3-5 screenshots)
-- Public copy: `public/docs/testing/{feature}/screenshots/*.png`
+3. Save screenshots to `docs/testing/{feature}/screenshots/`
+4. Write e2e tests in `e2e/{feature}.spec.ts`
+5. Add data-testid attributes to key elements
+**Outputs:**
+- Testing plan: `docs/testing/{feature}/{feature}.md`
+- Screenshots: `docs/testing/{feature}/screenshots/`
 - E2E test file: `e2e/{feature}.spec.ts`
 - Data-testid attributes on all interactive elements
-
-**This task is NOT complete without screenshots in both locations and embedded in documentation.**
 ```
 
 ---

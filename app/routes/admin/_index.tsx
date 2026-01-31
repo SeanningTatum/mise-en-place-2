@@ -7,7 +7,7 @@ import {
   InsightsCard,
   type Insight,
 } from "@/components/analytics";
-import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays, Share2, Eye, Bookmark, Globe } from "lucide-react";
+import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays } from "lucide-react";
 import type { Route } from "./+types/_index";
 
 export const loader = async ({ context }: Route.LoaderArgs) => {
@@ -29,12 +29,6 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     mealTypeDistribution,
     dayOfWeekDistribution,
     mostPlannedRecipes,
-    profileSharingStats,
-    profileGrowthData,
-    profileVisibilityDistribution,
-    recipeImportGrowthData,
-    topProfilesByViews,
-    mostSavedRecipes,
   ] = await Promise.all([
     context.trpc.analytics.getUserStats(),
     context.trpc.analytics.getUserGrowth({ startDate, endDate }),
@@ -49,12 +43,6 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     context.trpc.analytics.getMealTypeDistribution(),
     context.trpc.analytics.getDayOfWeekDistribution(),
     context.trpc.analytics.getMostPlannedRecipes({ limit: 5 }),
-    context.trpc.analytics.getProfileSharingStats(),
-    context.trpc.analytics.getProfileGrowth({ startDate, endDate }),
-    context.trpc.analytics.getProfileVisibilityDistribution(),
-    context.trpc.analytics.getRecipeImportGrowth({ startDate, endDate }),
-    context.trpc.analytics.getTopProfilesByViews({ limit: 5 }),
-    context.trpc.analytics.getMostSavedRecipes({ limit: 5 }),
   ]);
 
   return {
@@ -71,12 +59,6 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     mealTypeDistribution,
     dayOfWeekDistribution,
     mostPlannedRecipes,
-    profileSharingStats,
-    profileGrowthData,
-    profileVisibilityDistribution,
-    recipeImportGrowthData,
-    topProfilesByViews,
-    mostSavedRecipes,
   };
 };
 
@@ -107,12 +89,6 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
     mealTypeDistribution,
     dayOfWeekDistribution,
     mostPlannedRecipes,
-    profileSharingStats,
-    profileGrowthData,
-    profileVisibilityDistribution,
-    recipeImportGrowthData,
-    topProfilesByViews,
-    mostSavedRecipes,
   } = loaderData;
 
   // Generate insights based on the data
@@ -242,49 +218,6 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
     });
   }
 
-  // Profile sharing insights
-  const profileSharingInsights: Insight[] = [];
-  if (profileSharingStats.totalProfiles > 0) {
-    profileSharingInsights.push({
-      text: `${profileSharingStats.publicProfiles} public profile${profileSharingStats.publicProfiles !== 1 ? "s" : ""} (${profileSharingStats.publicRate}% of total)`,
-      type: profileSharingStats.publicRate >= 50 ? "positive" : "neutral",
-    });
-
-    if (profileSharingStats.totalViews > 0) {
-      profileSharingInsights.push({
-        text: `${profileSharingStats.totalViews.toLocaleString()} total profile view${profileSharingStats.totalViews !== 1 ? "s" : ""}`,
-        type: "positive",
-      });
-    }
-
-    if (profileSharingStats.totalImports > 0) {
-      profileSharingInsights.push({
-        text: `${profileSharingStats.totalImports} recipe${profileSharingStats.totalImports !== 1 ? "s" : ""} saved from shared profiles`,
-        type: "positive",
-      });
-    }
-
-    if (profileSharingStats.publicRecipes > 0) {
-      profileSharingInsights.push({
-        text: `${profileSharingStats.publicRecipes} public recipe${profileSharingStats.publicRecipes !== 1 ? "s" : ""} available for discovery`,
-        type: "positive",
-      });
-    }
-
-    if (topProfilesByViews.length > 0) {
-      const topProfile = topProfilesByViews[0];
-      profileSharingInsights.push({
-        text: `@${topProfile.username} is the most viewed profile with ${topProfile.viewCount} view${topProfile.viewCount !== 1 ? "s" : ""}`,
-        type: "positive",
-      });
-    }
-  } else {
-    profileSharingInsights.push({
-      text: "No profiles created yet - users can set up public profiles to share recipes",
-      type: "neutral",
-    });
-  }
-
   return (
     <div>
       <SiteHeader title="Dashboard" />
@@ -363,7 +296,7 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
             {/* Recipe Analytics Section */}
             <div className="px-4 lg:px-6 border-t pt-6">
               <h2 className="text-2xl font-semibold mb-4">Recipe Analytics</h2>
-
+              
               {/* Recipe Stats Cards */}
               <div className="mb-6">
                 <StatCardGrid columns={4}>
@@ -453,7 +386,7 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
             {/* Meal Planner Analytics Section */}
             <div className="px-4 lg:px-6 border-t pt-6">
               <h2 className="text-2xl font-semibold mb-4">Meal Planner Analytics</h2>
-
+              
               {/* Meal Plan Stats Cards */}
               <div className="mb-6">
                 <StatCardGrid columns={4}>
@@ -549,140 +482,6 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Profile Sharing Analytics Section */}
-            <div className="px-4 lg:px-6 border-t pt-6">
-              <h2 className="text-2xl font-semibold mb-4">Profile Sharing Analytics</h2>
-
-              {/* Profile Sharing Stats Cards */}
-              <div className="mb-6">
-                <StatCardGrid columns={4}>
-                  <StatCard
-                    label="Total Profiles"
-                    value={profileSharingStats.totalProfiles}
-                    icon={Users}
-                    description="User profiles created"
-                  />
-                  <StatCard
-                    label="Public Profiles"
-                    value={profileSharingStats.publicProfiles}
-                    icon={Globe}
-                    description={`${profileSharingStats.publicRate}% public rate`}
-                  />
-                  <StatCard
-                    label="Total Views"
-                    value={profileSharingStats.totalViews}
-                    icon={Eye}
-                    description="Profile page visits"
-                  />
-                  <StatCard
-                    label="Recipes Saved"
-                    value={profileSharingStats.totalImports}
-                    icon={Bookmark}
-                    description="Recipes saved from shared profiles"
-                  />
-                </StatCardGrid>
-              </div>
-
-              {/* Profile Sharing Charts Row */}
-              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6 mb-6">
-                <TimeSeriesChart
-                  title="Profile Growth"
-                  description="New profiles created over time"
-                  data={profileGrowthData}
-                  dataKey="count"
-                  dataLabel="New Profiles"
-                  type="area"
-                  showTimeRangeSelector
-                />
-                <DistributionChart
-                  title="Profile Visibility"
-                  description="Public vs private profiles"
-                  data={profileVisibilityDistribution}
-                  type="donut"
-                  colors={["var(--chart-2)", "var(--chart-4)"]}
-                />
-              </div>
-
-              {/* Recipe Imports + Insights */}
-              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6 mb-6">
-                <TimeSeriesChart
-                  title="Recipe Saves"
-                  description="Recipes saved from shared profiles over time"
-                  data={recipeImportGrowthData}
-                  dataKey="count"
-                  dataLabel="Recipes Saved"
-                  type="bar"
-                  showTimeRangeSelector
-                />
-                <InsightsCard
-                  title="Sharing Insights"
-                  description="Key observations about profile sharing"
-                  insights={profileSharingInsights}
-                />
-              </div>
-
-              {/* Leaderboards Row */}
-              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
-                {topProfilesByViews.length > 0 && (
-                  <div className="rounded-lg border bg-card p-6">
-                    <h3 className="text-lg font-semibold mb-2">Most Viewed Profiles</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Public profiles with the most views
-                    </p>
-                    <div className="space-y-3">
-                      {topProfilesByViews.map((profile, index) => (
-                        <div
-                          key={profile.profileId}
-                          className="flex items-center justify-between"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                              {index + 1}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium">{profile.displayName}</p>
-                              <p className="text-xs text-muted-foreground">@{profile.username}</p>
-                            </div>
-                          </div>
-                          <div className="text-sm font-semibold">
-                            {profile.viewCount} view{profile.viewCount !== 1 ? "s" : ""}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {mostSavedRecipes.length > 0 && (
-                  <div className="rounded-lg border bg-card p-6">
-                    <h3 className="text-lg font-semibold mb-2">Most Saved Recipes</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Recipes saved most from shared profiles
-                    </p>
-                    <div className="space-y-3">
-                      {mostSavedRecipes.map((recipe, index) => (
-                        <div
-                          key={recipe.recipeId}
-                          className="flex items-center justify-between"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                              {index + 1}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium">{recipe.recipeTitle}</p>
-                            </div>
-                          </div>
-                          <div className="text-sm font-semibold">
-                            {recipe.saveCount} save{recipe.saveCount !== 1 ? "s" : ""}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>

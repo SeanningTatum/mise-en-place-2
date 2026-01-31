@@ -1,19 +1,11 @@
 ---
 name: ux-product-thinking
-description: Guides UI/UX design decisions alongside product goals using competitive research, market research reports, ICP analysis, and mermaid diagrams. Use when designing new features, planning user flows, researching competitors, analyzing ICPs, generating UI concepts, or when the user asks about UX decisions, user journeys, or interface design.
+description: Guides UI/UX design decisions alongside product goals using competitive research, structured analysis, and mermaid diagrams. Use when designing new features, planning user flows, researching competitors, gathering branding inspiration, or when the user asks about UX decisions, user journeys, or interface design.
 ---
 
 # UX Product Thinking
 
-A structured approach to UI/UX design that aligns interface decisions with product goals. Uses Tavily for competitive research, market research reports for ICP analysis, image generation for UI concepts, and produces mermaid diagrams for visualization. Integrates with context-keeper for documentation.
-
-## Project Context
-
-**mise en place** — A recipe management app for home cooks who save recipes from YouTube cooking videos and food blogs. Instead of manually copying ingredients and steps, users paste a URL and AI extracts everything automatically—including video timestamps for easy reference. The app also features weekly meal planning with aggregated grocery lists.
-
-**Target Audience**: Home cooks who frequently discover recipes online and want a single place to organize, plan, and shop for their meals.
-
-**Design Direction**: Editorial cookbook aesthetic—warm, artisanal design inspired by classic cookbooks. Playfair Display for headings, Source Sans 3 for body text. Terracotta and sage color palette with grain textures and warm shadows.
+A structured approach to UI/UX design that aligns interface decisions with product goals. Uses Tavily for competitive research and Cloudflare Browser Renderer for visual analysis/screenshots, produces mermaid diagrams for visualization, and integrates with context-keeper for documentation.
 
 ## Rules Reference
 
@@ -33,64 +25,20 @@ Read `.cursor/context.md` for the compressed Rules Index. When implementing desi
 - Breaking down UI into components
 - Evaluating UX trade-offs
 - Documenting interface architecture
-- **Analyzing market research reports with ICP data**
-- **Generating UI concepts for different user personas**
 
-## Core Framework: RESEARCH → GOALS → USERS → FLOWS → DESIGN → UI → CONCEPTS
+## Core Framework: RESEARCH → GOALS → USERS → FLOWS → DESIGN → UI
 
 ```mermaid
 flowchart LR
     R[Research] --> G[Product Goals]
-    G --> U[User Needs/ICPs]
+    G --> U[User Needs]
     U --> F[User Flows]
     F --> C[Components]
     C --> D[Design Spec]
-    D --> UI[UI Concepts]
-    UI --> I[Implementation]
+    D --> I[Implementation]
 ```
 
-Work through each layer before moving to the next. The **UI Concepts** phase generates visual mockups for each ICP before implementation.
-
----
-
-## Input Sources
-
-This skill supports two research input paths:
-
-### Path A: Live Research (Tavily + Browser Renderer)
-Use when you need to gather fresh competitive intelligence. See **Phase 0** below.
-
-### Path B: Market Research Reports
-Use when you have existing research documents (from tools, consultants, or prior analysis).
-
-**When to use Path B:**
-- User provides a market research report file
-- Research already contains ICP analysis with fit scores
-- Competitive analysis is already documented
-- You want to skip to ICP-targeted design
-
-**Market Research Report Extraction:**
-```markdown
-When given a research report, extract:
-
-1. **ICPs (Ideal Customer Profiles)**
-   - Demographics and attributes
-   - Pain points and frustrations
-   - Goals and motivations
-   - Fit scores if provided
-   - Preferred channels
-
-2. **Competitive Positioning**
-   - Key competitors
-   - Feature comparison
-   - Differentiation opportunities
-   - Market gaps
-
-3. **Recommended Features**
-   - Priority ranking
-   - Demand level
-   - Coverage status (none/partial/saturated)
-```
+Work through each layer before moving to the next. The **Design Spec** phase is critical for creating distinctive, memorable interfaces.
 
 ---
 
@@ -331,53 +279,6 @@ quadrantChart
 
 Understand who uses the feature and what they need.
 
-### ICP Analysis (from Market Research)
-
-When working with market research reports that contain ICP data, structure the analysis:
-
-```markdown
-### ICP Overview
-
-| ICP | Fit Score | Primary Pain | Key Feature Need |
-|-----|-----------|--------------|------------------|
-| [Name] | XX/100 | [Pain point] | [Feature] |
-
-### ICP 1: [Name]
-**Fit Score**: XX/100 | [Primary/Secondary/Tertiary Target]
-
-| Attribute | Detail |
-|-----------|--------|
-| **Demographics** | [Age, role, context] |
-| **Discovery** | [How they find products] |
-| **Primary Pain** | [Main frustration] |
-| **Secondary Pain** | [Additional frustrations] |
-| **Key Feature Need** | [What they need most] |
-| **Willingness to Pay** | [Low/Medium/High + context] |
-
-**Messaging Focus**: "[One-line positioning]"
-
-**Hero Copy Options**:
-- "[Option 1]"
-- "[Option 2]"
-- "[Option 3]"
-```
-
-### ICP Positioning Diagram
-
-```mermaid
-quadrantChart
-    title ICP Fit vs Market Size
-    x-axis Small Market --> Large Market
-    y-axis Low Fit --> High Fit
-    quadrant-1 Primary Target
-    quadrant-2 Growth Opportunity
-    quadrant-3 Deprioritize
-    quadrant-4 Quick Wins
-    "ICP 1": [0.35, 0.72]
-    "ICP 2": [0.75, 0.68]
-    "ICP 3": [0.40, 0.58]
-```
-
 ### User Persona Quick Template
 
 ```markdown
@@ -602,144 +503,6 @@ Document in the architecture doc:
 
 ### Visual Effects
 [Background treatment, textures, shadows]
-```
-
----
-
-## Phase 7: UI Concept Generation
-
-Generate visual mockups for each ICP using image generation tools. This creates tangible design references before implementation.
-
-### When to Generate UI Concepts
-
-- Landing pages targeting multiple ICPs
-- Marketing pages with persona-specific messaging
-- Feature pages that need ICP-specific framing
-- A/B test variations for different audiences
-
-### UI Concept Generation Workflow
-
-```mermaid
-flowchart TD
-    ICPs[Identify ICPs from research] --> Design[Define design direction per ICP]
-    Design --> Prompts[Craft detailed image prompts]
-    Prompts --> Generate[Generate images with GenerateImage tool]
-    Generate --> Save[Save to public/docs/]
-    Save --> Embed[Embed in architecture document]
-```
-
-### Image Prompt Template
-
-For each ICP, create a detailed prompt:
-
-```
-Landing page UI concept for [product] targeting [ICP name and description].
-[Design aesthetic] aesthetic with [tone description].
-
-Layout: [Layout type], [viewport] view ([dimensions])
-- [Hero section description]
-- [Key visual elements]
-
-Color palette:
-- [Background color with hex]
-- [Primary color with hex] for [usage]
-- [Accent color with hex] for [usage]
-- [Text color with hex] for [usage]
-
-Typography:
-- [Headline style]: "[Headline text]"
-- [Subheadline style]: "[Subheadline text]"
-- [CTA text and style]
-
-Visual elements:
-- [Element 1]
-- [Element 2]
-- [Element 3]
-
-Style: [Overall style description]. [Tone]. [What to avoid].
-```
-
-### Example: ICP-Specific Prompts
-
-**ICP 1: Video-First User**
-```
-Focus on: Dynamic, playful energy
-Hero visual: Video player with timestamp markers
-Key elements: Platform logos (YouTube, TikTok), floating timestamp pills
-Color emphasis: Heavier primary color for energy
-Messaging: Action-oriented ("Stop pausing. Start cooking.")
-```
-
-**ICP 2: Overwhelmed Planner**
-```
-Focus on: Calm, organized, reassuring
-Hero visual: Calendar/planner grid with recipe cards
-Key elements: Grocery list, time-saved statistics
-Color emphasis: More accent color for calm
-Messaging: Relief-oriented ("Finally answered.")
-```
-
-**ICP 3: Legacy Preserver**
-```
-Focus on: Nostalgic, warm, heritage
-Hero visual: Handwritten → digital transformation
-Key elements: Family sharing visualization, preservation badges
-Color emphasis: Deeper, warmer tones, gold accents
-Messaging: Emotional ("Safe forever.")
-```
-
-### Saving and Embedding Concepts
-
-1. **Generate images** using the `GenerateImage` tool
-2. **Copy to public folder**: `public/docs/[feature-name]/`
-3. **Embed in architecture doc** using relative paths:
-
-```markdown
-### Concept 1: "[Concept Name]" ([ICP Name])
-
-![Concept 1 Description](/docs/[feature]/concept-1.png)
-
-**Visual Direction**: [Description]
-**Hero Design**: [Key elements]
-**Color Emphasis**: [What stands out]
-**Headline**: "[Copy]"
-**Subheadline**: "[Copy]"
-```
-
-### UI Concepts Section Template
-
-Add to architecture document:
-
-```markdown
-## UI Concepts
-
-Three distinct concepts, each tailored to resonate with a specific ICP 
-while maintaining the [design system] aesthetic.
-
-### Concept 1: "[Theme Name]" ([ICP Name])
-
-![Concept 1](/docs/[feature]/concept-1.png)
-
-**Visual Direction**: [Tone and feel]
-**Target Fit Score**: XX/100
-**Hero Design**:
-- [Layout description]
-- [Key visual element]
-- [Interactive element]
-
-**Color Emphasis**: [Which colors dominate and why]
-
-**Key Visual Elements**:
-- [Element 1]
-- [Element 2]
-- [Element 3]
-
-**Headline**: "[Copy]"
-**Subheadline**: "[Copy]"
-
----
-
-[Repeat for each ICP]
 ```
 
 ---
@@ -992,23 +755,12 @@ Copy and track progress:
 
 ```
 UX Product Thinking Progress:
-
-INPUT (choose one):
-- [ ] Path A: Competitive research with Tavily + Browser Renderer
+- [ ] Phase 0: Competitive research with Tavily + Browser Renderer (optional but recommended)
   - [ ] Search for competitors (tavily_search)
   - [ ] Extract content (tavily_extract or get_url_markdown)
   - [ ] Capture screenshots for visual analysis (get_url_screenshot)
-- [ ] Path B: Market research report provided
-  - [ ] Extract ICPs with fit scores
-  - [ ] Extract competitive positioning
-  - [ ] Extract recommended features
-
-PHASES:
 - [ ] Phase 1: Define product goals and success metrics
-- [ ] Phase 2: Analyze users/ICPs and their needs
-  - [ ] Create ICP overview table with fit scores
-  - [ ] Document each ICP's pain points and messaging
-  - [ ] Create ICP positioning quadrant chart
+- [ ] Phase 2: Analyze users and their needs
 - [ ] Phase 3: Design user flows (mermaid diagrams)
 - [ ] Phase 4: Plan component architecture
 - [ ] Phase 5: Create wireframe specifications
@@ -1019,24 +771,17 @@ PHASES:
   - [ ] Define color palette (dominant + sharp accent)
   - [ ] Plan motion/animation moments
   - [ ] Document spatial composition approach
-- [ ] Phase 7: Generate UI concepts for each ICP (RECOMMENDED)
-  - [ ] Create detailed image prompts per ICP
-  - [ ] Generate images with GenerateImage tool
-  - [ ] Save to public/docs/[feature]/
-  - [ ] Embed in architecture document
-
-OUTPUT:
 - [ ] **CREATE ARCHITECTURE DOC**: Write `docs/features/[feature]-architecture.md` (REQUIRED)
 - [ ] Document: Update context.md via context-keeper with summary + link to architecture doc
 ```
 
-**IMPORTANT**: The architecture document is a required deliverable. Phase 6 (Frontend Design) ensures distinctive implementation. Phase 7 (UI Concepts) provides visual references for each ICP before coding begins.
+**IMPORTANT**: The architecture document is a required deliverable. Phase 6 (Frontend Design) ensures the implementation will be distinctive, not generic "AI slop". Do not skip these steps.
 
 ---
 
-## Tools Quick Reference
+## MCP Tools Quick Reference
 
-### Tavily MCP (Search & Discovery)
+### Tavily (Search & Discovery)
 
 | Tool | Use For | Key Parameters |
 |------|---------|----------------|
@@ -1044,27 +789,13 @@ OUTPUT:
 | `tavily_extract` | Pull content from specific URLs | `urls`, `include_images`, `extract_depth` |
 | `tavily_crawl` | Explore site structure | `url`, `max_depth`, `instructions` |
 
-### Cloudflare Browser Renderer MCP (Visual & Content)
+### Cloudflare Browser Renderer (Visual & Content)
 
 | Tool | Use For | Key Parameters |
 |------|---------|----------------|
 | `get_url_screenshot` | Visual screenshots for design analysis | `url`, `viewport.width`, `viewport.height` |
 | `get_url_markdown` | Page content as clean markdown | `url` |
 | `get_url_html_content` | Raw HTML for style/structure inspection | `url` |
-
-### Image Generation (UI Concepts)
-
-| Tool | Use For | Key Parameters |
-|------|---------|----------------|
-| `GenerateImage` | Create UI mockups for ICPs | `description`, `filename` |
-
-**GenerateImage Tips:**
-- Include full layout description (viewport, sections)
-- Specify exact colors with hex values
-- Describe typography style and actual copy text
-- List visual elements explicitly
-- Describe overall aesthetic and tone
-- Use `filename` like `landing-concept-1-[icp-name].png`
 
 ### When to Use Which
 
@@ -1076,7 +807,6 @@ OUTPUT:
 | JS-rendered content | `get_url_markdown` |
 | Inspect CSS/HTML structure | `get_url_html_content` |
 | Site architecture overview | `tavily_crawl` |
-| **Generate ICP-specific UI mockups** | `GenerateImage` |
 
 ---
 

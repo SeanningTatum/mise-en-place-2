@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { redirect } from "react-router";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipes";
 import { Search, ChefHat, Plus, Sparkles } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
-import { useDebounce } from "@/lib/hooks";
 import { api } from "@/trpc/client";
 import type { Route } from "./+types/_index";
 
@@ -36,26 +34,19 @@ export const loader = async ({ request, context }: Route.LoaderArgs) => {
 
 export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const currentSearch = searchParams.get("search") || "";
   const currentSource = searchParams.get("source") || "all";
 
-  // Local state for immediate input feedback
-  const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
-  const debouncedSearch = useDebounce(searchInput, 300);
-
-  // Sync debounced search to URL params
-  useEffect(() => {
-    const currentUrlSearch = searchParams.get("search") || "";
-    if (debouncedSearch !== currentUrlSearch) {
-      const params = new URLSearchParams(searchParams);
-      if (debouncedSearch) {
-        params.set("search", debouncedSearch);
-      } else {
-        params.delete("search");
-      }
-      params.delete("page");
-      setSearchParams(params);
+  const handleSearchChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value) {
+      params.set("search", value);
+    } else {
+      params.delete("search");
     }
-  }, [debouncedSearch]);
+    params.delete("page");
+    setSearchParams(params);
+  };
 
   const handleSourceChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -133,8 +124,8 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           <Input
             type="search"
             placeholder="Search your recipes..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            value={currentSearch}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9 bg-card border-border/50 focus:border-primary/50"
             data-testid="recipe-search-input"
           />
@@ -213,16 +204,16 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
             </div>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-semibold mb-3 text-foreground">
-            {searchInput || currentSource !== "all"
+            {currentSearch || currentSource !== "all"
               ? "No recipes found"
               : "Your cookbook awaits"}
           </h2>
           <p className="text-muted-foreground mb-8 max-w-md leading-relaxed">
-            {searchInput || currentSource !== "all"
+            {currentSearch || currentSource !== "all"
               ? "No recipes match your filters. Try adjusting your search or explore all recipes."
               : "Transform your favorite YouTube cooking videos and food blogs into a beautifully organized personal cookbook."}
           </p>
-          {!searchInput && currentSource === "all" && (
+          {!currentSearch && currentSource === "all" && (
             <Link to="/recipes/new">
               <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-first-recipe-button">
                 <Sparkles className="h-4 w-4" />

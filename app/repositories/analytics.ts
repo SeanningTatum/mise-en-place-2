@@ -1,25 +1,6 @@
-import {
-  sql,
-  count,
-  eq,
-  gte,
-  lte,
-  and,
-  isNotNull,
-  desc,
-  countDistinct,
-  sum,
-} from "drizzle-orm";
+import { sql, count, eq, gte, lte, and, isNotNull, desc, countDistinct } from "drizzle-orm";
 import type { Context } from "@/trpc";
-import {
-  user,
-  recipe,
-  ingredient,
-  mealPlan,
-  mealPlanEntry,
-  userProfile,
-  recipeImport,
-} from "@/db/schema";
+import { user, recipe, ingredient, mealPlan, mealPlanEntry } from "@/db/schema";
 
 type Database = Context["db"];
 
@@ -42,8 +23,8 @@ export async function getUserGrowth(db: Database, input: DateRangeInput) {
       .where(
         and(
           gte(user.createdAt, input.startDate),
-          lte(user.createdAt, input.endDate),
-        ),
+          lte(user.createdAt, input.endDate)
+        )
       )
       .groupBy(sql`date(${user.createdAt} / 1000, 'unixepoch')`)
       .orderBy(sql`date(${user.createdAt} / 1000, 'unixepoch')`);
@@ -152,7 +133,7 @@ export async function getVerificationDistribution(db: Database) {
  */
 export async function getRecentSignupsCount(
   db: Database,
-  input: { days: number },
+  input: { days: number }
 ) {
   try {
     const startDate = new Date();
@@ -184,8 +165,8 @@ export async function getRecipeGrowth(db: Database, input: DateRangeInput) {
       .where(
         and(
           gte(recipe.createdAt, input.startDate),
-          lte(recipe.createdAt, input.endDate),
-        ),
+          lte(recipe.createdAt, input.endDate)
+        )
       )
       .groupBy(sql`date(${recipe.createdAt} / 1000, 'unixepoch')`)
       .orderBy(sql`date(${recipe.createdAt} / 1000, 'unixepoch')`);
@@ -244,12 +225,8 @@ export async function getRecipeStats(db: Database) {
       totalRecipes,
       youtubeRecipes,
       blogRecipes,
-      avgCalories: avgCaloriesResult?.avg
-        ? Math.round(avgCaloriesResult.avg)
-        : null,
-      avgProtein: avgProteinResult?.avg
-        ? Math.round(avgProteinResult.avg)
-        : null,
+      avgCalories: avgCaloriesResult?.avg ? Math.round(avgCaloriesResult.avg) : null,
+      avgProtein: avgProteinResult?.avg ? Math.round(avgProteinResult.avg) : null,
       avgCarbs: avgCarbsResult?.avg ? Math.round(avgCarbsResult.avg) : null,
       avgFat: avgFatResult?.avg ? Math.round(avgFatResult.avg) : null,
     };
@@ -294,10 +271,7 @@ export async function getSourceTypeDistribution(db: Database) {
 /**
  * Get top users by recipe count
  */
-export async function getTopRecipeCreators(
-  db: Database,
-  input: { limit: number },
-) {
+export async function getTopRecipeCreators(db: Database, input: { limit: number }) {
   try {
     const results = await db
       .select({
@@ -336,8 +310,8 @@ export async function getIngredientGrowth(db: Database, input: DateRangeInput) {
       .where(
         and(
           gte(ingredient.createdAt, input.startDate),
-          lte(ingredient.createdAt, input.endDate),
-        ),
+          lte(ingredient.createdAt, input.endDate)
+        )
       )
       .groupBy(sql`date(${ingredient.createdAt} / 1000, 'unixepoch')`)
       .orderBy(sql`date(${ingredient.createdAt} / 1000, 'unixepoch')`);
@@ -399,8 +373,8 @@ export async function getMealPlanGrowth(db: Database, input: DateRangeInput) {
       .where(
         and(
           gte(mealPlan.createdAt, input.startDate),
-          lte(mealPlan.createdAt, input.endDate),
-        ),
+          lte(mealPlan.createdAt, input.endDate)
+        )
       )
       .groupBy(sql`date(${mealPlan.createdAt} / 1000, 'unixepoch')`)
       .orderBy(sql`date(${mealPlan.createdAt} / 1000, 'unixepoch')`);
@@ -415,12 +389,8 @@ export async function getMealPlanGrowth(db: Database, input: DateRangeInput) {
  */
 export async function getMealPlanStats(db: Database) {
   try {
-    const [totalPlansResult] = await db
-      .select({ count: count() })
-      .from(mealPlan);
-    const [totalEntriesResult] = await db
-      .select({ count: count() })
-      .from(mealPlanEntry);
+    const [totalPlansResult] = await db.select({ count: count() }).from(mealPlan);
+    const [totalEntriesResult] = await db.select({ count: count() }).from(mealPlanEntry);
     const [uniquePlannersResult] = await db
       .select({ count: countDistinct(mealPlan.userId) })
       .from(mealPlan);
@@ -502,10 +472,7 @@ export async function getDayOfWeekDistribution(db: Database) {
 /**
  * Get most frequently planned recipes
  */
-export async function getMostPlannedRecipes(
-  db: Database,
-  input: { limit: number },
-) {
+export async function getMostPlannedRecipes(db: Database, input: { limit: number }) {
   try {
     const results = await db
       .select({
@@ -526,207 +493,6 @@ export async function getMostPlannedRecipes(
     }));
   } catch (error) {
     console.error("Failed to get most planned recipes:", error);
-    return [];
-  }
-}
-
-// ============================================
-// Profile Sharing Analytics
-// ============================================
-
-/**
- * Get profile sharing growth data grouped by day
- */
-export async function getProfileGrowth(db: Database, input: DateRangeInput) {
-  try {
-    return await db
-      .select({
-        date: sql<string>`date(${userProfile.createdAt} / 1000, 'unixepoch')`,
-        count: count(),
-      })
-      .from(userProfile)
-      .where(
-        and(
-          gte(userProfile.createdAt, input.startDate),
-          lte(userProfile.createdAt, input.endDate),
-        ),
-      )
-      .groupBy(sql`date(${userProfile.createdAt} / 1000, 'unixepoch')`)
-      .orderBy(sql`date(${userProfile.createdAt} / 1000, 'unixepoch')`);
-  } catch (error) {
-    console.error("Failed to get profile growth:", error);
-    return [];
-  }
-}
-
-/**
- * Get summary statistics for profile sharing
- */
-export async function getProfileSharingStats(db: Database) {
-  try {
-    const [totalProfilesResult] = await db
-      .select({ count: count() })
-      .from(userProfile);
-    const [publicProfilesResult] = await db
-      .select({ count: count() })
-      .from(userProfile)
-      .where(eq(userProfile.isPublic, true));
-    const [totalViewsResult] = await db
-      .select({ total: sum(userProfile.viewCount) })
-      .from(userProfile);
-    const [totalImportsResult] = await db
-      .select({ count: count() })
-      .from(recipeImport);
-    const [publicRecipesResult] = await db
-      .select({ count: count() })
-      .from(recipe)
-      .where(eq(recipe.isPublic, true));
-
-    const totalProfiles = totalProfilesResult?.count ?? 0;
-    const publicProfiles = publicProfilesResult?.count ?? 0;
-    const totalViews = Number(totalViewsResult?.total) || 0;
-    const totalImports = totalImportsResult?.count ?? 0;
-    const publicRecipes = publicRecipesResult?.count ?? 0;
-
-    const publicRate =
-      totalProfiles > 0
-        ? Math.round((publicProfiles / totalProfiles) * 100)
-        : 0;
-
-    return {
-      totalProfiles,
-      publicProfiles,
-      privateProfiles: totalProfiles - publicProfiles,
-      totalViews,
-      totalImports,
-      publicRecipes,
-      publicRate,
-    };
-  } catch (error) {
-    console.error("Failed to get profile sharing stats:", error);
-    return {
-      totalProfiles: 0,
-      publicProfiles: 0,
-      privateProfiles: 0,
-      totalViews: 0,
-      totalImports: 0,
-      publicRecipes: 0,
-      publicRate: 0,
-    };
-  }
-}
-
-/**
- * Get profile visibility distribution
- */
-export async function getProfileVisibilityDistribution(db: Database) {
-  try {
-    const [publicResult] = await db
-      .select({ count: count() })
-      .from(userProfile)
-      .where(eq(userProfile.isPublic, true));
-    const [privateResult] = await db
-      .select({ count: count() })
-      .from(userProfile)
-      .where(eq(userProfile.isPublic, false));
-
-    return [
-      { name: "Public", value: publicResult?.count ?? 0 },
-      { name: "Private", value: privateResult?.count ?? 0 },
-    ];
-  } catch (error) {
-    console.error("Failed to get profile visibility distribution:", error);
-    return [];
-  }
-}
-
-/**
- * Get recipe import growth data grouped by day
- */
-export async function getRecipeImportGrowth(
-  db: Database,
-  input: DateRangeInput,
-) {
-  try {
-    return await db
-      .select({
-        date: sql<string>`date(${recipeImport.importedAt} / 1000, 'unixepoch')`,
-        count: count(),
-      })
-      .from(recipeImport)
-      .where(
-        and(
-          gte(recipeImport.importedAt, input.startDate),
-          lte(recipeImport.importedAt, input.endDate),
-        ),
-      )
-      .groupBy(sql`date(${recipeImport.importedAt} / 1000, 'unixepoch')`)
-      .orderBy(sql`date(${recipeImport.importedAt} / 1000, 'unixepoch')`);
-  } catch (error) {
-    console.error("Failed to get recipe import growth:", error);
-    return [];
-  }
-}
-
-/**
- * Get top profiles by view count
- */
-export async function getTopProfilesByViews(
-  db: Database,
-  input: { limit: number },
-) {
-  try {
-    const results = await db
-      .select({
-        profileId: userProfile.id,
-        username: userProfile.username,
-        displayName: userProfile.displayName,
-        viewCount: userProfile.viewCount,
-      })
-      .from(userProfile)
-      .where(eq(userProfile.isPublic, true))
-      .orderBy(desc(userProfile.viewCount))
-      .limit(input.limit);
-
-    return results.map((r) => ({
-      profileId: r.profileId,
-      username: r.username,
-      displayName: r.displayName ?? r.username,
-      viewCount: r.viewCount,
-    }));
-  } catch (error) {
-    console.error("Failed to get top profiles by views:", error);
-    return [];
-  }
-}
-
-/**
- * Get most saved/imported recipes
- */
-export async function getMostSavedRecipes(
-  db: Database,
-  input: { limit: number },
-) {
-  try {
-    const results = await db
-      .select({
-        recipeId: recipeImport.sourceRecipeId,
-        recipeTitle: recipe.title,
-        saveCount: count(),
-      })
-      .from(recipeImport)
-      .innerJoin(recipe, eq(recipeImport.sourceRecipeId, recipe.id))
-      .groupBy(recipeImport.sourceRecipeId, recipe.title)
-      .orderBy(desc(count()))
-      .limit(input.limit);
-
-    return results.map((r) => ({
-      recipeId: r.recipeId,
-      recipeTitle: r.recipeTitle,
-      saveCount: r.saveCount,
-    }));
-  } catch (error) {
-    console.error("Failed to get most saved recipes:", error);
     return [];
   }
 }

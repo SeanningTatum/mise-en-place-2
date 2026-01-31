@@ -22,13 +22,6 @@
       "when": 1769708331326,
       "tag": "0002_add_meal_plan_tables",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1769805855139,
-      "tag": "0003_add_profile_sharing",
-      "breakpoints": true
     }
   ]
 }
