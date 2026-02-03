@@ -225,43 +225,43 @@ export default function PublicProfilePage({ loaderData, params }: Route.Componen
               </div>
             )
           ) : // Recipe Grid
-          currentRecipes.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>
-                {activeTab === "original"
-                  ? "No original recipes shared yet."
-                  : "No collected recipes shared yet."}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentRecipes.map((recipe) => (
-                <div key={recipe.id} className="relative">
-                  {/* Original badge for custom recipes */}
-                  {recipe.isCustom && (
-                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full shadow-sm">
-                      <Star className="h-3 w-3" />
-                      Original
-                    </div>
-                  )}
-                  <PublicRecipeCard
-                    id={recipe.id}
-                    title={recipe.title}
-                    slug={recipe.slug}
-                    description={recipe.description}
-                    thumbnailUrl={recipe.thumbnailUrl}
-                    sourceType={recipe.sourceType}
-                    calories={recipe.calories}
-                    protein={recipe.protein}
-                    saveCount={recipe.saveCount}
-                    username={params.username}
-                    onSave={() => handleSaveRecipe(recipe.id)}
-                    isSaving={savingRecipeId === recipe.id}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+            currentRecipes.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>
+                  {activeTab === "original"
+                    ? "No original recipes shared yet."
+                    : "No collected recipes shared yet."}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentRecipes.map((recipe) => (
+                  <div key={recipe.id} className="relative">
+                    {/* Original badge for custom recipes */}
+                    {recipe.isCustom && (
+                      <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+                        <Star className="h-3 w-3" />
+                        Original
+                      </div>
+                    )}
+                    <PublicRecipeCard
+                      id={recipe.id}
+                      title={recipe.title}
+                      slug={recipe.slug}
+                      description={recipe.description}
+                      thumbnailUrl={recipe.thumbnailUrl}
+                      sourceType={recipe.sourceType}
+                      calories={recipe.calories}
+                      protein={recipe.protein}
+                      saveCount={recipe.saveCount}
+                      username={params.username}
+                      onSave={() => handleSaveRecipe(recipe.id)}
+                      isSaving={savingRecipeId === recipe.id}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
         </section>
       </main>
 

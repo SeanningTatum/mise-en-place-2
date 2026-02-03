@@ -188,11 +188,11 @@ function generateSlug(name: string): string {
  */
 export async function createTemplate(
   db: Database,
-  input: CreateTemplateInput
+  input: CreateTemplateInput,
 ): Promise<{ id: string; slug: string }> {
   log.debug(
     { userId: input.userId, mealPlanId: input.mealPlanId, name: input.name },
-    "Creating meal plan template"
+    "Creating meal plan template",
   );
 
   try {
@@ -203,7 +203,10 @@ export async function createTemplate(
       })
       .from(mealPlan)
       .where(
-        and(eq(mealPlan.id, input.mealPlanId), eq(mealPlan.userId, input.userId))
+        and(
+          eq(mealPlan.id, input.mealPlanId),
+          eq(mealPlan.userId, input.userId),
+        ),
       )
       .limit(1);
 
@@ -225,7 +228,7 @@ export async function createTemplate(
       throw new ValidationError(
         "mealPlanTemplate",
         "Cannot create template from empty meal plan",
-        "entries"
+        "entries",
       );
     }
 
@@ -261,25 +264,22 @@ export async function createTemplate(
         entryCount: entries.length,
         userId: input.userId,
       },
-      "Meal plan template created"
+      "Meal plan template created",
     );
 
     return { id: templateId, slug };
   } catch (error) {
-    if (
-      error instanceof NotFoundError ||
-      error instanceof ValidationError
-    ) {
+    if (error instanceof NotFoundError || error instanceof ValidationError) {
       throw error;
     }
     log.error(
       { err: error, userId: input.userId, mealPlanId: input.mealPlanId },
-      "Failed to create meal plan template"
+      "Failed to create meal plan template",
     );
     throw new CreationError(
       "mealPlanTemplate",
       "Failed to create template",
-      error
+      error,
     );
   }
 }
@@ -289,11 +289,11 @@ export async function createTemplate(
  */
 export async function updateTemplate(
   db: Database,
-  input: UpdateTemplateInput
+  input: UpdateTemplateInput,
 ): Promise<{ success: boolean; slug: string }> {
   log.debug(
     { templateId: input.templateId, userId: input.userId },
-    "Updating meal plan template"
+    "Updating meal plan template",
   );
 
   try {
@@ -308,8 +308,8 @@ export async function updateTemplate(
       .where(
         and(
           eq(mealPlanTemplate.id, input.templateId),
-          eq(mealPlanTemplate.createdById, input.userId)
-        )
+          eq(mealPlanTemplate.createdById, input.userId),
+        ),
       )
       .limit(1);
 
@@ -343,7 +343,7 @@ export async function updateTemplate(
 
     log.info(
       { templateId: input.templateId, updates: Object.keys(updateData) },
-      "Meal plan template updated"
+      "Meal plan template updated",
     );
 
     return { success: true, slug };
@@ -351,12 +351,12 @@ export async function updateTemplate(
     if (error instanceof NotFoundError) throw error;
     log.error(
       { err: error, templateId: input.templateId },
-      "Failed to update meal plan template"
+      "Failed to update meal plan template",
     );
     throw new UpdateError(
       "mealPlanTemplate",
       "Failed to update template",
-      error
+      error,
     );
   }
 }
@@ -366,11 +366,11 @@ export async function updateTemplate(
  */
 export async function deleteTemplate(
   db: Database,
-  input: DeleteTemplateInput
+  input: DeleteTemplateInput,
 ): Promise<{ success: boolean }> {
   log.debug(
     { templateId: input.templateId, userId: input.userId },
-    "Deleting meal plan template"
+    "Deleting meal plan template",
   );
 
   try {
@@ -381,8 +381,8 @@ export async function deleteTemplate(
       .where(
         and(
           eq(mealPlanTemplate.id, input.templateId),
-          eq(mealPlanTemplate.createdById, input.userId)
-        )
+          eq(mealPlanTemplate.createdById, input.userId),
+        ),
       )
       .limit(1);
 
@@ -400,12 +400,12 @@ export async function deleteTemplate(
     if (error instanceof NotFoundError) throw error;
     log.error(
       { err: error, templateId: input.templateId },
-      "Failed to delete meal plan template"
+      "Failed to delete meal plan template",
     );
     throw new DeletionError(
       "mealPlanTemplate",
       "Failed to delete template",
-      error
+      error,
     );
   }
 }
@@ -415,11 +415,11 @@ export async function deleteTemplate(
  */
 export async function getTemplateById(
   db: Database,
-  input: GetTemplateInput
+  input: GetTemplateInput,
 ): Promise<TemplateWithEntries> {
   log.debug(
     { templateId: input.templateId, userId: input.userId },
-    "Getting meal plan template"
+    "Getting meal plan template",
   );
 
   try {
@@ -430,8 +430,8 @@ export async function getTemplateById(
       .where(
         and(
           eq(mealPlanTemplate.id, input.templateId),
-          eq(mealPlanTemplate.createdById, input.userId)
-        )
+          eq(mealPlanTemplate.createdById, input.userId),
+        ),
       )
       .limit(1);
 
@@ -484,13 +484,9 @@ export async function getTemplateById(
     if (error instanceof NotFoundError) throw error;
     log.error(
       { err: error, templateId: input.templateId },
-      "Failed to get meal plan template"
+      "Failed to get meal plan template",
     );
-    throw new QueryError(
-      "mealPlanTemplate",
-      "Failed to get template",
-      error
-    );
+    throw new QueryError("mealPlanTemplate", "Failed to get template", error);
   }
 }
 
@@ -499,7 +495,7 @@ export async function getTemplateById(
  */
 export async function listUserTemplates(
   db: Database,
-  input: ListUserTemplatesInput
+  input: ListUserTemplatesInput,
 ): Promise<TemplateListItem[]> {
   log.debug({ userId: input.userId }, "Listing user templates");
 
@@ -544,11 +540,7 @@ export async function listUserTemplates(
     }));
   } catch (error) {
     log.error({ err: error, userId: input.userId }, "Failed to list templates");
-    throw new QueryError(
-      "mealPlanTemplate",
-      "Failed to list templates",
-      error
-    );
+    throw new QueryError("mealPlanTemplate", "Failed to list templates", error);
   }
 }
 
@@ -557,7 +549,7 @@ export async function listUserTemplates(
  */
 export async function listPublicTemplates(
   db: Database,
-  input: ListPublicTemplatesInput
+  input: ListPublicTemplatesInput,
 ): Promise<TemplateListItem[]> {
   log.debug({ username: input.username }, "Listing public templates");
 
@@ -592,8 +584,8 @@ export async function listPublicTemplates(
       .where(
         and(
           eq(mealPlanTemplate.createdById, userId),
-          eq(mealPlanTemplate.isPublic, true)
-        )
+          eq(mealPlanTemplate.isPublic, true),
+        ),
       )
       .orderBy(mealPlanTemplate.createdAt);
 
@@ -621,12 +613,12 @@ export async function listPublicTemplates(
   } catch (error) {
     log.error(
       { err: error, username: input.username },
-      "Failed to list public templates"
+      "Failed to list public templates",
     );
     throw new QueryError(
       "mealPlanTemplate",
       "Failed to list public templates",
-      error
+      error,
     );
   }
 }
@@ -636,11 +628,11 @@ export async function listPublicTemplates(
  */
 export async function getPublicTemplateBySlug(
   db: Database,
-  input: GetPublicTemplateBySlugInput
+  input: GetPublicTemplateBySlugInput,
 ): Promise<PublicTemplateResponse | null> {
   log.debug(
     { username: input.username, slug: input.slug },
-    "Getting public template by slug"
+    "Getting public template by slug",
   );
 
   try {
@@ -670,8 +662,8 @@ export async function getPublicTemplateBySlug(
         and(
           eq(mealPlanTemplate.createdById, profile.userId),
           eq(mealPlanTemplate.slug, input.slug),
-          eq(mealPlanTemplate.isPublic, true)
-        )
+          eq(mealPlanTemplate.isPublic, true),
+        ),
       )
       .limit(1);
 
@@ -701,15 +693,17 @@ export async function getPublicTemplateBySlug(
       .where(eq(mealPlanTemplateEntry.templateId, template.id));
 
     // Calculate nutrition summary
-    const recipesWithCalories = entries.filter((e) => e.recipeCalories !== null);
+    const recipesWithCalories = entries.filter(
+      (e) => e.recipeCalories !== null,
+    );
     const recipesWithProtein = entries.filter((e) => e.recipeProtein !== null);
     const avgCalories =
       recipesWithCalories.length > 0
         ? Math.round(
             recipesWithCalories.reduce(
               (sum, e) => sum + (e.recipeCalories ?? 0),
-              0
-            ) / recipesWithCalories.length
+              0,
+            ) / recipesWithCalories.length,
           )
         : 0;
     const avgProtein =
@@ -717,8 +711,8 @@ export async function getPublicTemplateBySlug(
         ? Math.round(
             recipesWithProtein.reduce(
               (sum, e) => sum + (e.recipeProtein ?? 0),
-              0
-            ) / recipesWithProtein.length
+              0,
+            ) / recipesWithProtein.length,
           )
         : 0;
 
@@ -740,10 +734,7 @@ export async function getPublicTemplateBySlug(
         .where(inArray(recipeIngredient.recipeId, recipeIds));
 
       // Dedupe by ingredient ID
-      const uniqueIngredients = new Map<
-        string,
-        { category: string | null }
-      >();
+      const uniqueIngredients = new Map<string, { category: string | null }>();
       for (const ing of ingredientsData) {
         if (!uniqueIngredients.has(ing.ingredientId)) {
           uniqueIngredients.set(ing.ingredientId, {
@@ -809,12 +800,12 @@ export async function getPublicTemplateBySlug(
   } catch (error) {
     log.error(
       { err: error, username: input.username, slug: input.slug },
-      "Failed to get public template"
+      "Failed to get public template",
     );
     throw new QueryError(
       "mealPlanTemplate",
       "Failed to get public template",
-      error
+      error,
     );
   }
 }
@@ -824,7 +815,7 @@ export async function getPublicTemplateBySlug(
  */
 export async function importTemplate(
   db: Database,
-  input: ImportTemplateInput
+  input: ImportTemplateInput,
 ): Promise<{ success: boolean; mealPlanId: string; entriesImported: number }> {
   log.debug(
     {
@@ -832,7 +823,7 @@ export async function importTemplate(
       userId: input.userId,
       targetWeek: input.targetWeekStart,
     },
-    "Importing meal plan template"
+    "Importing meal plan template",
   );
 
   try {
@@ -872,7 +863,7 @@ export async function importTemplate(
       throw new ValidationError(
         "mealPlanTemplate",
         "Template has no entries",
-        "entries"
+        "entries",
       );
     }
 
@@ -883,8 +874,8 @@ export async function importTemplate(
       .where(
         and(
           eq(mealPlan.userId, input.userId),
-          eq(mealPlan.weekStartDate, input.targetWeekStart)
-        )
+          eq(mealPlan.weekStartDate, input.targetWeekStart),
+        ),
       )
       .limit(1);
 
@@ -937,7 +928,7 @@ export async function importTemplate(
         entriesImported: newEntries.length,
         userId: input.userId,
       },
-      "Meal plan template imported"
+      "Meal plan template imported",
     );
 
     return {
@@ -946,20 +937,17 @@ export async function importTemplate(
       entriesImported: newEntries.length,
     };
   } catch (error) {
-    if (
-      error instanceof NotFoundError ||
-      error instanceof ValidationError
-    ) {
+    if (error instanceof NotFoundError || error instanceof ValidationError) {
       throw error;
     }
     log.error(
       { err: error, templateId: input.templateId, userId: input.userId },
-      "Failed to import meal plan template"
+      "Failed to import meal plan template",
     );
     throw new CreationError(
       "mealPlanTemplate",
       "Failed to import template",
-      error
+      error,
     );
   }
 }
@@ -969,9 +957,12 @@ export async function importTemplate(
  */
 export async function incrementViewCount(
   db: Database,
-  input: IncrementViewCountInput
+  input: IncrementViewCountInput,
 ): Promise<{ success: boolean }> {
-  log.trace({ templateId: input.templateId }, "Incrementing template view count");
+  log.trace(
+    { templateId: input.templateId },
+    "Incrementing template view count",
+  );
 
   try {
     await db
@@ -985,7 +976,7 @@ export async function incrementViewCount(
   } catch (error) {
     log.error(
       { err: error, templateId: input.templateId },
-      "Failed to increment view count"
+      "Failed to increment view count",
     );
     // Don't throw - view count is non-critical
     return { success: false };

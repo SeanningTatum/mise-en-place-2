@@ -140,8 +140,8 @@ function MealCell({ entry, compact, isLastColumn }: MealCellProps) {
     entry.recipe.sourceType === "youtube"
       ? Youtube
       : entry.recipe.sourceType === "custom"
-      ? ChefHat
-      : Globe;
+        ? ChefHat
+        : Globe;
 
   return (
     <div

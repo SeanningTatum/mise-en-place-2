@@ -77,7 +77,7 @@ setup("authenticate", async ({ page }) => {
   
   // Verify we're logged in by checking we can access a protected route
   await page.goto("/recipes");
-  await expect(page.locator("h1")).toContainText(/Recipes/i, { timeout: 10000 });
+  await expect(page.locator("h1")).toContainText(/Your Cookbook|Recipes/i, { timeout: 10000 });
 
   // Save auth state
   await page.context().storageState({ path: AUTH_FILE });

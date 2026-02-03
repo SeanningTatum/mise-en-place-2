@@ -13,7 +13,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
         description: z.string().max(500).optional(),
         theme: z.string().max(50).optional(),
         mealPlanId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.createTemplate(ctx.db, {
@@ -37,7 +37,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
         theme: z.string().max(50).nullish(),
         coverImageUrl: z.string().url().nullish(),
         isPublic: z.boolean().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.updateTemplate(ctx.db, {
@@ -58,7 +58,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
     .input(
       z.object({
         templateId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.deleteTemplate(ctx.db, {
@@ -74,7 +74,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
     .input(
       z.object({
         templateId: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.getTemplateById(ctx.db, {
@@ -100,7 +100,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
       z.object({
         username: z.string(),
         slug: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.getPublicTemplateBySlug(ctx.db, {
@@ -116,7 +116,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
     .input(
       z.object({
         username: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.listPublicTemplates(ctx.db, {
@@ -132,7 +132,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
       z.object({
         templateId: z.string(),
         targetWeekStart: z.string(), // ISO date string (Monday)
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.importTemplate(ctx.db, {
@@ -149,7 +149,7 @@ export const mealPlanTemplateRouter = createTRPCRouter({
     .input(
       z.object({
         templateId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       return await mealPlanTemplateRepository.incrementViewCount(ctx.db, {

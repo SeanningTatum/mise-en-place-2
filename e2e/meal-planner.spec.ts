@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Meal Planner", () => {
-  test.use({ storageState: "playwright/.auth/user.json" });
+  test.use({ storageState: "e2e/.auth/user.json" });
 
   test.beforeEach(async ({ page }) => {
     await page.goto("/recipes/planner");
@@ -85,7 +85,7 @@ test.describe("Meal Planner", () => {
 });
 
 test.describe("Meal Planner with Recipes", () => {
-  test.use({ storageState: "playwright/.auth/user.json" });
+  test.use({ storageState: "e2e/.auth/user.json" });
 
   test("can add and remove recipe from meal slot", async ({ page }) => {
     // First, we need to have at least one recipe

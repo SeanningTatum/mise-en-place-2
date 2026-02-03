@@ -151,11 +151,10 @@ export function ImportModal({
           {/* Warning/info message */}
           {targetWeekStart && (
             <div
-              className={`flex items-start gap-2 p-3 rounded-lg text-sm ${
-                showWarning
+              className={`flex items-start gap-2 p-3 rounded-lg text-sm ${showWarning
                   ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
                   : "bg-green-500/10 text-green-700 dark:text-green-400"
-              }`}
+                }`}
             >
               {showWarning ? (
                 <>

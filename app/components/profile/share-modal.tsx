@@ -29,13 +29,13 @@ export function ShareModal({
   slug,
 }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  
+
   // Build URL based on share type
   const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
   let shareUrl: string;
   let shareText: string;
   let modalTitle: string;
-  
+
   switch (shareType) {
     case "plan":
       shareUrl = `${baseUrl}/u/${username}/plans/${slug}`;
@@ -52,7 +52,7 @@ export function ShareModal({
       shareText = `Check out ${displayName || username}'s recipe collection on mise en place!`;
       modalTitle = "Share Your Collection";
   }
-  
+
   const profileUrl = shareUrl; // Keep variable name for backwards compatibility
 
   const handleCopy = async () => {

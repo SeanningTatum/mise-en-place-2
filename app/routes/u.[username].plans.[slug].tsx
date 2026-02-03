@@ -277,27 +277,27 @@ export default function PublicPlanDetailPage({
             {(
               [...new Map(entries.map((e: TemplateEntry) => [e.recipe.id, e.recipe])).values()] as TemplateEntry["recipe"][]
             ).map((recipe) => (
-                <div
-                  key={recipe.id}
-                  className="group cursor-default"
-                  title={recipe.title}
-                >
-                  <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-2">
-                    {recipe.thumbnailUrl ? (
-                      <img
-                        src={recipe.thumbnailUrl}
-                        alt={recipe.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <UtensilsCrossed className="h-8 w-8 text-muted-foreground/30" />
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-sm font-medium line-clamp-2">{recipe.title}</p>
+              <div
+                key={recipe.id}
+                className="group cursor-default"
+                title={recipe.title}
+              >
+                <div className="aspect-square rounded-lg overflow-hidden bg-muted mb-2">
+                  {recipe.thumbnailUrl ? (
+                    <img
+                      src={recipe.thumbnailUrl}
+                      alt={recipe.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <UtensilsCrossed className="h-8 w-8 text-muted-foreground/30" />
+                    </div>
+                  )}
                 </div>
-              )
+                <p className="text-sm font-medium line-clamp-2">{recipe.title}</p>
+              </div>
+            )
             )}
           </div>
         </section>

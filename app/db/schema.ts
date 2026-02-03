@@ -99,9 +99,7 @@ export const recipe = sqliteTable("recipe", {
   sourceType: text("source_type", {
     enum: ["youtube", "blog", "custom"],
   }).notNull(),
-  isCustom: integer("is_custom", { mode: "boolean" })
-    .default(false)
-    .notNull(), // True for user-created recipes
+  isCustom: integer("is_custom", { mode: "boolean" }).default(false).notNull(), // True for user-created recipes
   youtubeVideoId: text("youtube_video_id"),
   thumbnailUrl: text("thumbnail_url"),
   servings: integer("servings"),
