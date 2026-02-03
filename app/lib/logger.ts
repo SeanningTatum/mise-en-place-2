@@ -113,7 +113,8 @@ export type LogLayer =
   | "repository"
   | "auth"
   | "middleware"
-  | "workflow";
+  | "workflow"
+  | "print";
 
 /**
  * Create a child logger with layer context for grouping
@@ -175,6 +176,7 @@ export const loggers = {
   auth: createLayerLogger("auth"),
   middleware: createLayerLogger("middleware"),
   workflow: createLayerLogger("workflow"),
+  print: createLayerLogger("print"),
 } as const;
 
 /**

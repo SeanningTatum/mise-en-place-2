@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { redirect, useNavigate } from "react-router";
+import { redirect } from "react-router";
 import { api } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { RecipeVisibilityList, ShareModal } from "@/components/profile";
+import { PageHeader } from "@/components/layout";
+import { ShareModal } from "@/components/profile";
 import { toast } from "sonner";
 import { Check, X, Loader2, User, ExternalLink, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,11 +31,9 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
 export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps) {
   const { user } = loaderData;
-  const navigate = useNavigate();
 
   // Queries
   const { data: profile, isLoading: profileLoading } = api.profile.getMyProfile.useQuery();
-  const { data: recipes, isLoading: recipesLoading } = api.profile.getMyRecipesForVisibility.useQuery();
 
   // Mutations
   const utils = api.useUtils();
@@ -52,15 +51,6 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
     onSuccess: () => {
       toast.success("Profile updated!");
       utils.profile.getMyProfile.invalidate();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
-
-  const setVisibilityMutation = api.profile.setRecipeVisibility.useMutation({
-    onSuccess: () => {
-      utils.profile.getMyRecipesForVisibility.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
@@ -146,15 +136,7 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
     }
   };
 
-  const handleToggleVisibility = async (recipeId: string, newIsPublic: boolean) => {
-    await setVisibilityMutation.mutateAsync({
-      recipeId,
-      isPublic: newIsPublic,
-    });
-  };
-
   const isSaving = createProfileMutation.isPending || updateProfileMutation.isPending;
-  const isLoading = profileLoading || recipesLoading;
 
   const initials = (displayName || username || user.name)
     .split(" ")
@@ -167,7 +149,7 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
     ? `${typeof window !== "undefined" ? window.location.origin : ""}/u/${profile.username}`
     : null;
 
-  if (isLoading) {
+  if (profileLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -177,13 +159,11 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
-      {/* Header */}
-      <div>
-        <h1 className="font-display text-3xl font-semibold">Public Profile</h1>
-        <p className="text-muted-foreground mt-1">
-          Share your recipe collection with a public profile page
-        </p>
-      </div>
+      <PageHeader
+        title="Profile Settings"
+        subtitle="Share your recipe collection with a public profile page"
+        backTo={{ label: "Recipes", href: "/recipes" }}
+      />
 
       {/* Public Profile Toggle */}
       <Card>
@@ -337,25 +317,6 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
           </div>
         </CardContent>
       </Card>
-
-      {/* Recipe Visibility */}
-      {profile && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-display">Recipe Visibility</CardTitle>
-            <CardDescription>
-              Choose which recipes appear on your public profile
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <RecipeVisibilityList
-              recipes={recipes || []}
-              onToggleVisibility={handleToggleVisibility}
-              isLoading={setVisibilityMutation.isPending}
-            />
-          </CardContent>
-        </Card>
-      )}
 
       {/* Share Modal */}
       {profile && (

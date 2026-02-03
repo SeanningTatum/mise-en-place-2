@@ -19,6 +19,7 @@ import {
   mealPlanEntry,
   userProfile,
   recipeImport,
+  multiCourseMeal,
 } from "@/db/schema";
 
 type Database = Context["db"];
@@ -727,6 +728,161 @@ export async function getMostSavedRecipes(
     }));
   } catch (error) {
     console.error("Failed to get most saved recipes:", error);
+    return [];
+  }
+}
+
+// ============================================
+// Multi-Course Meal Analytics
+// ============================================
+
+/**
+ * Get multi-course meal growth data grouped by day
+ */
+export async function getMultiCourseMealGrowth(
+  db: Database,
+  input: DateRangeInput,
+) {
+  try {
+    return await db
+      .select({
+        date: sql<string>`date(${multiCourseMeal.createdAt} / 1000, 'unixepoch')`,
+        count: count(),
+      })
+      .from(multiCourseMeal)
+      .where(
+        and(
+          gte(multiCourseMeal.createdAt, input.startDate),
+          lte(multiCourseMeal.createdAt, input.endDate),
+        ),
+      )
+      .groupBy(sql`date(${multiCourseMeal.createdAt} / 1000, 'unixepoch')`)
+      .orderBy(sql`date(${multiCourseMeal.createdAt} / 1000, 'unixepoch')`);
+  } catch (error) {
+    console.error("Failed to get multi-course meal growth:", error);
+    return [];
+  }
+}
+
+/**
+ * Get summary statistics for multi-course meals
+ */
+export async function getMultiCourseMealStats(db: Database) {
+  try {
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal);
+    const [publicResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.isPublic, true));
+    const [completeResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.generationStatus, "complete"));
+    const [errorResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.generationStatus, "error"));
+    const [pendingResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.generationStatus, "pending"));
+    const [generatingResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.generationStatus, "generating"));
+
+    const totalMeals = totalResult?.count ?? 0;
+    const publicMeals = publicResult?.count ?? 0;
+    const completeMeals = completeResult?.count ?? 0;
+    const errorMeals = errorResult?.count ?? 0;
+    const pendingMeals = pendingResult?.count ?? 0;
+    const generatingMeals = generatingResult?.count ?? 0;
+
+    const publicRate =
+      totalMeals > 0 ? Math.round((publicMeals / totalMeals) * 100) : 0;
+
+    const totalAttempted = completeMeals + errorMeals;
+    const successRate =
+      totalAttempted > 0
+        ? Math.round((completeMeals / totalAttempted) * 100)
+        : 0;
+
+    return {
+      totalMeals,
+      publicMeals,
+      privateMeals: totalMeals - publicMeals,
+      publicRate,
+      completeMeals,
+      errorMeals,
+      pendingMeals,
+      generatingMeals,
+      successRate,
+    };
+  } catch (error) {
+    console.error("Failed to get multi-course meal stats:", error);
+    return {
+      totalMeals: 0,
+      publicMeals: 0,
+      privateMeals: 0,
+      publicRate: 0,
+      completeMeals: 0,
+      errorMeals: 0,
+      pendingMeals: 0,
+      generatingMeals: 0,
+      successRate: 0,
+    };
+  }
+}
+
+/**
+ * Get generation status distribution
+ */
+export async function getGenerationStatusDistribution(db: Database) {
+  try {
+    const results = await db
+      .select({
+        name: multiCourseMeal.generationStatus,
+        value: count(),
+      })
+      .from(multiCourseMeal)
+      .where(isNotNull(multiCourseMeal.generationStatus))
+      .groupBy(multiCourseMeal.generationStatus);
+
+    // Capitalize status names for display
+    return results.map((r) => ({
+      name: r.name
+        ? r.name.charAt(0).toUpperCase() + r.name.slice(1)
+        : "Unknown",
+      value: r.value,
+    }));
+  } catch (error) {
+    console.error("Failed to get generation status distribution:", error);
+    return [];
+  }
+}
+
+/**
+ * Get public vs private distribution
+ */
+export async function getMealVisibilityDistribution(db: Database) {
+  try {
+    const [publicResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.isPublic, true));
+    const [privateResult] = await db
+      .select({ count: count() })
+      .from(multiCourseMeal)
+      .where(eq(multiCourseMeal.isPublic, false));
+
+    return [
+      { name: "Public", value: publicResult?.count ?? 0 },
+      { name: "Private", value: privateResult?.count ?? 0 },
+    ];
+  } catch (error) {
+    console.error("Failed to get meal visibility distribution:", error);
     return [];
   }
 }

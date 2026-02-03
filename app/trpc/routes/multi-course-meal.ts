@@ -1,12 +1,15 @@
 import { z } from "zod/v4";
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, protectedProcedure } from "..";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "..";
 import * as multiCourseMealRepository from "@/repositories/multi-course-meal";
 import * as mealPlanRepository from "@/repositories/meal-plan";
 import {
   generateMenuSuggestions,
   generateCookingTimeline,
 } from "@/lib/gemini";
+
+// Generation status enum
+const generationStatusEnum = z.enum(["pending", "generating", "complete", "error"]);
 
 // Course type enum
 const courseTypeEnum = z.enum([
@@ -88,6 +91,23 @@ const getMenuSuggestionsInput = z.object({
 
 const generateTimelineInput = z.object({
   mealId: z.string().uuid("Invalid meal ID"),
+});
+
+// New input schemas for sharing and generation
+const setPublicInput = z.object({
+  mealId: z.string().uuid("Invalid meal ID"),
+  isPublic: z.boolean(),
+});
+
+const getBySlugInput = z.object({
+  username: z.string().min(1, "Username is required"),
+  slug: z.string().min(1, "Slug is required"),
+});
+
+const updateGenerationStatusInput = z.object({
+  mealId: z.string().uuid("Invalid meal ID"),
+  status: generationStatusEnum,
+  error: z.string().optional(),
 });
 
 export const multiCourseMealRouter = createTRPCRouter({
@@ -310,5 +330,144 @@ export const multiCourseMealRouter = createTRPCRouter({
       });
 
       return timeline;
+    }),
+
+  /**
+   * Set meal public visibility
+   */
+  setPublic: protectedProcedure
+    .input(setPublicInput)
+    .mutation(async ({ ctx, input }) => {
+      return await multiCourseMealRepository.setPublicVisibility(ctx.db, {
+        mealId: input.mealId,
+        userId: ctx.auth.user.id,
+        isPublic: input.isPublic,
+      });
+    }),
+
+  /**
+   * Get generation status (for polling on loading page)
+   */
+  getGenerationStatus: protectedProcedure
+    .input(getMealInput)
+    .query(async ({ ctx, input }) => {
+      return await multiCourseMealRepository.getGenerationStatus(ctx.db, {
+        mealId: input.mealId,
+        userId: ctx.auth.user.id,
+      });
+    }),
+
+  /**
+   * Start timeline generation (async - sets status to pending, returns immediately)
+   */
+  startGeneration: protectedProcedure
+    .input(generateTimelineInput)
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.gemini) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "AI service is not configured",
+        });
+      }
+
+      // Set status to generating
+      await multiCourseMealRepository.updateGenerationStatus(ctx.db, {
+        mealId: input.mealId,
+        userId: ctx.auth.user.id,
+        status: "generating",
+      });
+
+      // Start generation in background (async - don't await)
+      // For now, we'll do it synchronously but wrap in try-catch to update status
+      try {
+        // Get meal with full recipe details
+        const mealData = await multiCourseMealRepository.getCoursesWithFullRecipes(
+          ctx.db,
+          {
+            mealId: input.mealId,
+            userId: ctx.auth.user.id,
+          }
+        );
+
+        // Generate timeline
+        const timeline = await generateCookingTimeline(ctx.gemini, {
+          mealName: mealData.meal.name,
+          guestCount: mealData.meal.guestCount,
+          servingTime: mealData.meal.servingTime,
+          serviceStyle: mealData.meal.serviceStyle,
+          courses: mealData.courses.map((c) => ({
+            courseType: c.courseType,
+            courseOrder: c.courseOrder,
+            recipe: {
+              id: c.recipe.id,
+              title: c.recipe.title,
+              servings: c.recipe.servings,
+              prepTimeMinutes: c.recipe.prepTimeMinutes,
+              cookTimeMinutes: c.recipe.cookTimeMinutes,
+              steps: c.recipe.steps,
+            },
+          })),
+        });
+
+        // Save timeline to meal
+        await multiCourseMealRepository.saveTimeline(ctx.db, {
+          mealId: input.mealId,
+          userId: ctx.auth.user.id,
+          timeline,
+        });
+
+        // Update status to complete
+        await multiCourseMealRepository.updateGenerationStatus(ctx.db, {
+          mealId: input.mealId,
+          userId: ctx.auth.user.id,
+          status: "complete",
+        });
+      } catch (error) {
+        // Update status to error
+        await multiCourseMealRepository.updateGenerationStatus(ctx.db, {
+          mealId: input.mealId,
+          userId: ctx.auth.user.id,
+          status: "error",
+          error: error instanceof Error ? error.message : "Generation failed",
+        });
+        throw error;
+      }
+
+      return { redirectTo: `/recipes/meals/${input.mealId}/generating` };
+    }),
+
+  /**
+   * Get full meal data for printing
+   */
+  getPrintData: protectedProcedure
+    .input(getMealInput)
+    .query(async ({ ctx, input }) => {
+      return await multiCourseMealRepository.getMealForPrint(ctx.db, {
+        mealId: input.mealId,
+        userId: ctx.auth.user.id,
+      });
+    }),
+
+  /**
+   * Get a public meal by username and slug (public route - no auth required)
+   */
+  getBySlug: publicProcedure
+    .input(getBySlugInput)
+    .query(async ({ ctx, input }) => {
+      return await multiCourseMealRepository.getBySlug(ctx.db, {
+        username: input.username,
+        slug: input.slug,
+      });
+    }),
+
+  /**
+   * List public meals for a user (public route - no auth required)
+   */
+  listPublicMeals: publicProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      return await multiCourseMealRepository.listPublicMeals(ctx.db, {
+        username: input.username,
+      });
     }),
 });

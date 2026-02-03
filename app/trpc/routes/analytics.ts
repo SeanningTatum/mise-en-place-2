@@ -166,4 +166,28 @@ export const analyticsRouter = createTRPCRouter({
     .query(({ ctx, input }) =>
       analyticsRepository.getMostSavedRecipes(ctx.db, input),
     ),
+
+  // Multi-course meal analytics
+  getMultiCourseMealGrowth: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      }),
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getMultiCourseMealGrowth(ctx.db, input),
+    ),
+
+  getMultiCourseMealStats: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getMultiCourseMealStats(ctx.db),
+  ),
+
+  getGenerationStatusDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getGenerationStatusDistribution(ctx.db),
+  ),
+
+  getMealVisibilityDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getMealVisibilityDistribution(ctx.db),
+  ),
 });

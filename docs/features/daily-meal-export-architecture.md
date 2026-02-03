@@ -1,3 +1,8 @@
+---
+title: Daily Meal Export Architecture
+date: 2026-02-03
+---
+
 # Daily Meal Export: Information Architecture
 
 Export recipes and cooking instructions for a day's meals from the meal planner, with two format options: separate recipe cards or a unified cooking guide.

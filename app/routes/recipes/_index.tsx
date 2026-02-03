@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipes";
-import { Search, ChefHat, Plus, Sparkles, PenLine, UtensilsCrossed } from "lucide-react";
+import { Search, ChefHat, Plus, Sparkles, PenLine } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 import { useDebounce } from "@/lib/hooks";
 import { api } from "@/trpc/client";
@@ -110,12 +110,6 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           </div>
           {/* Action buttons */}
           <div className="flex items-center gap-3 flex-wrap">
-            <Link to="/recipes/meal">
-              <Button variant="outline" className="gap-2 shadow-warm" data-testid="plan-meal-button">
-                <UtensilsCrossed className="h-4 w-4" />
-                Plan a Meal
-              </Button>
-            </Link>
             <Link to="/recipes/new">
               <Button variant="outline" className="gap-2 shadow-warm" data-testid="extract-recipe-button">
                 <Sparkles className="h-4 w-4" />

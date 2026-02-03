@@ -1,3 +1,8 @@
+---
+title: Multi-Course Meal Testing
+date: 2026-02-03
+---
+
 # Multi-Course Meal Planner - Test Plan
 
 ## Overview

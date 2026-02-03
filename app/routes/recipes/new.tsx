@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { redirect, useNavigate } from "react-router";
+import { redirect, useNavigate, Link } from "react-router";
 import { RecipeExtractor, RecipePreview, type ExtractedRecipeData } from "@/components/recipes";
 import { api } from "@/trpc/client";
-import { Sparkles, BookOpen } from "lucide-react";
+import { Sparkles, BookOpen, ArrowLeft } from "lucide-react";
 import type { Route } from "./+types/new";
 
 export const loader = async ({ request, context }: Route.LoaderArgs) => {
@@ -38,8 +38,17 @@ export default function NewRecipePage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
+      {/* Back link */}
+      <Link
+        to="/recipes"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+      >
+        <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+        <span>Back to Recipes</span>
+      </Link>
+
       {/* Header with editorial styling */}
-      <div className="text-center space-y-4 py-4">
+      <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-2 text-primary">
           <div className="h-px w-8 bg-primary/30" />
           <Sparkles className="h-5 w-5" />

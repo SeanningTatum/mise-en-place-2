@@ -278,12 +278,20 @@ export const multiCourseMeal = sqliteTable("multi_course_meal", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
+  slug: text("slug"), // URL-safe identifier for sharing
   guestCount: integer("guest_count").notNull(),
   servingTime: text("serving_time").notNull(), // ISO datetime string
   serviceStyle: text("service_style", {
     enum: ["plated", "family", "buffet"],
   }).notNull(),
   notes: text("notes"),
+  // Sharing and visibility
+  isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
+  // AI generation status for loading page
+  generationStatus: text("generation_status", {
+    enum: ["pending", "generating", "complete", "error"],
+  }),
+  generationError: text("generation_error"), // Error message if generation failed
   // Cached AI data stored as JSON
   aiSuggestionsJson: text("ai_suggestions_json", { mode: "json" }).$type<{
     suggestions?: Array<{

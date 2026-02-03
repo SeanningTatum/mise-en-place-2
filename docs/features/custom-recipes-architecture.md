@@ -1,3 +1,8 @@
+---
+title: Custom Recipes Architecture
+date: 2026-02-03
+---
+
 # Custom Recipes: Information Architecture
 
 A manual recipe creation feature allowing users to craft and share their own original recipes, displayed separately from URL-extracted recipes on public profiles.

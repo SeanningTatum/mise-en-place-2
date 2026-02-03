@@ -3,7 +3,8 @@ import { redirect, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ChefHat, Clock, ShoppingCart } from "lucide-react";
+import { PageHeader } from "@/components/layout";
+import { Clock, ShoppingCart } from "lucide-react";
 import {
   MealSetupForm,
   CourseList,
@@ -92,6 +93,17 @@ export default function MealPlannerPage({ loaderData }: Route.ComponentProps) {
     },
   });
 
+  // New mutation for async generation with loading page
+  const startGenerationMutation = api.multiCourseMeal.startGeneration.useMutation({
+    onSuccess: () => {
+      // Navigate to loading page
+      navigate(`/recipes/meals/${mealId}/generating`);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to start generation");
+    },
+  });
+
   // Query for meal data
   const {
     data: meal,
@@ -148,7 +160,8 @@ export default function MealPlannerPage({ loaderData }: Route.ComponentProps) {
 
   const handleGenerateTimeline = () => {
     if (!mealId) return;
-    generateTimelineMutation.mutate({ mealId });
+    // Use the new async generation with loading page
+    startGenerationMutation.mutate({ mealId });
   };
 
   const handleRegenerateTimeline = () => {
@@ -167,31 +180,26 @@ export default function MealPlannerPage({ loaderData }: Route.ComponentProps) {
     });
   };
 
+  // Dynamic title based on step
+  const getTitle = () => {
+    if (step === "setup") return "Plan a Multi-Course Meal";
+    if (step === "courses") return meal?.name || "Build Your Menu";
+    return meal?.name || "Cooking Timeline";
+  };
+
+  const getSubtitle = () => {
+    if (step === "setup") return "Create an elegant dining experience with AI assistance";
+    if (step === "courses") return `${meal?.guestCount || 0} guests • Add courses to your menu`;
+    return "Your personalized cooking schedule";
+  };
+
   return (
     <div className="space-y-6" data-testid="multi-course-meal-page">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/recipes")}
-          data-testid="back-to-recipes"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight">
-            {step === "setup" && "Plan a Multi-Course Meal"}
-            {step === "courses" && (meal?.name || "Build Your Menu")}
-            {step === "timeline" && (meal?.name || "Cooking Timeline")}
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {step === "setup" && "Create an elegant dining experience with AI assistance"}
-            {step === "courses" && `${meal?.guestCount || 0} guests • Add courses to your menu`}
-            {step === "timeline" && "Your personalized cooking schedule"}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={getTitle()}
+        subtitle={getSubtitle()}
+        backTo={{ label: "Recipes", href: "/recipes" }}
+      />
 
       {/* Step 1: Setup */}
       {step === "setup" && (
@@ -236,12 +244,12 @@ export default function MealPlannerPage({ loaderData }: Route.ComponentProps) {
             <Button
               onClick={handleGenerateTimeline}
               disabled={
-                meal.courses.length < 2 || generateTimelineMutation.isPending
+                meal.courses.length < 2 || startGenerationMutation.isPending
               }
               data-testid="generate-timeline-btn"
             >
-              {generateTimelineMutation.isPending
-                ? "Generating..."
+              {startGenerationMutation.isPending
+                ? "Starting..."
                 : "Generate Timeline →"}
             </Button>
           </div>
@@ -330,8 +338,8 @@ export default function MealPlannerPage({ loaderData }: Route.ComponentProps) {
             <Button variant="outline" onClick={() => setStep("courses")}>
               Back to Menu
             </Button>
-            <Button onClick={() => navigate("/recipes")}>
-              Done
+            <Button onClick={() => navigate(`/recipes/meals/${mealId}`)}>
+              View Saved Meal
             </Button>
           </div>
         </div>

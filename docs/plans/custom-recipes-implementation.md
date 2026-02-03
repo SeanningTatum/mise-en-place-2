@@ -1,3 +1,8 @@
+---
+title: Custom Recipes Implementation
+date: 2026-02-03
+---
+
 # Custom Recipes: Implementation Plan
 
 Add support for users to create their own custom recipes manually (without URL extraction) and display them in a separate "Original Recipes" section on public profiles, distinct from "Collected Recipes" (URL-extracted).

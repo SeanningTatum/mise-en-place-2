@@ -1,3 +1,8 @@
+---
+title: Profile Sharing Testing
+date: 2026-01-30
+---
+
 # Profile Sharing Feature - Testing Documentation
 
 ## Overview

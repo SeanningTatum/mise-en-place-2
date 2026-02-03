@@ -1,3 +1,8 @@
+---
+title: Multi-Course Meal Architecture
+date: 2026-02-03
+---
+
 # Multi-Course Meal Planner: Information Architecture
 
 A feature for planning and executing elegant multi-course meals with AI assistance—from selecting complementary recipes to generating prep timelines and scaled shopping lists.

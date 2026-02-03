@@ -1,10 +1,15 @@
+---
+title: Custom Recipes Testing
+date: 2026-02-03
+---
+
 # Testing Plan: Custom Recipes
 
 ## Overview
 Testing the Custom Recipes feature which allows users to manually create their own recipes with ingredients, steps, and optional nutrition information.
 
 ## Prerequisites
-- [x] Development server running at http://localhost:5173
+- [x] Development server running at http://localhost:5179
 - [x] Test user credentials: admin@test.local / TestAdmin123!
 - [x] Database with test data
 
@@ -52,7 +57,7 @@ Testing the Custom Recipes feature which allows users to manually create their o
 5. Remove one step
 **Expected Result:** Can add unlimited steps, cannot go below 2.
 
-**Screenshot:** ![Steps Management](./screenshots/create-form-steps.png)
+**Screenshot:** ![Steps Management](./screenshots/create-form-filled.png)
 
 ### Scenario 5: Complete Recipe Creation
 **Description:** Create a complete recipe and verify redirect.
@@ -154,16 +159,23 @@ bunx playwright test e2e/custom-recipes.spec.ts
 ## Test Results
 
 ### Execution Date
-Testing started: $(date)
+Testing executed: 2026-02-03
 
 ### Results Summary
 | Scenario | Status | Notes |
 |----------|--------|-------|
-| Recipe Creation Form | ⏳ Pending | |
-| Form Validation | ⏳ Pending | |
-| Add/Remove Ingredients | ⏳ Pending | |
-| Add/Remove Steps | ⏳ Pending | |
-| Complete Recipe Creation | ⏳ Pending | |
-| Recipes Index Buttons | ⏳ Pending | |
-| My Creations Tab | ⏳ Pending | |
-| Profile Page Tabs | ⏳ Pending | |
+| Recipe Creation Form | ✅ Pass | Form displays with all sections (Basic Info, Ingredients, Steps, Nutrition). Nutrition section is collapsible. |
+| Form Validation | ✅ Pass | Validation errors appear for: Title required, Description min length, Ingredient names required, Step instructions required. Fields highlighted in red. |
+| Add/Remove Ingredients | ✅ Pass | Can add ingredients with "Add Ingredient" button. Delete buttons disabled when at minimum 2, enabled when 3+. |
+| Add/Remove Steps | ✅ Pass | Same behavior as ingredients - minimum 2 required, delete disabled at minimum. |
+| Complete Recipe Creation | ✅ Pass | Recipe created successfully with all data. Redirects to detail page. "Original" badge displayed. Auto-calculated nutrition. |
+| Recipes Index Buttons | ✅ Pass | Both "Extract from URL" and "Create Your Own" buttons visible in header. |
+| My Creations Tab | ✅ Pass | Tab filters correctly to show only custom recipes (2 shown). URL changes to `?source=custom`. |
+| Profile Page Tabs | ⚠️ Partial | Public profile shows recipes but "Original Recipes" / "Collected Recipes" tabs not visible. Only shows shared recipes. Custom recipes may need to be marked public to appear. |
+
+### Issues Found
+1. **Profile Page Tabs**: The public profile page (`/u/username`) shows a single "Recipes" section rather than separate "Original Recipes" and "Collected Recipes" tabs. This may be by design or a feature to implement.
+
+### Test Artifacts
+- Created test recipe: "Test Recipe for Custom Recipes" at `/recipes/ee51ccd0-6831-4582-8b96-6314a9be5a1f`
+- All screenshots saved to `docs/testing/custom-recipes/screenshots/`

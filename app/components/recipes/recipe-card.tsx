@@ -56,7 +56,7 @@ export function RecipeCard({
               )}
             </div>
           )}
-          
+
           {/* Source badge - top right */}
           <Badge
             variant="secondary"
@@ -87,7 +87,7 @@ export function RecipeCard({
           <h3 className="font-display text-lg font-medium line-clamp-2 leading-tight text-foreground group-hover:text-primary transition-colors">
             {title}
           </h3>
-          
+
           {/* Macros row */}
           {(calories || protein) && (
             <div className="mt-3 pt-3 border-t border-border/50">

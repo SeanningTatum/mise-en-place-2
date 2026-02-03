@@ -1,3 +1,8 @@
+---
+title: Multi-Course Meal Implementation
+date: 2026-02-03
+---
+
 # Multi-Course Meal Planner Implementation Plan
 
 ## Overview

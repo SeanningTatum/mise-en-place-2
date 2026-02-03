@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { redirect } from "react-router";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/layout";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import {
   WeeklyPlannerGrid,
@@ -170,51 +171,45 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
 
   return (
     <div className="space-y-6" data-testid="meal-planner-page">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight">
-            Meal Planner
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            {formatWeekRange(currentWeekStart)}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {!isCurrentWeek && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToCurrentWeek}
-              className="gap-1.5"
-            >
-              <Calendar className="h-4 w-4" />
-              Today
-            </Button>
-          )}
-          <div className="flex items-center rounded-lg border border-border">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToPreviousWeek}
-              className="rounded-r-none"
-              data-testid="prev-week"
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={goToNextWeek}
-              className="rounded-l-none"
-              data-testid="next-week"
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+      <PageHeader
+        title="Weekly Planner"
+        subtitle={formatWeekRange(currentWeekStart)}
+        actions={
+          <div className="flex items-center gap-2">
+            {!isCurrentWeek && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToCurrentWeek}
+                className="gap-1.5"
+              >
+                <Calendar className="h-4 w-4" />
+                Today
+              </Button>
+            )}
+            <div className="flex items-center rounded-lg border border-border">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToPreviousWeek}
+                className="rounded-r-none"
+                data-testid="prev-week"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={goToNextWeek}
+                className="rounded-l-none"
+                data-testid="next-week"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Weekly Grid */}
       {isPlanLoading ? (

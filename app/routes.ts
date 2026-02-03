@@ -33,7 +33,11 @@ export default [
       route("/create", "routes/recipes/create.tsx"),
       route("/planner", "routes/recipes/planner.tsx"),
       route("/meal", "routes/recipes/meal.tsx"),
+      route("/meals", "routes/recipes/meals.tsx"),
+      route("/meals/:id", "routes/recipes/meals.[id].tsx"),
+      route("/meals/:id/generating", "routes/recipes/meals.$id.generating.tsx"),
       route("/profile", "routes/recipes/profile.tsx"),
+      route("/visibility", "routes/recipes/visibility.tsx"),
       route("/:id", "routes/recipes/[id].tsx"),
     ]),
   ]),
@@ -41,6 +45,8 @@ export default [
   // Public Profile Routes (no auth required)
   route("/u/:username", "routes/u.[username].tsx"),
   route("/u/:username/recipe/:slug", "routes/u.[username].recipe.[slug].tsx"),
+  route("/u/:username/meals", "routes/u.[username].meals.tsx"),
+  route("/u/:username/meals/:slug", "routes/u.[username].meals.[slug].tsx"),
 
   // Admin Routes
   ...prefix("admin", [

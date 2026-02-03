@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { redirect, useNavigate } from "react-router";
+import { redirect, useNavigate, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +42,7 @@ import {
   ListOrdered,
   ChevronDown,
   PenLine,
+  ArrowLeft,
 } from "lucide-react";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
@@ -139,6 +140,17 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
 
   const isYouTubeRecipe = recipe.sourceType === "youtube" && recipe.youtubeVideoId;
 
+  // Back link component
+  const BackLink = () => (
+    <Link
+      to="/recipes"
+      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group mb-4"
+    >
+      <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+      <span>Back to Recipes</span>
+    </Link>
+  );
+
   // Shared header component
   const RecipeHeader = () => (
     <div className="flex items-start justify-between gap-4">
@@ -223,6 +235,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   if (isYouTubeRecipe) {
     return (
       <div className="mx-auto max-w-7xl">
+        <BackLink />
         {/* Conditionally render mobile OR desktop layout - never both */}
         {!isDesktop ? (
           // Mobile: Stacked layout
@@ -380,6 +393,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   // Non-YouTube recipe: Original editorial layout
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      <BackLink />
       <RecipeHeader />
 
       {/* Macros Card */}
