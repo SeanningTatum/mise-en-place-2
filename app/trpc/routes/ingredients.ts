@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
-import { createTRPCRouter, adminProcedure } from "..";
+import { createTRPCRouter, adminProcedure, protectedProcedure } from "..";
 import * as ingredientRepository from "@/repositories/ingredient";
+import { findSimilarIngredients } from "@/lib/gemini";
 import { loggers } from "@/lib/logger";
 
 const log = loggers.trpc;
@@ -22,6 +23,15 @@ const updateIngredientInput = z.object({
   id: z.string().uuid("Invalid ingredient ID"),
   name: z.string().min(1).optional(),
   category: z.string().nullable().optional(),
+});
+
+const searchIngredientsInput = z.object({
+  query: z.string().min(2, "Query must be at least 2 characters"),
+  limit: z.number().int().min(1).max(20).default(10),
+});
+
+const suggestSimilarInput = z.object({
+  name: z.string().min(2, "Ingredient name must be at least 2 characters"),
 });
 
 export const ingredientsRouter = createTRPCRouter({
@@ -66,4 +76,86 @@ export const ingredientsRouter = createTRPCRouter({
   categories: adminProcedure.query(async ({ ctx }) => {
     return await ingredientRepository.getIngredientCategories(ctx.db);
   }),
+
+  // ============== User Routes (protected) ==============
+
+  /**
+   * Search ingredients by name (for autocomplete)
+   */
+  search: protectedProcedure
+    .input(searchIngredientsInput)
+    .query(async ({ ctx, input }) => {
+      return await ingredientRepository.searchIngredients(ctx.db, input);
+    }),
+
+  /**
+   * Suggest similar existing ingredients using AI
+   * First checks alias table, then uses AI if no alias match
+   */
+  suggestSimilar: protectedProcedure
+    .input(suggestSimilarInput)
+    .query(async ({ ctx, input }) => {
+      const normalizedName = input.name.toLowerCase().trim();
+
+      // 1. First do a direct search to find exact or close matches
+      const directMatches = await ingredientRepository.searchIngredients(ctx.db, {
+        query: normalizedName,
+        limit: 5,
+      });
+
+      // If we find exact or very close matches, return those
+      const exactMatch = directMatches.find(
+        (ing) => ing.name === normalizedName
+      );
+      if (exactMatch) {
+        return {
+          matches: [{ name: exactMatch.name, confidence: 1.0, id: exactMatch.id }],
+          source: "exact" as const,
+        };
+      }
+
+      // 2. If Gemini is available, use AI for similarity matching
+      if (ctx.gemini) {
+        const allIngredients = await ingredientRepository.getAllIngredientNames(ctx.db);
+        
+        if (allIngredients.length > 0) {
+          const aiMatches = await findSimilarIngredients(
+            ctx.gemini,
+            normalizedName,
+            allIngredients
+          );
+
+          if (aiMatches.length > 0) {
+            // Map AI matches back to ingredient IDs
+            const matchedIngredients = await Promise.all(
+              aiMatches.slice(0, 5).map(async (match) => {
+                const ing = directMatches.find((i) => i.name === match.name) ||
+                  (await ingredientRepository.searchIngredients(ctx.db, {
+                    query: match.name,
+                    limit: 1,
+                  }))[0];
+                return ing
+                  ? { name: ing.name, confidence: match.confidence, id: ing.id }
+                  : null;
+              })
+            );
+
+            return {
+              matches: matchedIngredients.filter((m): m is NonNullable<typeof m> => m !== null),
+              source: "ai" as const,
+            };
+          }
+        }
+      }
+
+      // 3. Return direct search results as fallback
+      return {
+        matches: directMatches.slice(0, 5).map((ing) => ({
+          name: ing.name,
+          confidence: 0.5,
+          id: ing.id,
+        })),
+        source: "search" as const,
+      };
+    }),
 });

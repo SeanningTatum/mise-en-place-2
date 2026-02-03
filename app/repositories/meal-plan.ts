@@ -4,6 +4,7 @@ import {
   mealPlanEntry,
   recipe,
   recipeIngredient,
+  recipeStep,
   ingredient,
 } from "@/db/schema";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@/models/errors";
 import type { Context } from "@/trpc";
 import { generateId } from "@/lib/utils";
+import { loggers } from "@/lib/logger";
 
 type Database = Context["db"];
 
@@ -43,6 +45,12 @@ interface GetMealPlanInput {
 interface GetGroceryListInput {
   mealPlanId: string;
   userId: string;
+}
+
+interface GetRecipesForDayInput {
+  mealPlanId: string;
+  userId: string;
+  dayOfWeek: number; // 0=Monday, 6=Sunday
 }
 
 // Result types
@@ -91,12 +99,57 @@ export interface GroceryList {
   recipeCount: number;
 }
 
+export interface RecipeForExport {
+  id: string;
+  title: string;
+  description: string | null;
+  sourceUrl: string;
+  sourceType: "youtube" | "blog";
+  thumbnailUrl: string | null;
+  servings: number | null;
+  prepTimeMinutes: number | null;
+  cookTimeMinutes: number | null;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  fiber: number | null;
+  steps: Array<{
+    id: string;
+    stepNumber: number;
+    instruction: string;
+    timestampSeconds: number | null;
+    durationSeconds: number | null;
+  }>;
+  ingredients: Array<{
+    id: string;
+    quantity: string | null;
+    unit: string | null;
+    notes: string | null;
+    ingredient: {
+      id: string;
+      name: string;
+      category: string | null;
+    };
+  }>;
+}
+
+export interface MealForExport {
+  mealType: "breakfast" | "lunch" | "dinner" | "snacks";
+  recipe: RecipeForExport;
+}
+
+export interface DayRecipes {
+  dayOfWeek: number;
+  meals: MealForExport[];
+}
+
 /**
  * Get or create a meal plan for a specific week
  */
 export async function getOrCreateMealPlan(
   db: Database,
-  input: GetOrCreateMealPlanInput
+  input: GetOrCreateMealPlanInput,
 ): Promise<MealPlanWithEntries> {
   try {
     // Check for existing plan
@@ -106,8 +159,8 @@ export async function getOrCreateMealPlan(
       .where(
         and(
           eq(mealPlan.userId, input.userId),
-          eq(mealPlan.weekStartDate, input.weekStartDate)
-        )
+          eq(mealPlan.weekStartDate, input.weekStartDate),
+        ),
       )
       .limit(1);
 
@@ -177,7 +230,11 @@ export async function getOrCreateMealPlan(
     };
   } catch (error) {
     if (error instanceof NotFoundError) throw error;
-    throw new QueryError("mealPlan", "Failed to get or create meal plan", error);
+    throw new QueryError(
+      "mealPlan",
+      "Failed to get or create meal plan",
+      error,
+    );
   }
 }
 
@@ -186,7 +243,7 @@ export async function getOrCreateMealPlan(
  */
 export async function addEntry(
   db: Database,
-  input: AddEntryInput
+  input: AddEntryInput,
 ): Promise<{ id: string }> {
   try {
     // Verify the meal plan exists
@@ -219,8 +276,8 @@ export async function addEntry(
         and(
           eq(mealPlanEntry.mealPlanId, input.mealPlanId),
           eq(mealPlanEntry.dayOfWeek, input.dayOfWeek),
-          eq(mealPlanEntry.mealType, input.mealType)
-        )
+          eq(mealPlanEntry.mealType, input.mealType),
+        ),
       );
 
     // Delete existing entry if any
@@ -252,7 +309,7 @@ export async function addEntry(
  */
 export async function removeEntry(
   db: Database,
-  input: RemoveEntryInput
+  input: RemoveEntryInput,
 ): Promise<{ success: boolean }> {
   try {
     // Verify entry exists and belongs to user's plan
@@ -266,8 +323,8 @@ export async function removeEntry(
       .where(
         and(
           eq(mealPlanEntry.id, input.entryId),
-          eq(mealPlan.userId, input.userId)
-        )
+          eq(mealPlan.userId, input.userId),
+        ),
       )
       .limit(1);
 
@@ -289,7 +346,7 @@ export async function removeEntry(
  */
 export async function getGroceryList(
   db: Database,
-  input: GetGroceryListInput
+  input: GetGroceryListInput,
 ): Promise<GroceryList> {
   try {
     // Verify plan belongs to user
@@ -299,8 +356,8 @@ export async function getGroceryList(
       .where(
         and(
           eq(mealPlan.id, input.mealPlanId),
-          eq(mealPlan.userId, input.userId)
-        )
+          eq(mealPlan.userId, input.userId),
+        ),
       )
       .limit(1);
 
@@ -392,7 +449,7 @@ export async function getGroceryList(
  */
 export async function getUserRecipesForPicker(
   db: Database,
-  input: { userId: string; search?: string }
+  input: { userId: string; search?: string },
 ): Promise<
   Array<{
     id: string;
@@ -418,13 +475,200 @@ export async function getUserRecipesForPicker(
     // Filter by search if provided
     if (input.search) {
       const searchLower = input.search.toLowerCase();
-      return recipes.filter((r) =>
-        r.title.toLowerCase().includes(searchLower)
-      );
+      return recipes.filter((r) => r.title.toLowerCase().includes(searchLower));
     }
 
     return recipes;
   } catch (error) {
     throw new QueryError("recipe", "Failed to get recipes for picker", error);
+  }
+}
+
+/**
+ * Get full recipe data for all meals on a specific day (for export/print)
+ */
+export async function getRecipesForDay(
+  db: Database,
+  input: GetRecipesForDayInput,
+): Promise<DayRecipes> {
+  const startTime = Date.now();
+  loggers.repository.debug(
+    { mealPlanId: input.mealPlanId, dayOfWeek: input.dayOfWeek },
+    "getRecipesForDay: Starting query for day export",
+  );
+
+  try {
+    // Verify plan belongs to user
+    const plans = await db
+      .select({ id: mealPlan.id })
+      .from(mealPlan)
+      .where(
+        and(
+          eq(mealPlan.id, input.mealPlanId),
+          eq(mealPlan.userId, input.userId),
+        ),
+      )
+      .limit(1);
+
+    if (plans.length === 0) {
+      loggers.repository.warn(
+        { mealPlanId: input.mealPlanId },
+        "getRecipesForDay: Meal plan not found",
+      );
+      throw new NotFoundError("mealPlan", input.mealPlanId);
+    }
+
+    // Get entries for the specific day
+    const entries = await db
+      .select({
+        id: mealPlanEntry.id,
+        mealType: mealPlanEntry.mealType,
+        recipeId: mealPlanEntry.recipeId,
+      })
+      .from(mealPlanEntry)
+      .where(
+        and(
+          eq(mealPlanEntry.mealPlanId, input.mealPlanId),
+          eq(mealPlanEntry.dayOfWeek, input.dayOfWeek),
+        ),
+      );
+
+    if (entries.length === 0) {
+      return { dayOfWeek: input.dayOfWeek, meals: [] };
+    }
+
+    // Get unique recipe IDs
+    const recipeIds = [...new Set(entries.map((e) => e.recipeId))];
+
+    // Fetch full recipe data for all recipes
+    const recipesData = await db
+      .select()
+      .from(recipe)
+      .where(inArray(recipe.id, recipeIds));
+
+    // Fetch all steps for these recipes
+    const stepsData = await db
+      .select()
+      .from(recipeStep)
+      .where(inArray(recipeStep.recipeId, recipeIds))
+      .orderBy(recipeStep.stepNumber);
+
+    // Fetch all ingredients for these recipes
+    const ingredientsData = await db
+      .select({
+        id: recipeIngredient.id,
+        recipeId: recipeIngredient.recipeId,
+        quantity: recipeIngredient.quantity,
+        unit: recipeIngredient.unit,
+        notes: recipeIngredient.notes,
+        ingredientId: ingredient.id,
+        ingredientName: ingredient.name,
+        ingredientCategory: ingredient.category,
+      })
+      .from(recipeIngredient)
+      .innerJoin(ingredient, eq(recipeIngredient.ingredientId, ingredient.id))
+      .where(inArray(recipeIngredient.recipeId, recipeIds));
+
+    // Group steps and ingredients by recipe ID
+    const stepsByRecipe = new Map<string, typeof stepsData>();
+    for (const step of stepsData) {
+      const existing = stepsByRecipe.get(step.recipeId) || [];
+      existing.push(step);
+      stepsByRecipe.set(step.recipeId, existing);
+    }
+
+    const ingredientsByRecipe = new Map<string, typeof ingredientsData>();
+    for (const ing of ingredientsData) {
+      const existing = ingredientsByRecipe.get(ing.recipeId) || [];
+      existing.push(ing);
+      ingredientsByRecipe.set(ing.recipeId, existing);
+    }
+
+    // Build recipe lookup map
+    const recipeMap = new Map<string, RecipeForExport>();
+    for (const r of recipesData) {
+      const steps = stepsByRecipe.get(r.id) || [];
+      const ingredients = ingredientsByRecipe.get(r.id) || [];
+
+      recipeMap.set(r.id, {
+        id: r.id,
+        title: r.title,
+        description: r.description,
+        sourceUrl: r.sourceUrl,
+        sourceType: r.sourceType,
+        thumbnailUrl: r.thumbnailUrl,
+        servings: r.servings,
+        prepTimeMinutes: r.prepTimeMinutes,
+        cookTimeMinutes: r.cookTimeMinutes,
+        calories: r.calories,
+        protein: r.protein,
+        carbs: r.carbs,
+        fat: r.fat,
+        fiber: r.fiber,
+        steps: steps.map((s) => ({
+          id: s.id,
+          stepNumber: s.stepNumber,
+          instruction: s.instruction,
+          timestampSeconds: s.timestampSeconds,
+          durationSeconds: s.durationSeconds,
+        })),
+        ingredients: ingredients.map((i) => ({
+          id: i.id,
+          quantity: i.quantity,
+          unit: i.unit,
+          notes: i.notes,
+          ingredient: {
+            id: i.ingredientId,
+            name: i.ingredientName,
+            category: i.ingredientCategory,
+          },
+        })),
+      });
+    }
+
+    // Build meals array in meal type order
+    const mealTypeOrder: Array<"breakfast" | "lunch" | "dinner" | "snacks"> = [
+      "breakfast",
+      "lunch",
+      "dinner",
+      "snacks",
+    ];
+
+    const meals: MealForExport[] = [];
+    for (const mealType of mealTypeOrder) {
+      const entry = entries.find((e) => e.mealType === mealType);
+      if (entry) {
+        const recipeData = recipeMap.get(entry.recipeId);
+        if (recipeData) {
+          meals.push({
+            mealType,
+            recipe: recipeData,
+          });
+        }
+      }
+    }
+
+    loggers.repository.info(
+      {
+        dayOfWeek: input.dayOfWeek,
+        mealCount: meals.length,
+        durationMs: Date.now() - startTime,
+      },
+      "getRecipesForDay: Successfully fetched recipes for export",
+    );
+
+    return { dayOfWeek: input.dayOfWeek, meals };
+  } catch (error) {
+    loggers.repository.error(
+      {
+        mealPlanId: input.mealPlanId,
+        dayOfWeek: input.dayOfWeek,
+        error: error instanceof Error ? error.message : String(error),
+        durationMs: Date.now() - startTime,
+      },
+      "getRecipesForDay: Failed to fetch recipes for day",
+    );
+    if (error instanceof NotFoundError) throw error;
+    throw new QueryError("mealPlan", "Failed to get recipes for day", error);
   }
 }

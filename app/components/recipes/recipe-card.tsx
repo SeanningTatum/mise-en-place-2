@@ -1,14 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MacrosCard } from "./macros-card";
-import { Youtube, Globe, Clock, Flame } from "lucide-react";
+import { Youtube, Globe, Clock, Flame, PenLine } from "lucide-react";
 import { Link } from "react-router";
 
 interface RecipeCardProps {
   id: string;
   title: string;
   thumbnailUrl?: string | null;
-  sourceType: "youtube" | "blog";
+  sourceType: "youtube" | "blog" | "custom";
   calories?: number | null;
   protein?: number | null;
   prepTimeMinutes?: number | null;
@@ -49,6 +49,8 @@ export function RecipeCard({
             <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-secondary to-muted">
               {sourceType === "youtube" ? (
                 <Youtube className="h-12 w-12 text-muted-foreground/40" />
+              ) : sourceType === "custom" ? (
+                <PenLine className="h-12 w-12 text-muted-foreground/40" />
               ) : (
                 <Globe className="h-12 w-12 text-muted-foreground/40" />
               )}
@@ -62,10 +64,12 @@ export function RecipeCard({
           >
             {sourceType === "youtube" ? (
               <Youtube className="h-3 w-3 text-red-500" />
+            ) : sourceType === "custom" ? (
+              <PenLine className="h-3 w-3 text-accent" />
             ) : (
               <Globe className="h-3 w-3 text-primary" />
             )}
-            {sourceType === "youtube" ? "YouTube" : "Blog"}
+            {sourceType === "youtube" ? "YouTube" : sourceType === "custom" ? "Original" : "Blog"}
           </Badge>
 
           {/* Time badge - bottom left, overlaid on image */}

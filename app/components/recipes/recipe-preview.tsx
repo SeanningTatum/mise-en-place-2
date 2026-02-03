@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MacrosCard } from "./macros-card";
-import { Youtube, Globe, Clock, Users, Loader2 } from "lucide-react";
+import { Youtube, Globe, Clock, Users, Loader2, PenLine } from "lucide-react";
 import type { ExtractedRecipeData } from "./recipe-extractor";
 
 interface RecipePreviewProps {
@@ -49,6 +49,11 @@ export function RecipePreview({ recipe, onSave, onCancel, isSaving }: RecipePrev
                     <>
                       <Youtube className="h-3 w-3" />
                       YouTube
+                    </>
+                  ) : recipe.sourceType === "custom" ? (
+                    <>
+                      <PenLine className="h-3 w-3" />
+                      Original
                     </>
                   ) : (
                     <>

@@ -1,5 +1,5 @@
-import { eq, count, desc, like, sql } from "drizzle-orm";
-import { ingredient, recipeIngredient } from "@/db/schema";
+import { eq, count, desc, like, sql, inArray } from "drizzle-orm";
+import { ingredient, recipeIngredient, ingredientAlias } from "@/db/schema";
 import {
   NotFoundError,
   UpdateError,
@@ -7,6 +7,7 @@ import {
   ValidationError,
   QueryError,
 } from "@/models/errors";
+import { generateId } from "@/lib/utils";
 import type { Context } from "@/trpc";
 
 type Database = Context["db"];
@@ -30,6 +31,16 @@ interface UpdateIngredientInput {
   category?: string | null;
 }
 
+interface CreateAliasInput {
+  alias: string;
+  canonicalId: string;
+}
+
+interface SearchIngredientsInput {
+  query: string;
+  limit?: number;
+}
+
 // Result types
 export interface IngredientWithUsage {
   id: string;
@@ -40,14 +51,35 @@ export interface IngredientWithUsage {
 }
 
 /**
- * Generate a unique ID for database records
+ * Find ingredient by alias (check alias table)
  */
-function generateId(): string {
-  return crypto.randomUUID();
+async function findByAlias(
+  db: Database,
+  normalizedName: string
+): Promise<{ id: string; name: string } | null> {
+  const aliasResult = await db
+    .select({
+      canonicalId: ingredientAlias.canonicalId,
+    })
+    .from(ingredientAlias)
+    .where(eq(ingredientAlias.alias, normalizedName))
+    .limit(1);
+
+  if (aliasResult.length === 0) return null;
+
+  // Get the canonical ingredient
+  const canonical = await db
+    .select({ id: ingredient.id, name: ingredient.name })
+    .from(ingredient)
+    .where(eq(ingredient.id, aliasResult[0].canonicalId))
+    .limit(1);
+
+  return canonical.length > 0 ? canonical[0] : null;
 }
 
 /**
  * Find or create an ingredient by name
+ * Checks both the ingredient table and alias table for matches
  */
 export async function findOrCreateIngredient(
   db: Database,
@@ -56,7 +88,7 @@ export async function findOrCreateIngredient(
   try {
     const normalizedName = name.toLowerCase().trim();
 
-    // Try to find existing ingredient
+    // 1. Try to find exact match in ingredient table
     const existing = await db
       .select({ id: ingredient.id, name: ingredient.name })
       .from(ingredient)
@@ -67,7 +99,13 @@ export async function findOrCreateIngredient(
       return { id: existing[0].id, name: existing[0].name, isNew: false };
     }
 
-    // Create new ingredient
+    // 2. Check alias table for a match
+    const aliasMatch = await findByAlias(db, normalizedName);
+    if (aliasMatch) {
+      return { id: aliasMatch.id, name: aliasMatch.name, isNew: false };
+    }
+
+    // 3. Create new ingredient
     const newId = generateId();
     await db.insert(ingredient).values({
       id: newId,
@@ -289,5 +327,157 @@ export async function getIngredientCategories(db: Database): Promise<string[]> {
       .filter((c): c is string => c !== null);
   } catch (error) {
     throw new QueryError("ingredient", "Failed to get categories", error);
+  }
+}
+
+// ============== Alias Management ==============
+
+/**
+ * Create an alias for an ingredient
+ */
+export async function createAlias(
+  db: Database,
+  input: CreateAliasInput
+): Promise<{ id: string }> {
+  try {
+    const normalizedAlias = input.alias.toLowerCase().trim();
+
+    // Verify canonical ingredient exists
+    const canonical = await db
+      .select({ id: ingredient.id })
+      .from(ingredient)
+      .where(eq(ingredient.id, input.canonicalId))
+      .limit(1);
+
+    if (canonical.length === 0) {
+      throw new NotFoundError("ingredient", input.canonicalId, "Canonical ingredient not found");
+    }
+
+    // Check if alias already exists
+    const existing = await db
+      .select({ id: ingredientAlias.id })
+      .from(ingredientAlias)
+      .where(eq(ingredientAlias.alias, normalizedAlias))
+      .limit(1);
+
+    if (existing.length > 0) {
+      throw new ValidationError("ingredientAlias", "Alias already exists", "alias");
+    }
+
+    // Also check if alias matches an existing ingredient name
+    const ingredientMatch = await db
+      .select({ id: ingredient.id })
+      .from(ingredient)
+      .where(eq(ingredient.name, normalizedAlias))
+      .limit(1);
+
+    if (ingredientMatch.length > 0) {
+      throw new ValidationError(
+        "ingredientAlias",
+        "Alias matches an existing ingredient name",
+        "alias"
+      );
+    }
+
+    const newId = generateId();
+    await db.insert(ingredientAlias).values({
+      id: newId,
+      alias: normalizedAlias,
+      canonicalId: input.canonicalId,
+    });
+
+    return { id: newId };
+  } catch (error) {
+    if (error instanceof NotFoundError || error instanceof ValidationError) {
+      throw error;
+    }
+    throw new UpdateError("ingredientAlias", "Failed to create alias", error);
+  }
+}
+
+/**
+ * Get all aliases for an ingredient
+ */
+export async function getAliasesForIngredient(
+  db: Database,
+  ingredientId: string
+): Promise<{ id: string; alias: string }[]> {
+  try {
+    return await db
+      .select({ id: ingredientAlias.id, alias: ingredientAlias.alias })
+      .from(ingredientAlias)
+      .where(eq(ingredientAlias.canonicalId, ingredientId));
+  } catch (error) {
+    throw new QueryError("ingredientAlias", "Failed to get aliases", error);
+  }
+}
+
+/**
+ * Delete an alias
+ */
+export async function deleteAlias(db: Database, aliasId: string): Promise<void> {
+  try {
+    const result = await db
+      .delete(ingredientAlias)
+      .where(eq(ingredientAlias.id, aliasId));
+
+    // Note: D1/SQLite doesn't return affected rows, so we can't check if delete succeeded
+  } catch (error) {
+    throw new DeletionError("ingredientAlias", "Failed to delete alias", error);
+  }
+}
+
+// ============== Ingredient Search ==============
+
+/**
+ * Search ingredients by name (for autocomplete)
+ */
+export async function searchIngredients(
+  db: Database,
+  input: SearchIngredientsInput
+): Promise<{ id: string; name: string; category: string | null }[]> {
+  try {
+    const normalizedQuery = input.query.toLowerCase().trim();
+    const limit = input.limit ?? 10;
+
+    if (normalizedQuery.length < 2) {
+      return [];
+    }
+
+    return await db
+      .select({
+        id: ingredient.id,
+        name: ingredient.name,
+        category: ingredient.category,
+      })
+      .from(ingredient)
+      .where(like(ingredient.name, `%${normalizedQuery}%`))
+      .orderBy(
+        // Prioritize exact matches and prefix matches
+        sql`CASE 
+          WHEN ${ingredient.name} = ${normalizedQuery} THEN 0
+          WHEN ${ingredient.name} LIKE ${normalizedQuery + '%'} THEN 1
+          ELSE 2
+        END`,
+        ingredient.name
+      )
+      .limit(limit);
+  } catch (error) {
+    throw new QueryError("ingredient", "Failed to search ingredients", error);
+  }
+}
+
+/**
+ * Get all ingredient names (for AI similarity matching)
+ */
+export async function getAllIngredientNames(db: Database): Promise<string[]> {
+  try {
+    const results = await db
+      .select({ name: ingredient.name })
+      .from(ingredient);
+
+    return results.map((r) => r.name);
+  } catch (error) {
+    throw new QueryError("ingredient", "Failed to get ingredient names", error);
   }
 }

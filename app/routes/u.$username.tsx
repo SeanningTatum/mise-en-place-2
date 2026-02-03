@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { api } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicProfileHeader, PublicRecipeCard, ShareModal } from "@/components/profile";
-import { ChefHat, ArrowLeft } from "lucide-react";
+import { ChefHat, ArrowLeft, Star } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import type { Route } from "./+types/u.$username";
 
 export function meta({ params }: Route.MetaArgs) {
@@ -35,12 +36,21 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     throw new Response("Profile not found", { status: 404 });
   }
 
-  // Fetch public recipes
-  const recipesData = await context.trpc.profile.getPublicRecipes({
-    username,
-    limit: 50,
-    offset: 0,
-  });
+  // Fetch original (custom) and collected (extracted) recipes separately
+  const [originalRecipes, collectedRecipes] = await Promise.all([
+    context.trpc.profile.getPublicRecipes({
+      username,
+      limit: 50,
+      offset: 0,
+      isCustom: true,
+    }),
+    context.trpc.profile.getPublicRecipes({
+      username,
+      limit: 50,
+      offset: 0,
+      isCustom: false,
+    }),
+  ]);
 
   // Increment view count (fire and forget)
   context.trpc.profile.incrementViewCount({ username }).catch(() => {
@@ -49,16 +59,35 @@ export async function loader({ params, context }: Route.LoaderArgs) {
 
   return {
     profile,
-    recipes: recipesData.recipes,
-    totalRecipes: recipesData.total,
+    originalRecipes: originalRecipes.recipes,
+    originalCount: originalRecipes.total,
+    collectedRecipes: collectedRecipes.recipes,
+    collectedCount: collectedRecipes.total,
   };
 }
 
 export default function PublicProfilePage({ loaderData, params }: Route.ComponentProps) {
-  const { profile, recipes } = loaderData;
+  const { profile, originalRecipes, originalCount, collectedRecipes, collectedCount } = loaderData;
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showShareModal, setShowShareModal] = useState(false);
   const [savingRecipeId, setSavingRecipeId] = useState<string | null>(null);
+
+  // Default to "original" if there are original recipes, otherwise "collected"
+  const defaultTab = originalCount > 0 ? "original" : "collected";
+  const activeTab = searchParams.get("tab") || defaultTab;
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (value === defaultTab) {
+      params.delete("tab");
+    } else {
+      params.set("tab", value);
+    }
+    setSearchParams(params);
+  };
+
+  const currentRecipes = activeTab === "original" ? originalRecipes : collectedRecipes;
 
   const utils = api.useUtils();
   const importRecipeMutation = api.profile.importRecipe.useMutation({
@@ -131,37 +160,72 @@ export default function PublicProfilePage({ loaderData, params }: Route.Componen
           onShareClick={() => setShowShareModal(true)}
         />
 
-        {/* Recipes Grid */}
-        <section>
-          <h2 className="font-display text-xl font-semibold mb-4">
-            Recipes
-            <span className="text-muted-foreground font-normal text-base ml-2">
-              ({recipes.length})
-            </span>
-          </h2>
+        {/* Recipes Section with Tabs */}
+        <section className="space-y-6">
+          {/* Tab Navigation */}
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="bg-secondary/50 h-auto p-1">
+              <TabsTrigger
+                value="original"
+                className={cn(
+                  "gap-2 data-[state=active]:bg-card px-4 py-2",
+                  originalCount === 0 && "text-muted-foreground"
+                )}
+                data-testid="profile-tab-original"
+              >
+                <Star className="h-4 w-4" />
+                Original Recipes
+                <span className="text-xs text-muted-foreground">({originalCount})</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="collected"
+                className={cn(
+                  "gap-2 data-[state=active]:bg-card px-4 py-2",
+                  collectedCount === 0 && "text-muted-foreground"
+                )}
+                data-testid="profile-tab-collected"
+              >
+                Collected Recipes
+                <span className="text-xs text-muted-foreground">({collectedCount})</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-          {recipes.length === 0 ? (
+          {/* Recipe Grid */}
+          {currentRecipes.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p>No public recipes yet.</p>
+              <p>
+                {activeTab === "original"
+                  ? "No original recipes shared yet."
+                  : "No collected recipes shared yet."}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recipes.map((recipe) => (
-                <PublicRecipeCard
-                  key={recipe.id}
-                  id={recipe.id}
-                  title={recipe.title}
-                  slug={recipe.slug}
-                  description={recipe.description}
-                  thumbnailUrl={recipe.thumbnailUrl}
-                  sourceType={recipe.sourceType}
-                  calories={recipe.calories}
-                  protein={recipe.protein}
-                  saveCount={recipe.saveCount}
-                  username={params.username}
-                  onSave={() => handleSaveRecipe(recipe.id)}
-                  isSaving={savingRecipeId === recipe.id}
-                />
+              {currentRecipes.map((recipe) => (
+                <div key={recipe.id} className="relative">
+                  {/* Original badge for custom recipes */}
+                  {recipe.isCustom && (
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+                      <Star className="h-3 w-3" />
+                      Original
+                    </div>
+                  )}
+                  <PublicRecipeCard
+                    id={recipe.id}
+                    title={recipe.title}
+                    slug={recipe.slug}
+                    description={recipe.description}
+                    thumbnailUrl={recipe.thumbnailUrl}
+                    sourceType={recipe.sourceType}
+                    calories={recipe.calories}
+                    protein={recipe.protein}
+                    saveCount={recipe.saveCount}
+                    username={params.username}
+                    onSave={() => handleSaveRecipe(recipe.id)}
+                    isSaving={savingRecipeId === recipe.id}
+                  />
+                </div>
               ))}
             </div>
           )}

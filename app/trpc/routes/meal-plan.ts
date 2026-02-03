@@ -4,7 +4,9 @@ import * as mealPlanRepository from "@/repositories/meal-plan";
 
 // Input schemas
 const getOrCreateForWeekInput = z.object({
-  weekStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be ISO date format (YYYY-MM-DD)"),
+  weekStartDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Must be ISO date format (YYYY-MM-DD)"),
 });
 
 const addEntryInput = z.object({
@@ -24,6 +26,11 @@ const getGroceryListInput = z.object({
 
 const getRecipesForPickerInput = z.object({
   search: z.string().optional(),
+});
+
+const getRecipesForDayInput = z.object({
+  mealPlanId: z.string().uuid("Invalid meal plan ID"),
+  dayOfWeek: z.number().int().min(0).max(6),
 });
 
 export const mealPlanRouter = createTRPCRouter({
@@ -81,6 +88,19 @@ export const mealPlanRouter = createTRPCRouter({
       return await mealPlanRepository.getUserRecipesForPicker(ctx.db, {
         userId: ctx.auth.user.id,
         search: input.search,
+      });
+    }),
+
+  /**
+   * Get full recipe data for all meals on a specific day (for export/print)
+   */
+  getRecipesForDay: protectedProcedure
+    .input(getRecipesForDayInput)
+    .query(async ({ ctx, input }) => {
+      return await mealPlanRepository.getRecipesForDay(ctx.db, {
+        mealPlanId: input.mealPlanId,
+        userId: ctx.auth.user.id,
+        dayOfWeek: input.dayOfWeek,
       });
     }),
 });

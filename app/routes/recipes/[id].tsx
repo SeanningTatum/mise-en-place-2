@@ -41,6 +41,7 @@ import {
   UtensilsCrossed,
   ListOrdered,
   ChevronDown,
+  PenLine,
 } from "lucide-react";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
@@ -49,6 +50,13 @@ import { useMediaQuery } from "@/lib/hooks";
 import type { Route } from "./+types/[id]";
 
 export const loader = async ({ request, context, params }: Route.LoaderArgs) => {
+  // Validate that params.id is a valid UUID format
+  // This prevents this dynamic route from matching static routes like /recipes/create
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(params.id)) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
   const session = await context.auth.api.getSession({
     headers: request.headers,
   });
@@ -148,6 +156,11 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
                 <Youtube className="h-3.5 w-3.5 text-red-500" />
                 <span>YouTube</span>
               </>
+            ) : recipe.sourceType === "custom" ? (
+              <>
+                <PenLine className="h-3.5 w-3.5 text-accent" />
+                <span>Original</span>
+              </>
             ) : (
               <>
                 <Globe className="h-3.5 w-3.5 text-primary" />
@@ -184,12 +197,14 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem asChild>
-            <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Original
-            </a>
-          </DropdownMenuItem>
+          {recipe.sourceUrl && (
+            <DropdownMenuItem asChild>
+              <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View Original
+              </a>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
             onClick={() => setDeleteDialogOpen(true)}

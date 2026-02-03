@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecipeCard, RecipeCardSkeleton } from "@/components/recipes";
-import { Search, ChefHat, Plus, Sparkles } from "lucide-react";
+import { Search, ChefHat, Plus, Sparkles, PenLine, UtensilsCrossed } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 import { useDebounce } from "@/lib/hooks";
 import { api } from "@/trpc/client";
@@ -92,7 +92,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
   return (
     <div className="space-y-8">
       {/* Header - Editorial style with decorative elements */}
-      <div className="space-y-1">
+      <div className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
@@ -108,8 +108,27 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
               )}
             </p>
           </div>
-          {/* Decorative divider line - desktop only */}
-          <div className="hidden sm:block flex-1 mx-8 h-px bg-linear-to-r from-transparent via-border to-transparent" />
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <Link to="/recipes/meal">
+              <Button variant="outline" className="gap-2 shadow-warm" data-testid="plan-meal-button">
+                <UtensilsCrossed className="h-4 w-4" />
+                Plan a Meal
+              </Button>
+            </Link>
+            <Link to="/recipes/new">
+              <Button variant="outline" className="gap-2 shadow-warm" data-testid="extract-recipe-button">
+                <Sparkles className="h-4 w-4" />
+                Extract from URL
+              </Button>
+            </Link>
+            <Link to="/recipes/create">
+              <Button className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="create-recipe-button">
+                <PenLine className="h-4 w-4" />
+                Create Your Own
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -118,13 +137,16 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
         <Tabs value={currentSource} onValueChange={handleSourceChange} className="w-full sm:w-auto">
           <TabsList className="bg-secondary/50">
             <TabsTrigger value="all" data-testid="filter-tab-all" className="data-[state=active]:bg-card">
-              All Sources
+              All
             </TabsTrigger>
             <TabsTrigger value="youtube" data-testid="filter-tab-youtube" className="data-[state=active]:bg-card">
               YouTube
             </TabsTrigger>
             <TabsTrigger value="blog" data-testid="filter-tab-blog" className="data-[state=active]:bg-card">
               Blogs
+            </TabsTrigger>
+            <TabsTrigger value="custom" data-testid="filter-tab-custom" className="data-[state=active]:bg-card">
+              My Creations
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -223,12 +245,21 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
               : "Transform your favorite YouTube cooking videos and food blogs into a beautifully organized personal cookbook."}
           </p>
           {!searchInput && currentSource === "all" && (
-            <Link to="/recipes/new">
-              <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-first-recipe-button">
-                <Sparkles className="h-4 w-4" />
-                Extract Your First Recipe
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Link to="/recipes/new">
+                <Button size="lg" variant="outline" className="gap-2 shadow-warm" data-testid="extract-first-recipe-button">
+                  <Sparkles className="h-4 w-4" />
+                  Extract from URL
+                </Button>
+              </Link>
+              <span className="text-muted-foreground">or</span>
+              <Link to="/recipes/create">
+                <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="create-first-recipe-button">
+                  <PenLine className="h-4 w-4" />
+                  Create Your Own
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       )}

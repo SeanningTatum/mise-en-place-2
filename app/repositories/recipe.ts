@@ -21,6 +21,7 @@ import type {
   ExtractedStep,
 } from "@/lib/gemini";
 import { generateId, chunkArray, normalizeRecipeUrl } from "@/lib/utils";
+import { processIngredientForStorage, normalizeUnit } from "@/lib/units";
 
 type Database = Context["db"];
 
@@ -45,12 +46,38 @@ interface CreateRecipeInput {
   steps: ExtractedStep[];
 }
 
+interface CreateCustomRecipeInput {
+  userId: string;
+  title: string;
+  description: string;
+  servings: number;
+  prepTimeMinutes: number | null;
+  cookTimeMinutes: number | null;
+  thumbnailUrl: string | null;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  fiber: number | null;
+  ingredients: Array<{
+    name: string;
+    quantity: string | null;
+    unit: string | null;
+    notes: string | null;
+  }>;
+  steps: Array<{
+    stepNumber: number;
+    instruction: string;
+  }>;
+}
+
 interface GetRecipesByUserInput {
   userId: string;
   page: number;
   limit: number;
   search?: string;
-  sourceType?: "youtube" | "blog";
+  sourceType?: "youtube" | "blog" | "custom";
+  isCustom?: boolean;
 }
 
 interface GetAllRecipesInput {
@@ -75,8 +102,9 @@ export interface RecipeWithRelations {
   createdById: string;
   title: string;
   description: string | null;
-  sourceUrl: string;
-  sourceType: "youtube" | "blog";
+  sourceUrl: string | null;
+  sourceType: "youtube" | "blog" | "custom";
+  isCustom: boolean;
   youtubeVideoId: string | null;
   thumbnailUrl: string | null;
   servings: number | null;
@@ -191,8 +219,8 @@ interface ExistingRecipeSummary {
   id: string;
   title: string;
   thumbnailUrl: string | null;
-  sourceUrl: string;
-  sourceType: "youtube" | "blog";
+  sourceUrl: string | null;
+  sourceType: "youtube" | "blog" | "custom";
 }
 
 export async function findRecipeBySourceUrl(
@@ -292,14 +320,21 @@ export async function createRecipe(
         input.ingredients,
       );
 
-      const ingredientValues = input.ingredients.map((ing) => ({
-        id: generateId(),
-        recipeId,
-        ingredientId: ingredientMap.get(ing.name)!,
-        quantity: ing.quantity,
-        unit: ing.unit,
-        notes: ing.notes,
-      }));
+      const ingredientValues = input.ingredients.map((ing) => {
+        const processed = processIngredientForStorage(ing.quantity, ing.unit);
+        return {
+          id: generateId(),
+          recipeId,
+          ingredientId: ingredientMap.get(ing.name)!,
+          quantity: processed.quantity,
+          unit: processed.unit,
+          notes: ing.notes,
+          quantityMetric: processed.quantityMetric
+            ? Math.round(processed.quantityMetric * 100)
+            : null, // Scale by 100 for precision in integer storage
+          unitMetric: processed.unitMetric as "ml" | "g" | null,
+        };
+      });
 
       const ingredientChunks = chunkArray(
         ingredientValues,
@@ -313,6 +348,103 @@ export async function createRecipe(
     return { id: recipeId };
   } catch (error) {
     throw new CreationError("recipe", "Failed to create recipe", error);
+  }
+}
+
+/**
+ * Create a custom (user-created) recipe with all related data
+ */
+export async function createCustomRecipe(
+  db: Database,
+  input: CreateCustomRecipeInput,
+): Promise<{ id: string }> {
+  try {
+    const recipeId = generateId();
+    const slug = await generateUniqueSlug(db, {
+      title: input.title,
+      userId: input.userId,
+    });
+
+    // Create the custom recipe
+    await db.insert(recipe).values({
+      id: recipeId,
+      createdById: input.userId,
+      title: input.title,
+      slug,
+      description: input.description,
+      sourceUrl: null, // Custom recipes have no source URL
+      normalizedUrl: null,
+      sourceType: "custom",
+      isCustom: true,
+      youtubeVideoId: null,
+      thumbnailUrl: input.thumbnailUrl,
+      servings: input.servings,
+      prepTimeMinutes: input.prepTimeMinutes,
+      cookTimeMinutes: input.cookTimeMinutes,
+      calories: input.calories,
+      protein: input.protein,
+      carbs: input.carbs,
+      fat: input.fat,
+      fiber: input.fiber,
+    });
+
+    // Create steps (batched to avoid D1 parameter limit)
+    if (input.steps.length > 0) {
+      const stepValues = input.steps.map((step) => ({
+        id: generateId(),
+        recipeId,
+        stepNumber: step.stepNumber,
+        instruction: step.instruction,
+        timestampSeconds: null, // Custom recipes don't have timestamps
+        durationSeconds: null,
+      }));
+
+      const stepChunks = chunkArray(stepValues, MAX_ROWS_PER_INSERT);
+      for (const chunk of stepChunks) {
+        await db.insert(recipeStep).values(chunk);
+      }
+    }
+
+    // Find or create ingredients and link them (batched to avoid D1 parameter limit)
+    if (input.ingredients.length > 0) {
+      const ingredientMap = await findOrCreateIngredients(
+        db,
+        input.ingredients.map((ing) => ({
+          name: ing.name,
+          quantity: ing.quantity ?? null,
+          unit: ing.unit ?? null,
+          notes: ing.notes ?? null,
+        })),
+      );
+
+      const ingredientValues = input.ingredients.map((ing) => {
+        const processed = processIngredientForStorage(ing.quantity, ing.unit);
+        return {
+          id: generateId(),
+          recipeId,
+          ingredientId: ingredientMap.get(ing.name)!,
+          quantity: processed.quantity,
+          unit: processed.unit,
+          notes: ing.notes,
+          quantityMetric: processed.quantityMetric
+            ? Math.round(processed.quantityMetric * 100)
+            : null, // Scale by 100 for precision in integer storage
+          unitMetric: processed.unitMetric as "ml" | "g" | null,
+        };
+      });
+
+      const ingredientChunks = chunkArray(
+        ingredientValues,
+        MAX_ROWS_PER_INSERT,
+      );
+      for (const chunk of ingredientChunks) {
+        await db.insert(recipeIngredient).values(chunk);
+      }
+    }
+
+    return { id: recipeId };
+  } catch (error) {
+    throw new CreationError("recipe", "Failed to create custom recipe", error);
   }
 }
 
@@ -420,6 +552,10 @@ export async function getRecipesByUser(
 
     if (input.sourceType) {
       conditions.push(eq(recipe.sourceType, input.sourceType));
+    }
+
+    if (input.isCustom !== undefined) {
+      conditions.push(eq(recipe.isCustom, input.isCustom));
     }
 
     const finalCondition = and(...conditions);
@@ -595,6 +731,7 @@ interface GetPublicRecipesByUsernameInput {
   username: string;
   limit?: number;
   offset?: number;
+  isCustom?: boolean; // Filter by custom (original) or extracted (collected) recipes
 }
 
 interface GetPublicRecipeBySlugInput {
@@ -794,7 +931,8 @@ export async function getPublicRecipesByUsername(
     slug: string | null;
     description: string | null;
     thumbnailUrl: string | null;
-    sourceType: "youtube" | "blog";
+    sourceType: "youtube" | "blog" | "custom";
+    isCustom: boolean;
     servings: number | null;
     calories: number | null;
     protein: number | null;
@@ -821,6 +959,15 @@ export async function getPublicRecipesByUsername(
 
     const userId = profiles[0].userId;
 
+    // Build conditions
+    const conditions = [eq(recipe.createdById, userId), eq(recipe.isPublic, true)];
+    
+    if (input.isCustom !== undefined) {
+      conditions.push(eq(recipe.isCustom, input.isCustom));
+    }
+
+    const whereCondition = and(...conditions);
+
     // Get public recipes
     const [recipes, totalResult] = await Promise.all([
       db
@@ -831,6 +978,7 @@ export async function getPublicRecipesByUsername(
           description: recipe.description,
           thumbnailUrl: recipe.thumbnailUrl,
           sourceType: recipe.sourceType,
+          isCustom: recipe.isCustom,
           servings: recipe.servings,
           calories: recipe.calories,
           protein: recipe.protein,
@@ -838,20 +986,17 @@ export async function getPublicRecipesByUsername(
           createdAt: recipe.createdAt,
         })
         .from(recipe)
-        .where(and(eq(recipe.createdById, userId), eq(recipe.isPublic, true)))
+        .where(whereCondition)
         .orderBy(desc(recipe.createdAt))
         .limit(limit)
         .offset(offset),
-      db
-        .select({ count: count() })
-        .from(recipe)
-        .where(and(eq(recipe.createdById, userId), eq(recipe.isPublic, true))),
+      db.select({ count: count() }).from(recipe).where(whereCondition),
     ]);
 
     return {
       recipes: recipes.map((r) => ({
         ...r,
-        sourceType: r.sourceType as "youtube" | "blog",
+        sourceType: r.sourceType as "youtube" | "blog" | "custom",
       })),
       total: totalResult[0]?.count ?? 0,
     };
@@ -1002,8 +1147,11 @@ export async function cloneRecipe(
       slug: newSlug,
       description: sourceRecipe.description,
       sourceUrl: sourceRecipe.sourceUrl,
-      normalizedUrl: normalizeRecipeUrl(sourceRecipe.sourceUrl),
+      normalizedUrl: sourceRecipe.sourceUrl
+        ? normalizeRecipeUrl(sourceRecipe.sourceUrl)
+        : null,
       sourceType: sourceRecipe.sourceType,
+      isCustom: sourceRecipe.isCustom,
       youtubeVideoId: sourceRecipe.youtubeVideoId,
       thumbnailUrl: sourceRecipe.thumbnailUrl,
       servings: sourceRecipe.servings,
@@ -1035,16 +1183,23 @@ export async function cloneRecipe(
       }
     }
 
-    // Clone recipe-ingredients (reusing existing ingredients)
+    // Clone recipe-ingredients (reusing existing ingredients, with metric conversion)
     if (sourceRecipe.ingredients.length > 0) {
-      const ingredientValues = sourceRecipe.ingredients.map((ing) => ({
-        id: generateId(),
-        recipeId: newRecipeId,
-        ingredientId: ing.ingredient.id,
-        quantity: ing.quantity,
-        unit: ing.unit,
-        notes: ing.notes,
-      }));
+      const ingredientValues = sourceRecipe.ingredients.map((ing) => {
+        const processed = processIngredientForStorage(ing.quantity, ing.unit);
+        return {
+          id: generateId(),
+          recipeId: newRecipeId,
+          ingredientId: ing.ingredient.id,
+          quantity: processed.quantity,
+          unit: processed.unit,
+          notes: ing.notes,
+          quantityMetric: processed.quantityMetric
+            ? Math.round(processed.quantityMetric * 100)
+            : null,
+          unitMetric: processed.unitMetric as "ml" | "g" | null,
+        };
+      });
 
       const ingredientChunks = chunkArray(
         ingredientValues,

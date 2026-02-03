@@ -223,6 +223,7 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
         <WeeklyPlannerGrid
           weekStartDate={currentWeekStart}
           entries={mealPlan?.entries ?? []}
+          mealPlanId={mealPlan?.id ?? ""}
           onAddMeal={handleAddMeal}
           onRemoveMeal={handleRemoveMeal}
           isLoading={addEntryMutation.isPending || removeEntryMutation.isPending}

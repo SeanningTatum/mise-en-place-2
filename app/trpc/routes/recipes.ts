@@ -3,7 +3,7 @@ import { createTRPCRouter, protectedProcedure, adminProcedure } from "..";
 import * as recipeRepository from "@/repositories/recipe";
 import { isYouTubeUrl, parseYouTubeUrl, getVideoMetadata } from "@/lib/youtube";
 import { extractBlogContent, isBlogUrl } from "@/lib/content-extractor";
-import { extractRecipe, extractRecipeFromYouTube, type ExtractedRecipe } from "@/lib/gemini";
+import { extractRecipe, extractRecipeFromYouTube, generateMacros, type ExtractedRecipe } from "@/lib/gemini";
 import { TRPCError } from "@trpc/server";
 import { loggers } from "@/lib/logger";
 
@@ -51,7 +51,41 @@ const listRecipesInput = z.object({
   page: z.number().int().min(0).default(0),
   limit: z.number().int().min(1).max(50).default(12),
   search: z.string().optional(),
-  sourceType: z.enum(["youtube", "blog"]).optional(),
+  sourceType: z.enum(["youtube", "blog", "custom"]).optional(),
+  isCustom: z.boolean().optional(),
+});
+
+// Input schema for creating custom recipes
+const createCustomRecipeInput = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+  servings: z.number().int().min(1, "Servings must be at least 1"),
+  prepTimeMinutes: z.number().int().min(0).nullable(),
+  cookTimeMinutes: z.number().int().min(0).nullable(),
+  thumbnailUrl: z.string().url().nullable().optional(),
+  calories: z.number().int().min(0).nullable().optional(),
+  protein: z.number().int().min(0).nullable().optional(),
+  carbs: z.number().int().min(0).nullable().optional(),
+  fat: z.number().int().min(0).nullable().optional(),
+  fiber: z.number().int().min(0).nullable().optional(),
+  ingredients: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Ingredient name is required"),
+        quantity: z.string().nullable(),
+        unit: z.string().nullable(),
+        notes: z.string().nullable(),
+      })
+    )
+    .min(2, "At least 2 ingredients are required"),
+  steps: z
+    .array(
+      z.object({
+        stepNumber: z.number().int().min(1),
+        instruction: z.string().min(1, "Step instruction is required"),
+      })
+    )
+    .min(2, "At least 2 steps are required"),
 });
 
 const getRecipeInput = z.object({
@@ -67,8 +101,8 @@ export interface ExistingRecipeInfo {
   id: string;
   title: string;
   thumbnailUrl: string | null;
-  sourceUrl: string;
-  sourceType: "youtube" | "blog";
+  sourceUrl: string | null;
+  sourceType: "youtube" | "blog" | "custom";
 }
 
 export interface ExtractedRecipeResponse {
@@ -267,6 +301,73 @@ export const recipesRouter = createTRPCRouter({
         userId: ctx.auth.user.id,
         ...input,
       });
+
+      return result;
+    }),
+
+  /**
+   * Create a custom (user-created) recipe
+   */
+  createCustom: protectedProcedure
+    .input(createCustomRecipeInput)
+    .mutation(async ({ ctx, input }) => {
+      log.info(
+        { title: input.title, userId: ctx.auth.user.id },
+        "Creating custom recipe"
+      );
+
+      // Check if macros are provided
+      const hasMacros =
+        input.calories != null ||
+        input.protein != null ||
+        input.carbs != null ||
+        input.fat != null ||
+        input.fiber != null;
+
+      let macros = {
+        calories: input.calories ?? null,
+        protein: input.protein ?? null,
+        carbs: input.carbs ?? null,
+        fat: input.fat ?? null,
+        fiber: input.fiber ?? null,
+      };
+
+      // Generate macros with AI if not provided and Gemini is available
+      if (!hasMacros && ctx.gemini) {
+        log.info({ title: input.title }, "No macros provided, generating with AI");
+        const generatedMacros = await generateMacros(ctx.gemini, {
+          title: input.title,
+          servings: input.servings,
+          ingredients: input.ingredients.map((ing) => ({
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: ing.unit,
+          })),
+        });
+        macros = generatedMacros;
+        log.info(
+          { title: input.title, calories: macros.calories },
+          "Macros generated successfully"
+        );
+      }
+
+      const result = await recipeRepository.createCustomRecipe(ctx.db, {
+        userId: ctx.auth.user.id,
+        title: input.title,
+        description: input.description,
+        servings: input.servings,
+        prepTimeMinutes: input.prepTimeMinutes,
+        cookTimeMinutes: input.cookTimeMinutes,
+        thumbnailUrl: input.thumbnailUrl ?? null,
+        ...macros,
+        ingredients: input.ingredients,
+        steps: input.steps,
+      });
+
+      log.info(
+        { recipeId: result.id, title: input.title },
+        "Custom recipe created successfully"
+      );
 
       return result;
     }),

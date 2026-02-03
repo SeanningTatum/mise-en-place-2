@@ -89,6 +89,10 @@ User management, analytics charts, documentation viewer.
 AI-powered extraction from YouTube (with timestamps) and blogs using Gemini/Claude. Extracts title, description, servings, macros, ingredients, steps.
 **Key files**: `app/lib/{gemini,claude,youtube,content-extractor}.ts`, `app/repositories/recipe.ts`, `app/components/recipes/`
 
+### Custom Recipes
+Manual recipe creation with AI-assisted macro generation, ingredient autocomplete with similarity detection, and metric unit standardization. Recipes show "Original" source label. Ingredient matching uses alias table + AI similarity search.
+**Key files**: `app/components/recipes/custom-recipe-form.tsx`, `app/components/recipes/ingredient-name-input.tsx`, `app/lib/units.ts`, `app/lib/gemini.ts`, `app/repositories/recipe.ts`, `app/repositories/ingredient.ts`, `app/trpc/routes/recipes.ts`, `app/trpc/routes/ingredients.ts`
+
 ### Admin Documentation
 Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, search.
 **Key files**: `app/routes/admin/docs.tsx`, `app/components/markdown-renderer.tsx`, `docs/`
@@ -103,6 +107,11 @@ Public profile pages at `/u/[username]` for sharing recipe collections. Users cr
 **Data model**: `user_profile` (username, displayName, bio, avatarUrl, isPublic, viewCount) → `recipe` (slug, isPublic, saveCount) → `recipe_import` (tracks recipe cloning)
 **Key files**: `app/routes/u.[username].tsx`, `app/routes/recipes/profile.tsx`, `app/repositories/profile.ts`, `app/trpc/routes/profile.ts`, `app/components/profile/`
 
+### Multi-Course Meal Planner
+Plan elegant multi-course dining experiences with AI assistance. Create meals with name, guest count, serving time, and service style (plated/family/buffet). Add courses from recipe library with type categorization (appetizer, soup/salad, main, side, dessert, drink). AI generates menu suggestions for improving composition and cooking timelines that work backward from serving time. Shopping lists aggregate and scale ingredients to guest count.
+**Data model**: `multi_course_meal` (name, guestCount, servingTime, serviceStyle, aiSuggestionsJson, timelineJson) → `meal_course` (courseType, courseOrder, servingsOverride) → references `recipe`
+**Key files**: `app/routes/recipes/meal.tsx`, `app/components/multi-course-meal/`, `app/repositories/multi-course-meal.ts`, `app/trpc/routes/multi-course-meal.ts`, `app/lib/gemini.ts` (generateMenuSuggestions, generateCookingTimeline)
+
 ## Database
 
 **Schema**: `app/db/schema.ts` using Drizzle ORM
@@ -110,7 +119,11 @@ Public profile pages at `/u/[username]` for sharing recipe collections. Users cr
 **Core Tables**:
 - `user` - User accounts with roles (user/admin), ban system
 - `recipe` - Recipes with extraction metadata, slugs, visibility flags (`is_public`, `save_count`)
+- `recipe_ingredient` - Recipe ingredients with metric standardization (`quantity_metric`, `unit_metric`)
+- `ingredient` - Ingredient master list
+- `ingredient_alias` - Ingredient name variations for similarity matching
 - `meal_plan` / `meal_plan_entry` - Weekly meal planning
+- `multi_course_meal` / `meal_course` - Multi-course meal planning with AI timelines
 - `user_profile` - Public profiles (username, displayName, bio, avatarUrl, isPublic, viewCount)
 - `recipe_import` - Tracks when users clone recipes from other profiles
 
@@ -135,6 +148,7 @@ erDiagram
 - `admin.ts` - User management, analytics, docs
 - `recipes.ts` - Recipe CRUD, extraction, visibility
 - `meal-plan.ts` - Weekly planning, grocery lists
+- `multi-course-meal.ts` - Multi-course meal planning, AI suggestions/timelines
 - `profile.ts` - Profile management, public profiles, recipe import
 - `ingredients.ts` - Ingredient management
 - `analytics.ts` - Usage analytics
@@ -185,6 +199,8 @@ sequenceDiagram
 
 ## Recent Changes
 
+- **Multi-Course Meal Planner** - Plan elegant multi-course dining experiences with AI assistance. Create meals with name, guest count, serving time, and service style (plated/family/buffet). Add courses from recipe library with type categorization. AI generates menu suggestions for improving composition and cooking timelines that work backward from serving time. Shopping lists aggregate and scale ingredients to guest count. New tables: multi_course_meal, meal_course. New AI functions: generateMenuSuggestions, generateCookingTimeline. New files: `app/routes/recipes/meal.tsx`, `app/components/multi-course-meal/`, `app/repositories/multi-course-meal.ts`, `app/trpc/routes/multi-course-meal.ts`
+- **Custom Recipe Enhancements** - Enhanced custom recipe creation with AI macro generation (Gemini), ingredient autocomplete with similarity detection (alias table + AI), metric unit standardization (all units normalized to ml/g on save), and "Original" source labeling. New tables: ingredient_alias. Schema additions: recipe_ingredient.quantity_metric, recipe_ingredient.unit_metric. New files: `app/lib/units.ts`, `app/components/recipes/ingredient-name-input.tsx`, `scripts/seed-ingredient-aliases.ts`
 - **Profile Sharing** - Public profile pages at `/u/[username]` for sharing recipe collections. Users create profiles with unique usernames (3-30 chars, lowercase, numbers, hyphens), toggle profile/recipe visibility, share via links/QR codes. Visitors can import (clone) public recipes. New tables: user_profile, recipe_import. Schema additions: recipe.slug, recipe.is_public, recipe.save_count
 - **Week Meal Planner** - Full-featured weekly meal planning with 7-day × 4-meal grid, recipe picker modal, aggregated grocery list with clipboard/print export. New tables: meal_plan, meal_plan_entry
 - **Editorial Cookbook Design System** - Added warm typography (Playfair Display/Source Sans 3), OKLCH color palette, grain texture, warm shadows, enhanced components (recipe cards, auth pages, layout)

@@ -304,6 +304,7 @@ export const profileRouter = createTRPCRouter({
 
   /**
    * Get public recipes for a profile
+   * Supports filtering by isCustom to separate original vs collected recipes
    */
   getPublicRecipes: publicProcedure
     .input(
@@ -311,6 +312,7 @@ export const profileRouter = createTRPCRouter({
         username: z.string(),
         limit: z.number().min(1).max(50).default(20),
         offset: z.number().min(0).default(0),
+        isCustom: z.boolean().optional(), // true = original recipes, false = collected recipes
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -318,6 +320,7 @@ export const profileRouter = createTRPCRouter({
         username: input.username,
         limit: input.limit,
         offset: input.offset,
+        isCustom: input.isCustom,
       });
     }),
 
