@@ -17,7 +17,18 @@ import {
   IconAlertCircle,
   IconFlame,
   IconLink,
+  IconZoomIn,
+  IconZoomOut,
+  IconRefresh,
+  IconX,
+  IconMaximize,
 } from "@tabler/icons-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogPortal,
+  DialogOverlay,
+} from "@/components/ui/dialog";
 
 // Initialize mermaid with comprehensive config for all diagram types
 // Note: This is the default config, actual rendering uses config in MermaidBlock
@@ -136,12 +147,221 @@ interface MermaidBlockProps {
   code: string;
 }
 
+// Interactive diagram viewer with pan and zoom
+interface DiagramViewerProps {
+  svg: string;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function DiagramViewer({ svg, isOpen, onClose }: DiagramViewerProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [initialPinchDistance, setInitialPinchDistance] = useState<number | null>(null);
+  const [initialScale, setInitialScale] = useState(1);
+
+  // Reset view when opening
+  useEffect(() => {
+    if (isOpen) {
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [isOpen]);
+
+  const handleZoomIn = useCallback(() => {
+    setScale((s) => Math.min(s * 1.25, 5));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setScale((s) => Math.max(s / 1.25, 0.25));
+  }, []);
+
+  const handleReset = useCallback(() => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  }, []);
+
+  // Wheel zoom
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setScale((s) => Math.min(Math.max(s * delta, 0.25), 5));
+  }, []);
+
+  // Mouse drag
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+  }, [position]);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y,
+    });
+  }, [isDragging, dragStart]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Touch events for mobile
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - position.x,
+        y: e.touches[0].clientY - position.y,
+      });
+    } else if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      setInitialPinchDistance(Math.sqrt(dx * dx + dy * dy));
+      setInitialScale(scale);
+    }
+  }, [position, scale]);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1 && isDragging) {
+      setPosition({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y,
+      });
+    } else if (e.touches.length === 2 && initialPinchDistance !== null) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const newScale = initialScale * (distance / initialPinchDistance);
+      setScale(Math.min(Math.max(newScale, 0.25), 5));
+    }
+  }, [isDragging, dragStart, initialPinchDistance, initialScale]);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    setInitialPinchDistance(null);
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      } else if (e.key === "+" || e.key === "=") {
+        handleZoomIn();
+      } else if (e.key === "-") {
+        handleZoomOut();
+      } else if (e.key === "0") {
+        handleReset();
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose, handleZoomIn, handleZoomOut, handleReset]);
+
+  // Process SVG for fullscreen view - make it larger and centered
+  const fullscreenSvg = svg.replace(
+    /<svg([^>]*)style="[^"]*"([^>]*)>/,
+    '<svg$1style="width: 100%; height: 100%; max-width: none; max-height: none;"$2>'
+  );
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogPortal>
+        <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Toolbar */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-background/95 backdrop-blur rounded-lg border shadow-lg px-2 py-1.5">
+            <button
+              onClick={handleZoomOut}
+              className="p-2 rounded-md hover:bg-muted transition-colors"
+              title="Zoom out (-)"
+            >
+              <IconZoomOut className="size-5" />
+            </button>
+            <span className="text-sm font-medium min-w-[4rem] text-center">
+              {Math.round(scale * 100)}%
+            </span>
+            <button
+              onClick={handleZoomIn}
+              className="p-2 rounded-md hover:bg-muted transition-colors"
+              title="Zoom in (+)"
+            >
+              <IconZoomIn className="size-5" />
+            </button>
+            <div className="w-px h-6 bg-border mx-1" />
+            <button
+              onClick={handleReset}
+              className="p-2 rounded-md hover:bg-muted transition-colors"
+              title="Reset view (0)"
+            >
+              <IconRefresh className="size-5" />
+            </button>
+            <div className="w-px h-6 bg-border mx-1" />
+            <button
+              onClick={onClose}
+              className="p-2 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              title="Close (Esc)"
+            >
+              <IconX className="size-5" />
+            </button>
+          </div>
+
+          {/* Hint text */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-sm text-muted-foreground bg-background/80 backdrop-blur rounded-lg px-3 py-1.5 border">
+            Scroll to zoom • Drag to pan • Press Esc to close
+          </div>
+
+          {/* Diagram container */}
+          <div
+            ref={containerRef}
+            className={cn(
+              "w-full h-full overflow-hidden",
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            )}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              className="w-full h-full flex items-center justify-center p-8"
+              style={{
+                transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                transformOrigin: "center center",
+                transition: isDragging ? "none" : "transform 0.1s ease-out",
+              }}
+            >
+              <div
+                className="bg-white rounded-xl p-8 shadow-2xl [&_svg]:max-w-none [&_svg]:w-auto [&_svg]:h-auto [&_svg]:max-h-[80vh]"
+                dangerouslySetInnerHTML={{ __html: fullscreenSvg }}
+              />
+            </div>
+          </div>
+        </div>
+      </DialogPortal>
+    </Dialog>
+  );
+}
+
 function MermaidBlock({ code }: MermaidBlockProps) {
   const id = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Ensure we only render on client side
   useEffect(() => {
@@ -158,128 +378,116 @@ function MermaidBlock({ code }: MermaidBlockProps) {
         
         // Create a temporary container with explicit width for rendering
         const tempContainer = document.createElement("div");
-        tempContainer.style.width = "1200px";
+        tempContainer.style.width = "1400px";
         tempContainer.style.position = "absolute";
         tempContainer.style.left = "-9999px";
         tempContainer.style.top = "-9999px";
         document.body.appendChild(tempContainer);
         
-        // Detect diagram type from code to apply specific settings
-        const diagramType = code.trim().split('\n')[0].toLowerCase();
-        const isJourney = diagramType.includes('journey');
-        const isSequence = diagramType.includes('sequencediagram');
-        const isFlowchart = diagramType.includes('flowchart') || diagramType.includes('graph');
-        const isStateDiagram = diagramType.includes('statediagram');
-        const isErDiagram = diagramType.includes('erdiagram');
-        const isGantt = diagramType.includes('gantt');
-        const isPie = diagramType.includes('pie');
-        const isMindmap = diagramType.includes('mindmap');
-        const isQuadrant = diagramType.includes('quadrantchart');
-        
-        // Re-initialize mermaid before each render with optimized settings
+        // Re-initialize mermaid before each render with larger, more readable settings
         mermaid.initialize({
           startOnLoad: false,
           theme: "default",
           securityLevel: "loose",
           fontFamily: "system-ui, -apple-system, sans-serif",
-          // Global font size - smaller for better fit
-          fontSize: 12,
-          // Flowchart settings - smaller padding and wrapping
+          // Global font size - larger for readability
+          fontSize: 14,
+          // Flowchart settings - more readable
           flowchart: { 
             htmlLabels: true, 
             useMaxWidth: false,
             curve: "basis",
-            diagramPadding: 8,
-            nodeSpacing: 50,
-            rankSpacing: 50,
-            wrappingWidth: 150,
+            diagramPadding: 20,
+            nodeSpacing: 60,
+            rankSpacing: 60,
+            wrappingWidth: 200,
           },
-          // Sequence diagram - larger width for better readability
+          // Sequence diagram - larger for readability
           sequence: { 
             useMaxWidth: false,
             wrap: true,
-            width: 150,
-            height: 50,
-            boxMargin: 10,
-            boxTextMargin: 5,
-            noteMargin: 10,
-            messageMargin: 35,
+            width: 180,
+            height: 60,
+            boxMargin: 12,
+            boxTextMargin: 8,
+            noteMargin: 12,
+            messageMargin: 40,
             mirrorActors: false,
-            actorFontSize: 12,
-            noteFontSize: 11,
-            messageFontSize: 12,
+            actorFontSize: 14,
+            noteFontSize: 13,
+            messageFontSize: 14,
           },
-          // ER diagram - compact entities
+          // ER diagram - readable entities
           er: { 
             useMaxWidth: false,
             layoutDirection: "TB",
-            minEntityWidth: 80,
-            minEntityHeight: 50,
-            entityPadding: 10,
-            fontSize: 11,
+            minEntityWidth: 100,
+            minEntityHeight: 60,
+            entityPadding: 15,
+            fontSize: 13,
           },
-          // State diagram - smaller text
+          // State diagram - larger text
           state: { 
             useMaxWidth: false,
-            titleTopMargin: 15,
-            nodeSpacing: 30,
-            rankSpacing: 30,
+            titleTopMargin: 20,
+            nodeSpacing: 40,
+            rankSpacing: 40,
           },
           // Pie chart
           pie: { 
             useMaxWidth: false,
             textPosition: 0.75,
           },
-          // Gantt chart - compact
+          // Gantt chart - larger
           gantt: { 
             useMaxWidth: false,
-            titleTopMargin: 15,
-            barHeight: 20,
-            barGap: 4,
-            topPadding: 30,
-            leftPadding: 60,
-            gridLineStartPadding: 25,
-            fontSize: 10,
-            sectionFontSize: 11,
+            titleTopMargin: 20,
+            barHeight: 24,
+            barGap: 6,
+            topPadding: 40,
+            leftPadding: 80,
+            gridLineStartPadding: 30,
+            fontSize: 12,
+            sectionFontSize: 13,
           },
-          // Journey diagram - much more compact
+          // Journey diagram - more readable
           journey: { 
             useMaxWidth: false,
-            diagramMarginX: 20,
-            diagramMarginY: 10,
-            leftMargin: 50,
-            width: 150,
-            height: 40,
-            boxMargin: 5,
-            boxTextMargin: 3,
-            noteMargin: 5,
-            messageMargin: 20,
-            taskFontSize: 10,
-            sectionFontSize: 11,
+            diagramMarginX: 30,
+            diagramMarginY: 15,
+            leftMargin: 60,
+            width: 180,
+            height: 50,
+            boxMargin: 8,
+            boxTextMargin: 5,
+            noteMargin: 8,
+            messageMargin: 25,
+            taskFontSize: 12,
+            sectionFontSize: 13,
           },
-          // Mindmap - compact
+          // Mindmap - readable
           mindmap: { 
             useMaxWidth: false,
-            padding: 8,
-            maxNodeWidth: 150,
+            padding: 12,
+            maxNodeWidth: 200,
           },
-          // Quadrant chart - smaller overall
+          // Quadrant chart - larger
           quadrantChart: { 
             useMaxWidth: false,
-            chartWidth: 400,
-            chartHeight: 400,
-            titleFontSize: 14,
-            titlePadding: 8,
-            quadrantPadding: 4,
-            xAxisLabelPadding: 8,
-            yAxisLabelPadding: 8,
-            xAxisLabelFontSize: 11,
-            yAxisLabelFontSize: 11,
-            quadrantLabelFontSize: 11,
-            quadrantTextTopPadding: 4,
-            pointTextPadding: 4,
-            pointLabelFontSize: 10,
-            pointRadius: 4,
+            chartWidth: 500,
+            chartHeight: 500,
+            titleFontSize: 16,
+            titlePadding: 12,
+            quadrantPadding: 8,
+            xAxisLabelPadding: 10,
+            yAxisLabelPadding: 10,
+            xAxisLabelFontSize: 13,
+            yAxisLabelFontSize: 13,
+            quadrantLabelFontSize: 13,
+            quadrantTextTopPadding: 6,
+            pointTextPadding: 6,
+            pointLabelFontSize: 12,
+            pointRadius: 5,
           },
         });
         
@@ -288,31 +496,8 @@ function MermaidBlock({ code }: MermaidBlockProps) {
         // Clean up temp container
         document.body.removeChild(tempContainer);
         
-        // Post-process SVG to ensure proper sizing and responsiveness
+        // Post-process SVG to ensure proper sizing
         let processedSvg = renderedSvg;
-        
-        // Determine max-width based on diagram type
-        let maxWidth = "100%";
-        let minHeight = "auto";
-        
-        // Sequence diagrams need more width
-        if (isSequence) {
-          maxWidth = "100%";
-          minHeight = "300px";
-        }
-        // Journey diagrams should be scaled down
-        else if (isJourney) {
-          maxWidth = "100%";
-        }
-        // ER diagrams need good width for multiple entities  
-        else if (isErDiagram) {
-          maxWidth = "100%";
-          minHeight = "250px";
-        }
-        // Quadrant charts should be reasonably sized
-        else if (isQuadrant) {
-          maxWidth = "500px";
-        }
         
         // Remove any existing style attributes and add responsive styles
         processedSvg = processedSvg.replace(
@@ -339,24 +524,24 @@ function MermaidBlock({ code }: MermaidBlockProps) {
               newAttrs += ` ${viewBox}`;
             }
             
-            return `<svg${newAttrs} style="max-width: ${maxWidth}; min-height: ${minHeight}; height: auto; display: block;">`;
+            // Preserve natural dimensions with some max limits for preview
+            return `<svg${newAttrs} style="max-width: 100%; height: auto; min-height: 200px; display: block;">`;
           }
         );
         
-        // Scale down text in SVG for better fitting
+        // Update text styles for better readability
         processedSvg = processedSvg.replace(
           /<style>([\s\S]*?)<\/style>/,
           (match, styleContent) => {
-            // Add CSS to scale text and improve fitting
             const additionalStyles = `
               .node rect, .node circle, .node ellipse, .node polygon, .node path { 
-                stroke-width: 1px !important; 
+                stroke-width: 1.5px !important; 
               }
               .label, .nodeLabel, .edgeLabel, .cluster-label {
-                font-size: 11px !important;
+                font-size: 13px !important;
               }
               .messageText, .actor {
-                font-size: 11px !important;
+                font-size: 13px !important;
               }
               text {
                 font-family: system-ui, -apple-system, sans-serif !important;
@@ -397,11 +582,36 @@ function MermaidBlock({ code }: MermaidBlockProps) {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="my-6 flex justify-center overflow-x-auto rounded-xl border bg-muted/30 p-6"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <>
+      <div
+        ref={containerRef}
+        onClick={() => setIsViewerOpen(true)}
+        className={cn(
+          "group my-6 relative rounded-xl border bg-muted/30 p-6",
+          "cursor-pointer transition-all hover:border-primary/50 hover:shadow-md",
+          "overflow-x-auto"
+        )}
+      >
+        {/* Expand hint */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-background/80 backdrop-blur text-xs font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity border shadow-sm">
+          <IconMaximize className="size-3.5" />
+          Click to expand
+        </div>
+        
+        {/* Diagram */}
+        <div 
+          className="flex justify-center [&_svg]:max-w-full"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      </div>
+
+      {/* Fullscreen viewer */}
+      <DiagramViewer
+        svg={svg}
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+      />
+    </>
   );
 }
 

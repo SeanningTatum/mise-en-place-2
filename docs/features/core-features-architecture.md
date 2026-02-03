@@ -1,3 +1,8 @@
+---
+title: Core Features Architecture
+date: 2026-01-30
+---
+
 # Core Features: Information Architecture
 
 A comprehensive architecture for the three highest-impact features identified through market research, designed to establish mise en place as the definitive recipe app for video-first home cooks.

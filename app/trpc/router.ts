@@ -9,6 +9,7 @@ import { recipesRouter } from "./routes/recipes";
 import { ingredientsRouter } from "./routes/ingredients";
 import { mealPlanRouter } from "./routes/meal-plan";
 import { profileRouter } from "./routes/profile";
+import { multiCourseMealRouter } from "./routes/multi-course-meal";
 
 const userRouter = createTRPCRouter({
   getUsers: publicProcedure.query(async ({ ctx }) => {
@@ -50,6 +51,7 @@ export const appRouter = createTRPCRouter({
   ingredients: ingredientsRouter,
   mealPlan: mealPlanRouter,
   profile: profileRouter,
+  multiCourseMeal: multiCourseMealRouter,
 });
 
 export type AppRouter = typeof appRouter;

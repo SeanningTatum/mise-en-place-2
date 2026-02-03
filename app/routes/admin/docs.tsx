@@ -19,6 +19,7 @@ import {
   IconX,
   IconRocket,
   IconTestPipe,
+  IconSitemap,
 } from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -43,6 +44,16 @@ const markdownFiles = import.meta.glob("/docs/**/*.md", {
   import: "default",
   eager: true,
 }) as Record<string, string>;
+
+// Import the high-level architecture document separately
+const architectureFile = import.meta.glob("/.cursor/context/high-level-architecture.md", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
+
+// Get the architecture content
+const architectureContent = Object.values(architectureFile)[0] || "";
 
 // Types for frontmatter
 interface DocFrontmatter {
@@ -146,6 +157,7 @@ function TableOfContents({ headings, activeId, onHeadingClick }: TableOfContents
 
 // Categories configuration
 const categories = [
+  { id: "architecture", label: "Architecture", icon: IconSitemap },
   { id: "meetings", label: "Meetings", icon: IconCalendarEvent },
   { id: "ideas", label: "Ideas", icon: IconBulb },
   { id: "plans", label: "Plans", icon: IconMap },
@@ -161,6 +173,11 @@ const emptyStateConfig: Record<
   CategoryId,
   { title: string; description: string; icon: React.ComponentType<{ className?: string }> }
 > = {
+  architecture: {
+    title: "Architecture overview",
+    description: "High-level system architecture, route maps, feature flows, and changelog.",
+    icon: IconSitemap,
+  },
   meetings: {
     title: "No meeting notes yet",
     description: "Document your team syncs, stand-ups, and planning sessions here.",
@@ -233,6 +250,7 @@ interface ParsedDoc {
 // Group documents by category
 function getDocumentsByCategory() {
   const docs: Record<CategoryId, ParsedDoc[]> = {
+    architecture: [],
     meetings: [],
     ideas: [],
     plans: [],
@@ -240,6 +258,18 @@ function getDocumentsByCategory() {
     releases: [],
     testing: [],
   };
+
+  // Add the architecture document as a special entry
+  if (architectureContent) {
+    const { frontmatter, content } = parseFrontmatter(architectureContent);
+    docs.architecture.push({
+      filename: "high-level-architecture",
+      title: frontmatter.title || "High-Level Architecture",
+      path: "/.cursor/context/high-level-architecture.md",
+      content,
+      date: frontmatter.date || null,
+    });
+  }
 
   for (const [path, rawContent] of Object.entries(markdownFiles)) {
     const parsed = parseFilePath(path);
@@ -295,7 +325,7 @@ export default function DocsPage() {
     if (cat && categories.some((c) => c.id === cat)) {
       return cat;
     }
-    return "features"; // Default to features (has content)
+    return "architecture"; // Default to architecture (high-level overview)
   }, [params.category]);
 
   // Get the current document content

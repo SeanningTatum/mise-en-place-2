@@ -94,9 +94,14 @@ export const recipe = sqliteTable("recipe", {
   title: text("title").notNull(),
   slug: text("slug"), // URL-safe title for public URLs
   description: text("description"),
-  sourceUrl: text("source_url").notNull(),
-  normalizedUrl: text("normalized_url").notNull(),
-  sourceType: text("source_type", { enum: ["youtube", "blog"] }).notNull(),
+  sourceUrl: text("source_url"), // Nullable for custom recipes
+  normalizedUrl: text("normalized_url"), // Nullable for custom recipes
+  sourceType: text("source_type", {
+    enum: ["youtube", "blog", "custom"],
+  }).notNull(),
+  isCustom: integer("is_custom", { mode: "boolean" })
+    .default(false)
+    .notNull(), // True for user-created recipes
   youtubeVideoId: text("youtube_video_id"),
   thumbnailUrl: text("thumbnail_url"),
   servings: integer("servings"),
@@ -159,12 +164,30 @@ export const recipeIngredient = sqliteTable("recipe_ingredient", {
     .notNull()
     .references(() => ingredient.id, { onDelete: "cascade" }),
   quantity: text("quantity"), // stored as text to handle fractions like "1/2"
-  unit: text("unit"),
+  unit: text("unit"), // normalized unit name
   notes: text("notes"),
+  // Metric conversion for grocery list aggregation
+  quantityMetric: integer("quantity_metric"), // quantity converted to metric (ml or g), scaled by 100 for precision
+  unitMetric: text("unit_metric", { enum: ["ml", "g"] }), // metric unit type
 });
 
 export type RecipeIngredient = typeof recipeIngredient.$inferSelect;
 export type InsertRecipeIngredient = typeof recipeIngredient.$inferInsert;
+
+// Ingredient aliases for normalization
+export const ingredientAlias = sqliteTable("ingredient_alias", {
+  id: text("id").primaryKey(),
+  alias: text("alias").notNull().unique(), // normalized alias (lowercase)
+  canonicalId: text("canonical_id")
+    .notNull()
+    .references(() => ingredient.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+});
+
+export type IngredientAlias = typeof ingredientAlias.$inferSelect;
+export type InsertIngredientAlias = typeof ingredientAlias.$inferInsert;
 
 // Meal planning tables
 export const mealPlan = sqliteTable("meal_plan", {
@@ -247,3 +270,77 @@ export const recipeImport = sqliteTable("recipe_import", {
 
 export type RecipeImport = typeof recipeImport.$inferSelect;
 export type InsertRecipeImport = typeof recipeImport.$inferInsert;
+
+// Multi-course meal planning tables
+export const multiCourseMeal = sqliteTable("multi_course_meal", {
+  id: text("id").primaryKey(),
+  createdById: text("created_by_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  slug: text("slug"), // URL-safe identifier for sharing
+  guestCount: integer("guest_count").notNull(),
+  servingTime: text("serving_time").notNull(), // ISO datetime string
+  serviceStyle: text("service_style", {
+    enum: ["plated", "family", "buffet"],
+  }).notNull(),
+  notes: text("notes"),
+  // Sharing and visibility
+  isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
+  // AI generation status for loading page
+  generationStatus: text("generation_status", {
+    enum: ["pending", "generating", "complete", "error"],
+  }),
+  generationError: text("generation_error"), // Error message if generation failed
+  // Cached AI data stored as JSON
+  aiSuggestionsJson: text("ai_suggestions_json", { mode: "json" }).$type<{
+    suggestions?: Array<{
+      courseType: string;
+      suggestedRecipeId?: string;
+      suggestion: string;
+      reasoning: string;
+    }>;
+    generatedAt?: string;
+  }>(),
+  timelineJson: text("timeline_json", { mode: "json" }).$type<{
+    items?: Array<{
+      id: string;
+      time: string;
+      task: string;
+      recipeId?: string;
+      recipeName?: string;
+      durationMinutes: number;
+      category: "prep" | "cook" | "rest" | "serve";
+    }>;
+    generatedAt?: string;
+  }>(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export type MultiCourseMeal = typeof multiCourseMeal.$inferSelect;
+export type InsertMultiCourseMeal = typeof multiCourseMeal.$inferInsert;
+
+export const mealCourse = sqliteTable("meal_course", {
+  id: text("id").primaryKey(),
+  mealId: text("meal_id")
+    .notNull()
+    .references(() => multiCourseMeal.id, { onDelete: "cascade" }),
+  recipeId: text("recipe_id")
+    .notNull()
+    .references(() => recipe.id, { onDelete: "cascade" }),
+  courseType: text("course_type", {
+    enum: ["appetizer", "soup_salad", "main", "side", "dessert", "drink"],
+  }).notNull(),
+  courseOrder: integer("course_order").notNull(),
+  servingsOverride: integer("servings_override"), // Optional override for scaling
+  notes: text("notes"),
+});
+
+export type MealCourse = typeof mealCourse.$inferSelect;
+export type InsertMealCourse = typeof mealCourse.$inferInsert;

@@ -16,13 +16,22 @@ user ◄─────┬───── session (userId)
            │
            ├───── verification (identifier = email)
            │
+           ├───── user_profile (userId)
+           │
+           ├───── meal_plan (userId)
+           │         └── meal_plan_entry (mealPlanId) → recipe
+           │
+           ├───── multi_course_meal (userId)
+           │         └── meal_course (mealId) → recipe
+           │
            └───── recipe (createdById)
                       │
                       ├───── recipe_step (recipeId)
                       │
-                      └───── recipe_ingredient (recipeId)
-                                   │
-                                   └───── ingredient (ingredientId)
+                      ├───── recipe_ingredient (recipeId)
+                      │         └── ingredient (ingredientId)
+                      │
+                      └───── recipe_import (sourceRecipeId, clonedRecipeId)
 ```
 
 ## Tables Overview
@@ -40,10 +49,27 @@ user ◄─────┬───── session (userId)
 
 | Table | Purpose | Key Fields |
 |-------|---------|------------|
-| `recipe` | Extracted recipes with macros | sourceType (youtube/blog), youtubeVideoId, servings, calories/protein/carbs/fat/fiber |
+| `recipe` | Extracted recipes with macros | sourceType (youtube/blog), youtubeVideoId, servings, calories/protein/carbs/fat/fiber, slug, isPublic, saveCount |
 | `recipe_step` | Cooking instructions | stepNumber, instruction, timestampSeconds, durationSeconds |
 | `ingredient` | Normalized ingredient database | name (unique), category |
-| `recipe_ingredient` | Junction table | quantity (text for fractions), unit, notes |
+| `ingredient_alias` | Name variations for matching | ingredientId, alias |
+| `recipe_ingredient` | Junction table | quantity (text for fractions), unit, notes, quantityMetric, unitMetric |
+| `recipe_import` | Tracks recipe cloning | userId, sourceRecipeId, clonedRecipeId |
+
+### Profile Tables
+
+| Table | Purpose | Key Fields |
+|-------|---------|------------|
+| `user_profile` | Public user profiles | userId, username (unique), displayName, bio, avatarUrl, isPublic, viewCount |
+
+### Meal Planning Tables
+
+| Table | Purpose | Key Fields |
+|-------|---------|------------|
+| `meal_plan` | Weekly meal plans | userId, weekStartDate |
+| `meal_plan_entry` | Individual meal assignments | mealPlanId, dayOfWeek (0-6), mealType enum, recipeId |
+| `multi_course_meal` | Multi-course dining events | userId, name, guestCount, servingTime, serviceStyle, slug, isPublic, generationStatus, generationError, aiSuggestionsJson, timelineJson |
+| `meal_course` | Courses within a meal | mealId, recipeId, courseType, courseOrder, servingsOverride |
 
 ## SQLite Conventions
 

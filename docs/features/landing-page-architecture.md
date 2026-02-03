@@ -1,3 +1,8 @@
+---
+title: Landing Page Architecture
+date: 2026-01-30
+---
+
 # Landing Page: Information Architecture
 
 A conversion-focused landing page for mise en place, targeting three distinct ICPs with tailored messaging and visual design.

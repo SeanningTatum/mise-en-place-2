@@ -7,7 +7,7 @@ import {
   InsightsCard,
   type Insight,
 } from "@/components/analytics";
-import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays, Share2, Eye, Bookmark, Globe } from "lucide-react";
+import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays, Share2, Eye, Bookmark, Globe, UtensilsCrossed, CheckCircle2, XCircle, Clock, Loader2 } from "lucide-react";
 import type { Route } from "./+types/_index";
 
 export const loader = async ({ context }: Route.LoaderArgs) => {
@@ -35,6 +35,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     recipeImportGrowthData,
     topProfilesByViews,
     mostSavedRecipes,
+    multiCourseMealStats,
+    multiCourseMealGrowthData,
+    generationStatusDistribution,
+    mealVisibilityDistribution,
   ] = await Promise.all([
     context.trpc.analytics.getUserStats(),
     context.trpc.analytics.getUserGrowth({ startDate, endDate }),
@@ -55,6 +59,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     context.trpc.analytics.getRecipeImportGrowth({ startDate, endDate }),
     context.trpc.analytics.getTopProfilesByViews({ limit: 5 }),
     context.trpc.analytics.getMostSavedRecipes({ limit: 5 }),
+    context.trpc.analytics.getMultiCourseMealStats(),
+    context.trpc.analytics.getMultiCourseMealGrowth({ startDate, endDate }),
+    context.trpc.analytics.getGenerationStatusDistribution(),
+    context.trpc.analytics.getMealVisibilityDistribution(),
   ]);
 
   return {
@@ -77,6 +85,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     recipeImportGrowthData,
     topProfilesByViews,
     mostSavedRecipes,
+    multiCourseMealStats,
+    multiCourseMealGrowthData,
+    generationStatusDistribution,
+    mealVisibilityDistribution,
   };
 };
 
@@ -113,6 +125,10 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
     recipeImportGrowthData,
     topProfilesByViews,
     mostSavedRecipes,
+    multiCourseMealStats,
+    multiCourseMealGrowthData,
+    generationStatusDistribution,
+    mealVisibilityDistribution,
   } = loaderData;
 
   // Generate insights based on the data
@@ -281,6 +297,47 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
   } else {
     profileSharingInsights.push({
       text: "No profiles created yet - users can set up public profiles to share recipes",
+      type: "neutral",
+    });
+  }
+
+  // Multi-course meal insights
+  const mealPlannerInsights: Insight[] = [];
+  if (multiCourseMealStats.totalMeals > 0) {
+    mealPlannerInsights.push({
+      text: `${multiCourseMealStats.totalMeals} multi-course meal${multiCourseMealStats.totalMeals !== 1 ? "s" : ""} created`,
+      type: "positive",
+    });
+
+    mealPlannerInsights.push({
+      text: `${multiCourseMealStats.publicRate}% of meals are shared publicly`,
+      type: multiCourseMealStats.publicRate >= 30 ? "positive" : "neutral",
+    });
+
+    if (multiCourseMealStats.successRate > 0) {
+      mealPlannerInsights.push({
+        text: `${multiCourseMealStats.successRate}% generation success rate`,
+        type: multiCourseMealStats.successRate >= 80 ? "positive" : multiCourseMealStats.successRate >= 50 ? "neutral" : "negative",
+      });
+    }
+
+    if (multiCourseMealStats.errorMeals > 0) {
+      mealPlannerInsights.push({
+        text: `${multiCourseMealStats.errorMeals} meal${multiCourseMealStats.errorMeals !== 1 ? "s" : ""} failed generation`,
+        type: multiCourseMealStats.errorMeals > multiCourseMealStats.completeMeals ? "negative" : "neutral",
+      });
+    }
+
+    if (multiCourseMealGrowthData.length > 0) {
+      const recentMeals = multiCourseMealGrowthData.slice(-7).reduce((sum, d) => sum + d.count, 0);
+      mealPlannerInsights.push({
+        text: `${recentMeals} new meal${recentMeals !== 1 ? "s" : ""} created in the last 7 days`,
+        type: recentMeals > 0 ? "positive" : "neutral",
+      });
+    }
+  } else {
+    mealPlannerInsights.push({
+      text: "No multi-course meals created yet - users can create meal plans with multiple courses",
       type: "neutral",
     });
   }
@@ -682,6 +739,76 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Multi-Course Meal Planner Analytics Section */}
+            <div className="px-4 lg:px-6 border-t pt-6">
+              <h2 className="text-2xl font-semibold mb-4">Meal Planner Analytics</h2>
+
+              {/* Meal Planner Stats Cards */}
+              <div className="mb-6">
+                <StatCardGrid columns={4}>
+                  <StatCard
+                    label="Total Meals"
+                    value={multiCourseMealStats.totalMeals}
+                    icon={UtensilsCrossed}
+                    description="Multi-course meals created"
+                  />
+                  <StatCard
+                    label="Public Meals"
+                    value={multiCourseMealStats.publicMeals}
+                    icon={Share2}
+                    description={`${multiCourseMealStats.publicRate}% share rate`}
+                  />
+                  <StatCard
+                    label="Generation Success"
+                    value={`${multiCourseMealStats.successRate}%`}
+                    icon={CheckCircle2}
+                    description={`${multiCourseMealStats.completeMeals} successful`}
+                  />
+                  <StatCard
+                    label="Generation Errors"
+                    value={multiCourseMealStats.errorMeals}
+                    icon={XCircle}
+                    description="Failed generations"
+                  />
+                </StatCardGrid>
+              </div>
+
+              {/* Meal Planner Charts Row */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6 mb-6">
+                <TimeSeriesChart
+                  title="Meal Creation Growth"
+                  description="Multi-course meals created over time"
+                  data={multiCourseMealGrowthData}
+                  dataKey="count"
+                  dataLabel="New Meals"
+                  type="area"
+                  showTimeRangeSelector
+                />
+                <DistributionChart
+                  title="Generation Status"
+                  description="Distribution by generation status"
+                  data={generationStatusDistribution}
+                  type="donut"
+                />
+              </div>
+
+              {/* Second Row: Visibility Distribution + Insights */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+                <DistributionChart
+                  title="Meal Visibility"
+                  description="Public vs private meals"
+                  data={mealVisibilityDistribution}
+                  type="donut"
+                  colors={["var(--chart-2)", "var(--chart-4)"]}
+                />
+                <InsightsCard
+                  title="Meal Planner Insights"
+                  description="Key observations about multi-course meal planning"
+                  insights={mealPlannerInsights}
+                />
               </div>
             </div>
           </div>

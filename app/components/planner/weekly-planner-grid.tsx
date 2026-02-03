@@ -24,6 +24,7 @@ interface MealEntry {
 interface WeeklyPlannerGridProps {
   weekStartDate: Date;
   entries: MealEntry[];
+  mealPlanId: string;
   onAddMeal: (dayOfWeek: number, mealType: "breakfast" | "lunch" | "dinner" | "snacks") => void;
   onRemoveMeal: (entryId: string) => void;
   isLoading?: boolean;
@@ -50,6 +51,7 @@ function isSameDay(date1: Date, date2: Date): boolean {
 export function WeeklyPlannerGrid({
   weekStartDate,
   entries,
+  mealPlanId,
   onAddMeal,
   onRemoveMeal,
   isLoading,
@@ -74,6 +76,7 @@ export function WeeklyPlannerGrid({
             dayOfWeek={index}
             date={date}
             entries={dayEntries}
+            mealPlanId={mealPlanId}
             onAddMeal={onAddMeal}
             onRemoveMeal={onRemoveMeal}
             isLoading={isLoading}

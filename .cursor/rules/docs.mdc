@@ -18,7 +18,21 @@ docs/
     └── {feature}/
         ├── {feature}.md
         └── screenshots/
+
+.cursor/context/
+├── high-level-architecture.md  # Living architecture doc (route map, flows, changelog)
+└── ...other context docs       # Technical docs for agents
 ```
+
+## Living Architecture Document
+
+The **high-level architecture document** at `.cursor/context/high-level-architecture.md` is maintained by the `architecture-tracker` subagent. It provides:
+- **Route Map** - Visual hierarchy of all routes
+- **Feature Flows** - Mermaid diagrams for each feature
+- **Data Relationships** - ER diagram of database
+- **Changelog** - Dated list of architectural changes
+
+**When to update:** After adding routes, features, or schema changes. Use the `architecture-tracker` subagent or run `sync-changes` skill.
 
 ## Naming Conventions
 
@@ -59,9 +73,9 @@ cp docs/testing/{feature-name}/screenshots/*.png public/docs/testing/{feature-na
 
 Without this step, images will appear broken in the admin docs viewer.
 
-## Frontmatter
+## Frontmatter (REQUIRED)
 
-All documents support YAML frontmatter for metadata. The documentation viewer uses this for sorting and display.
+**All documents MUST include YAML frontmatter** with at minimum a `date` field. The documentation viewer uses this for sorting and display.
 
 ```markdown
 ---
@@ -72,19 +86,24 @@ date: 2026-01-29
 # Document Content
 ```
 
-### Supported Fields
+### Required Fields
 
-| Field | Description | Example |
-|-------|-------------|---------|
-| `title` | Display title (overrides filename-derived title) | `Recipe Extraction Feature` |
-| `date` | Document date for sorting (YYYY-MM-DD format) | `2026-01-29` |
+| Field | Description | Example | Required |
+|-------|-------------|---------|----------|
+| `date` | Document creation date (YYYY-MM-DD format) | `2026-01-29` | **Yes** |
+| `title` | Display title (overrides filename-derived title) | `Recipe Extraction Feature` | Optional |
+
+### When to Set the Date
+
+- **New documents**: Use today's date when creating the document
+- **Existing documents**: Use the git creation date or the date the feature was designed/implemented
 
 ### Sorting Behavior
 
 Documents are sorted by date (newest first):
 1. Documents with `date` frontmatter appear first, sorted descending
 2. Documents with date-prefixed filenames (e.g., `2026-01-24-meeting.md`) use that date
-3. Documents without dates are sorted alphabetically by filename
+3. Documents without dates are sorted alphabetically by filename (avoid this)
 
 ## Formatting Standards
 

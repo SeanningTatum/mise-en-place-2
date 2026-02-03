@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { redirect, useNavigate } from "react-router";
+import { redirect, useNavigate, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +41,8 @@ import {
   UtensilsCrossed,
   ListOrdered,
   ChevronDown,
+  PenLine,
+  ArrowLeft,
 } from "lucide-react";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
@@ -49,6 +51,13 @@ import { useMediaQuery } from "@/lib/hooks";
 import type { Route } from "./+types/[id]";
 
 export const loader = async ({ request, context, params }: Route.LoaderArgs) => {
+  // Validate that params.id is a valid UUID format
+  // This prevents this dynamic route from matching static routes like /recipes/create
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(params.id)) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
   const session = await context.auth.api.getSession({
     headers: request.headers,
   });
@@ -131,6 +140,17 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
 
   const isYouTubeRecipe = recipe.sourceType === "youtube" && recipe.youtubeVideoId;
 
+  // Back link component
+  const BackLink = () => (
+    <Link
+      to="/recipes"
+      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group mb-4"
+    >
+      <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+      <span>Back to Recipes</span>
+    </Link>
+  );
+
   // Shared header component
   const RecipeHeader = () => (
     <div className="flex items-start justify-between gap-4">
@@ -147,6 +167,11 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               <>
                 <Youtube className="h-3.5 w-3.5 text-red-500" />
                 <span>YouTube</span>
+              </>
+            ) : recipe.sourceType === "custom" ? (
+              <>
+                <PenLine className="h-3.5 w-3.5 text-accent" />
+                <span>Original</span>
               </>
             ) : (
               <>
@@ -184,12 +209,14 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem asChild>
-            <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
-              <ExternalLink className="mr-2 h-4 w-4" />
-              View Original
-            </a>
-          </DropdownMenuItem>
+          {recipe.sourceUrl && (
+            <DropdownMenuItem asChild>
+              <a href={recipe.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="view-original-link">
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View Original
+              </a>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             className="text-destructive focus:text-destructive"
             onClick={() => setDeleteDialogOpen(true)}
@@ -208,6 +235,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   if (isYouTubeRecipe) {
     return (
       <div className="mx-auto max-w-7xl">
+        <BackLink />
         {/* Conditionally render mobile OR desktop layout - never both */}
         {!isDesktop ? (
           // Mobile: Stacked layout
@@ -365,6 +393,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   // Non-YouTube recipe: Original editorial layout
   return (
     <div className="mx-auto max-w-5xl space-y-8">
+      <BackLink />
       <RecipeHeader />
 
       {/* Macros Card */}
