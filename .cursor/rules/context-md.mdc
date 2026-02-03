@@ -11,6 +11,7 @@ alwaysApply: false
 **Source of Truth**: `.cursor/context/` folder contains detailed documentation:
 - `api.md` - tRPC routes, auth endpoints, procedure types, error responses
 - `architecture.md` - System overview, data flow patterns, layer responsibilities
+- `high-level-architecture.md` - Living visual doc with route map, feature flows, data relationships, changelog (maintained by architecture-tracker subagent)
 - `data-models.md` - Schema, entity relationships, tables overview, migrations
 - `features.md` - Feature documentation with flow diagrams and key files
 - `integrations.md` - External services (Cloudflare, Better Auth, Stripe, PostHog)
@@ -74,6 +75,15 @@ alwaysApply: false
 - Adding new rules to `.cursor/rules/`
 - Adding significant new features (brief summary)
 - Adding new tech stack components
+
+### Update high-level-architecture.md when:
+- Adding new routes (update Route Map + Information Architecture table)
+- Implementing new features (add Feature Flow section)
+- Schema changes (update Data Relationships ER diagram)
+- Architectural decisions (update System Architecture)
+- **Always add a Changelog entry with date**
+
+Use the `architecture-tracker` subagent to maintain this document.
 
 ## Example: Adding a New Rule to context.md
 

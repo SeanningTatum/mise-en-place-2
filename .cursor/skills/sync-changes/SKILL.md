@@ -27,7 +27,8 @@ Read `.cursor/context.md` for the compressed Rules Index. When syncing, ensure u
 
 | Subagent | Purpose | Output |
 |----------|---------|--------|
-| `context-keeper` | Update documentation | Updated `context.md` |
+| `context-keeper` | Update technical documentation | Updated `context.md` |
+| `architecture-tracker` | Update visual architecture docs | Updated `high-level-architecture.md` |
 | `data-analytics` | Update admin dashboard | New/updated analytics components |
 | `tester` | Ensure test coverage | E2E tests + test documentation |
 
@@ -58,20 +59,21 @@ Identify:
 Run subagents in parallel when possible (they're independent):
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     SYNC PHASE (Parallel)                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌──────────────┐ │
-│  │ context-keeper  │  │ data-analytics  │  │   tester     │ │
-│  │                 │  │                 │  │              │ │
-│  │ Update docs     │  │ Update admin    │  │ Ensure tests │ │
-│  │ - context.md    │  │ dashboard with  │  │ exist for    │ │
-│  │ - Recent changes│  │ new metrics     │  │ new features │ │
-│  │ - Architecture  │  │                 │  │              │ │
-│  └─────────────────┘  └─────────────────┘  └──────────────┘ │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                           SYNC PHASE (Parallel)                               │
+├──────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌────────────────┐  ┌───────────────────┐  ┌───────────────┐  ┌───────────┐ │
+│  │ context-keeper │  │ architecture-     │  │ data-analytics│  │  tester   │ │
+│  │                │  │ tracker           │  │               │  │           │ │
+│  │ Update docs    │  │ Update visual     │  │ Update admin  │  │ Ensure    │ │
+│  │ - context.md   │  │ architecture      │  │ dashboard     │  │ tests     │ │
+│  │ - API, schema  │  │ - Route map       │  │ with new      │  │ exist     │ │
+│  │ - Features     │  │ - Feature flows   │  │ metrics       │  │           │ │
+│  │                │  │ - Changelog       │  │               │  │           │ │
+│  └────────────────┘  └───────────────────┘  └───────────────┘  └───────────┘ │
+│                                                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Step 3: Execute Delegation
@@ -123,6 +125,30 @@ Task({
 })
 ```
 
+**Architecture Tracker:**
+```typescript
+Task({
+  subagent_type: "architecture-tracker",
+  description: "Update architecture docs",
+  prompt: `
+    Update high-level architecture document for recent changes:
+    
+    Recent changes:
+    - {list of changed files}
+    
+    1. Read .cursor/context/high-level-architecture.md
+    2. Check app/routes.ts for new routes
+    3. Update relevant sections:
+       - Route Map diagram (if new routes)
+       - Information Architecture table (if new routes)
+       - Feature Flows section (if new features)
+       - Data Relationships (if schema changes)
+    4. Add Changelog entry with today's date
+  `,
+  model: "fast"
+})
+```
+
 **Tester:**
 ```typescript
 Task({
@@ -154,14 +180,15 @@ Task({
 
 ## Decision Matrix
 
-| Change Type | context-keeper | data-analytics | tester |
-|-------------|----------------|----------------|--------|
-| New feature | ✅ Required | Check schema | ✅ Required |
-| Schema change | ✅ Required | ✅ Required | Maybe |
-| UI-only change | ✅ Required | ❌ Skip | ✅ Required |
-| Bug fix | Maybe | ❌ Skip | ✅ Required |
-| API change | ✅ Required | Maybe | ✅ Required |
-| Config change | ✅ Required | ❌ Skip | ❌ Skip |
+| Change Type | context-keeper | architecture-tracker | data-analytics | tester |
+|-------------|----------------|---------------------|----------------|--------|
+| New feature | ✅ Required | ✅ Required | Check schema | ✅ Required |
+| Schema change | ✅ Required | ✅ Required | ✅ Required | Maybe |
+| New routes | ✅ Required | ✅ Required | ❌ Skip | ✅ Required |
+| UI-only change | ✅ Required | ❌ Skip | ❌ Skip | ✅ Required |
+| Bug fix | Maybe | ❌ Skip | ❌ Skip | ✅ Required |
+| API change | ✅ Required | Maybe | Maybe | ✅ Required |
+| Config change | ✅ Required | ❌ Skip | ❌ Skip | ❌ Skip |
 
 ---
 
@@ -175,6 +202,16 @@ Task({
   subagent_type: "context-keeper",
   description: "Quick docs sync",
   prompt: "Review git diff and update context.md with recent changes.",
+  model: "fast"
+})
+```
+
+**Architecture only:**
+```typescript
+Task({
+  subagent_type: "architecture-tracker",
+  description: "Quick architecture sync",
+  prompt: "Review app/routes.ts and update high-level-architecture.md with any new routes. Add changelog entry.",
   model: "fast"
 })
 ```
@@ -217,12 +254,17 @@ Task({
    - Recipe extraction feature
    - Claude AI integration
    - Content extractor architecture
+
+2. **architecture-tracker** → Update:
+   - Add /recipes/new route to Route Map
+   - Add Recipe Extraction feature flow diagram
+   - Add changelog entry
    
-2. **data-analytics** → Add:
+3. **data-analytics** → Add:
    - Recipe creation time-series chart
    - Source type distribution (YouTube vs URL)
    
-3. **tester** → Create:
+4. **tester** → Create:
    - e2e/recipes.spec.ts tests
    - Testing plan for extraction flow
    - Test documentation with screenshots
@@ -235,6 +277,8 @@ Task({
 After sync completes, verify:
 
 - [ ] `context.md` reflects current state of codebase
+- [ ] `high-level-architecture.md` has all routes and features
+- [ ] Changelog has entry for recent changes
 - [ ] Recent Changes section is up to date
 - [ ] Analytics dashboard shows relevant metrics (if applicable)
 - [ ] E2E tests exist for all user-facing features
@@ -249,6 +293,13 @@ After sync completes, verify:
 **Skip context-keeper if:**
 - Only fixing typos or minor bugs
 - Changes are purely internal (no user impact)
+
+**Skip architecture-tracker if:**
+- No new routes added
+- No new features implemented
+- No schema changes
+- Changes are UI-only tweaks (not new pages)
+- Bug fixes or refactors
 
 **Skip data-analytics if:**
 - No schema changes

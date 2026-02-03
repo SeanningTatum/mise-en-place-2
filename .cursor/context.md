@@ -11,6 +11,7 @@ When working on this project, consult the rules in `.cursor/rules/` and detailed
 |IMPORTANT: Read detailed docs for deep dives. Index below shows what each covers.
 |api.md: tRPC routes, auth endpoints, file upload API, procedure types, error responses, context object
 |architecture.md: System overview diagram, data flow patterns, layer responsibilities, key files
+|high-level-architecture.md: Living doc with route map, feature flows, data relationships, changelog - visual-first for planning
 |data-models.md: Schema location, entity relationships, tables overview, SQLite conventions, migrations
 |features.md: Auth, admin dashboard, admin docs, file upload, analytics, recipe extraction, multi-course meal planner - with flow diagrams
 |integrations.md: Cloudflare (D1/R2/KV), Better Auth, Stripe, PostHog, Resend, Shiki, Mermaid

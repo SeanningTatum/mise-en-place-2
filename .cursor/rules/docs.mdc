@@ -18,7 +18,21 @@ docs/
     └── {feature}/
         ├── {feature}.md
         └── screenshots/
+
+.cursor/context/
+├── high-level-architecture.md  # Living architecture doc (route map, flows, changelog)
+└── ...other context docs       # Technical docs for agents
 ```
+
+## Living Architecture Document
+
+The **high-level architecture document** at `.cursor/context/high-level-architecture.md` is maintained by the `architecture-tracker` subagent. It provides:
+- **Route Map** - Visual hierarchy of all routes
+- **Feature Flows** - Mermaid diagrams for each feature
+- **Data Relationships** - ER diagram of database
+- **Changelog** - Dated list of architectural changes
+
+**When to update:** After adding routes, features, or schema changes. Use the `architecture-tracker` subagent or run `sync-changes` skill.
 
 ## Naming Conventions
 

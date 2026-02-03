@@ -18,6 +18,7 @@ You are a documentation specialist responsible for maintaining the project's con
 **Source of Truth**: `.cursor/context/` folder contains detailed documentation files:
 - `api.md` - tRPC routes, auth endpoints, file upload API, procedure types, error responses
 - `architecture.md` - System overview, data flow patterns, layer responsibilities, key files
+- `high-level-architecture.md` - Living visual doc with route map, feature flows, changelog (maintained by architecture-tracker)
 - `data-models.md` - Schema location, entity relationships, tables overview, migrations
 - `features.md` - Feature documentation with flow diagrams and key files
 - `integrations.md` - External services (Cloudflare, Better Auth, Stripe, PostHog, etc.)
@@ -90,14 +91,25 @@ Maintain detailed documentation in `.cursor/context/`:
 
 ```
 .cursor/context/
-├── api.md           # API routes, endpoints, request/response formats
-├── architecture.md  # System design, data flow, layer responsibilities
-├── data-models.md   # Database schema, relationships, migrations
-├── features.md      # Feature documentation with flows and key files
-├── integrations.md  # External services and their configuration
-├── security.md      # Authentication, authorization, security patterns
-└── user-journeys.md # User flows and interaction patterns
+├── api.md                    # API routes, endpoints, request/response formats
+├── architecture.md           # System design, data flow, layer responsibilities
+├── high-level-architecture.md # Visual route map, feature flows, changelog (architecture-tracker maintains)
+├── data-models.md            # Database schema, relationships, migrations
+├── features.md               # Feature documentation with flows and key files
+├── integrations.md           # External services and their configuration
+├── security.md               # Authentication, authorization, security patterns
+└── user-journeys.md          # User flows and interaction patterns
 ```
+
+## Coordination with architecture-tracker
+
+**context-keeper** focuses on technical agent context docs (API details, security, data models).
+
+**architecture-tracker** maintains `high-level-architecture.md` - a visual-first document for human developers with route maps, feature flow diagrams, and a dated changelog.
+
+When both need updating after a feature:
+1. Run **context-keeper** first (technical docs)
+2. Run **architecture-tracker** second (visual overview + changelog)
 
 ## context.md Structure (Quick Reference)
 

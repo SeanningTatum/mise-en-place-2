@@ -56,8 +56,9 @@ Create tasks following the data flow pattern:
 8. Debug Logging (for complex logic/integrations)
 9. Testing
 10. Context Documentation (context.md)
-11. Analytics Dashboard (if new data to track)
-12. PR Validation
+11. Architecture Documentation (high-level-architecture.md)
+12. Analytics Dashboard (if new data to track)
+13. PR Validation
 ```
 
 Skip layers not affected by the work.
@@ -77,6 +78,7 @@ Map each task to the appropriate subagent:
 | Add logging | `logger` | Adding debug logs to code |
 | Testing | `tester` | Verify implementation, write e2e tests |
 | Documentation | `context-keeper` | Update context.md |
+| Architecture Docs | `architecture-tracker` | Update route maps, flows, changelog |
 | Analytics | `data-analytics` | Create dashboards for new data |
 | PR Validation | Manual (pr-checker skill) | Final validation step |
 
@@ -205,6 +207,20 @@ The testing task MUST follow this workflow:
 **Description:** Update context.md with new feature/routes/schema summary
 ```
 
+### Architecture Documentation Task (when applicable)
+```markdown
+#### Task: Update Architecture Documentation
+**Subagent:** `architecture-tracker`
+**Files:** `.cursor/context/high-level-architecture.md`
+**Description:** Update living architecture doc with:
+  - New routes added to Route Map diagram
+  - New rows in Information Architecture table
+  - New Feature Flow section (if new feature)
+  - Updated Data Relationships (if schema changes)
+  - Changelog entry with today's date
+**When to include:** New routes, new features, schema changes, architectural decisions
+```
+
 ### Analytics Task (when applicable)
 ```markdown
 #### Task: Create Analytics Dashboard
@@ -286,11 +302,15 @@ exposing via tRPC and creating a settings page.
 **Subagent:** `context-keeper`
 **Description:** Add preferences feature summary to context.md
 
-#### Task 10: Create Analytics Dashboard
+#### Task 10: Update Architecture Documentation
+**Subagent:** `architecture-tracker`
+**Description:** Update high-level-architecture.md with new /settings/preferences route, add changelog entry
+
+#### Task 11: Create Analytics Dashboard
 **Subagent:** `data-analytics`
 **Description:** Create metrics dashboard for preference usage (theme distribution, notification opt-ins)
 
-#### Task 11: PR Validation
+#### Task 12: PR Validation
 **Subagent:** None (use pr-checker skill)
 **Description:** Run validation checklist before creating PR
 
@@ -302,8 +322,9 @@ exposing via tRPC and creating a settings page.
 - [ ] Feature architecture doc exists (Task 6)
 - [ ] Debug logging added (Task 7)
 - [ ] context.md updated (Task 9)
+- [ ] high-level-architecture.md updated (Task 10)
 - [ ] Testing plan exists (Task 8)
-- [ ] Analytics dashboard created (Task 10)
+- [ ] Analytics dashboard created (Task 11)
 ```
 
 ---
@@ -385,14 +406,15 @@ Run the `pr-checker` skill which validates:
 
 | Work Type | Typical Subagents |
 |-----------|-------------------|
-| New feature (user-facing) | research (Tavily) → explore → generalPurpose → logger → tester → context-keeper → data-analytics |
-| New feature (backend) | explore → generalPurpose → logger → tester → context-keeper → data-analytics |
+| New feature (user-facing) | research (Tavily) → explore → generalPurpose → logger → tester → context-keeper → architecture-tracker → data-analytics |
+| New feature (backend) | explore → generalPurpose → logger → tester → context-keeper → architecture-tracker → data-analytics |
 | Bug fix | explore → generalPurpose → logger → tester |
 | Refactor | explore → generalPurpose → tester |
-| UI-only change | generalPurpose → tester |
+| UI-only change | generalPurpose → tester → context-keeper |
 | Analytics addition | data-analytics |
-| Schema change | generalPurpose → data-analytics → tester |
-| Complex integration | explore → generalPurpose → logger → tester → context-keeper |
+| Schema change | generalPurpose → data-analytics → tester → architecture-tracker |
+| Complex integration | explore → generalPurpose → logger → tester → context-keeper → architecture-tracker |
+| New routes only | generalPurpose → tester → architecture-tracker |
 
 ## Documentation Checklist
 
@@ -403,6 +425,7 @@ Run the `pr-checker` skill which validates:
 | Architecture | `docs/features/{feature}-architecture.md` | New features with multiple layers |
 | Testing | `docs/testing/{feature}/{feature}.md` | All features |
 | Context | `.cursor/context.md` | All features/changes |
+| High-Level Architecture | `.cursor/context/high-level-architecture.md` | New routes, features, schema changes |
 
 **Important:** After implementation is complete, save the plan to `docs/plans/` for future reference.
 | Debug Logs | In implementation files | Complex logic, integrations, error-prone paths |

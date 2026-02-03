@@ -132,6 +132,9 @@ Execute subagents in dependency order:
 ├─────────────────────────────────────────────────────────────┤
 │  6. Context Update (context-keeper)                         │
 │     └─ Update context.md with new feature                   │
+│                                                              │
+│  7. Architecture Update (architecture-tracker)              │
+│     └─ Update high-level-architecture.md with routes/flows  │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -340,6 +343,33 @@ If applicable, add Mermaid diagrams for:
 - Schema relationships
 ```
 
+### Architecture Updates: `architecture-tracker`
+
+**When:** After features that add routes, tables, or change flows
+
+**Triggers:**
+- New routes added to `app/routes.ts`
+- New database tables created
+- New feature flows implemented
+- Architectural decisions made
+
+**Delegation Pattern:**
+```markdown
+Update high-level architecture document for {feature}:
+
+Changes made:
+- New routes: {list routes}
+- New tables: {list tables}
+- New features: {describe}
+
+Update:
+1. Route Map diagram with new routes
+2. Information Architecture table
+3. Feature Flows section (add new flow diagram)
+4. Data Relationships (if new tables)
+5. Changelog with dated entry
+```
+
 ---
 
 ## Execution Decision Tree
@@ -390,7 +420,8 @@ Does this feature have a UI component?
 | `logger` | Features with business logic | Structured logs |
 | `tester` | After implementation | Tests + documentation |
 | `data-analytics` | New trackable data | Dashboard |
-| `context-keeper` | Always (last) | Updated context.md |
+| `context-keeper` | Always (after implementation) | Updated context.md |
+| `architecture-tracker` | After route/schema changes | Updated architecture doc |
 
 ---
 
@@ -473,4 +504,5 @@ Before marking implementation complete:
 - [ ] E2E tests written and passing
 - [ ] Test documentation created with screenshots
 - [ ] context.md updated with new feature
+- [ ] high-level-architecture.md updated (routes, flows, changelog)
 - [ ] Analytics dashboard created (if applicable)

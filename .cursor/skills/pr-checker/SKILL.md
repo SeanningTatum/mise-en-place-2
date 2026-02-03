@@ -28,10 +28,11 @@ PR Validation:
 - [ ] 3. Research doc exists (if new user-facing feature)
 - [ ] 4. Feature architecture doc exists (if new feature)
 - [ ] 5. context.md updated (if feature/architecture change)
-- [ ] 6. Testing plan exists
-- [ ] 7. Migrations use db-migration skill (if applicable)
-- [ ] 8. Analytics considered (if schema/feature change)
-- [ ] 9. Ready for create-pull-request skill
+- [ ] 6. high-level-architecture.md updated (if new routes/features/schema)
+- [ ] 7. Testing plan exists
+- [ ] 8. Migrations use db-migration skill (if applicable)
+- [ ] 9. Analytics considered (if schema/feature change)
+- [ ] 10. Ready for create-pull-request skill
 ```
 
 ---
@@ -193,6 +194,49 @@ Add to the `## Recent Changes` section:
 
 ---
 
+## Step 5.5: Check high-level-architecture.md Updates
+
+**Required when:** Adding new routes, implementing new features, or making database schema changes.
+
+### Verify high-level-architecture.md
+
+```bash
+# Check if high-level-architecture.md was modified
+git diff main...HEAD --name-only | grep -q "high-level-architecture.md"
+
+# Check if new routes were added
+git diff main...HEAD -- app/routes.ts
+```
+
+**If routes/features/schema changed but high-level-architecture.md is unchanged:**
+
+1. Check what needs updating:
+   - New routes → Update Route Map diagram + Information Architecture table
+   - New features → Add Feature Flow section with Mermaid diagram
+   - Schema changes → Update Data Relationships ER diagram
+
+2. **Prompt user:** "high-level-architecture.md needs updating. Run the `architecture-tracker` subagent to update route maps, feature flows, and add a changelog entry."
+
+### What Should Be Updated
+
+| Change Type | Sections to Update |
+|-------------|-------------------|
+| New routes | Route Map, Information Architecture table, Changelog |
+| New features | Route Map, Feature Flows, possibly Data Relationships, Changelog |
+| Schema changes | Data Relationships ER diagram, Changelog |
+| Architectural decisions | System Architecture, Changelog |
+
+### Changelog Entry Format
+
+```markdown
+### YYYY-MM-DD - Feature/Change Name
+- Added: New route at `/path`
+- Added: New table `table_name`
+- Changed: Modified flow for X
+```
+
+---
+
 ## Step 6: Check Feature Architecture Doc
 
 **Required when:** Adding new features with multiple files/layers.
@@ -348,6 +392,7 @@ Generate a summary:
 - [✅/❌/N/A] Research doc (`docs/research/{feature}-research.md`) - for user-facing features
 - [✅/❌] Feature architecture doc (`docs/features/{feature}-architecture.md`)
 - [✅/❌] context.md updated
+- [✅/❌] high-level-architecture.md updated (routes, flows, changelog)
 - [✅/❌] Testing plan exists (`docs/testing/{feature}/{feature}.md`)
 
 ### Testing
@@ -378,17 +423,20 @@ If checks fail, address the issues first:
 3. Create research doc at `docs/research/{feature}-research.md` (use Tavily MCP)
 4. Create feature architecture doc at `docs/features/{feature}-architecture.md`
 5. Update context.md via context-keeper subagent
-6. Generate testing plan with tester subagent
-7. Generate migrations with db-migration skill
-8. Create analytics dashboards with data-analytics subagent
+6. Update high-level-architecture.md via architecture-tracker subagent
+7. Generate testing plan with tester subagent
+8. Generate migrations with db-migration skill
+9. Create analytics dashboards with data-analytics subagent
 
 ---
 
 ## Quick Reference: Skills to Use
 
-| Task | Skill |
-|------|-------|
-| Generate migration | `db-migration` |
-| Create pull request | `create-pull-request` |
+| Task | Skill/Subagent |
+|------|----------------|
+| Generate migration | `db-migration` skill |
+| Create pull request | `create-pull-request` skill |
+| Update context docs | `context-keeper` subagent |
+| Update architecture docs | `architecture-tracker` subagent |
 | Generate testing plan | `tester` subagent |
 | Create analytics dashboards | `data-analytics` subagent |

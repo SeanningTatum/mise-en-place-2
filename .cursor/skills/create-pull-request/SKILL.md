@@ -13,6 +13,13 @@ Create GitHub PRs with descriptions following the team's template structure.
 
 Read `.cursor/context.md` for the compressed Rules Index. Ensure all touched files comply with their respective rules before creating the PR.
 
+### Pre-PR Documentation Checklist
+
+For feature PRs, ensure these are updated:
+- [ ] `context.md` updated (via `context-keeper` subagent)
+- [ ] `high-level-architecture.md` updated (via `architecture-tracker` subagent) - if new routes, features, or schema changes
+- [ ] Testing plan exists with screenshots
+
 ## Workflow
 
 ### Step 1: Gather Context
