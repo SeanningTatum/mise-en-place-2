@@ -8,6 +8,7 @@ import { analyticsRouter } from "./routes/analytics";
 import { recipesRouter } from "./routes/recipes";
 import { ingredientsRouter } from "./routes/ingredients";
 import { mealPlanRouter } from "./routes/meal-plan";
+import { mealPlanTemplateRouter } from "./routes/meal-plan-template";
 import { profileRouter } from "./routes/profile";
 import { multiCourseMealRouter } from "./routes/multi-course-meal";
 
@@ -50,6 +51,7 @@ export const appRouter = createTRPCRouter({
   recipes: recipesRouter,
   ingredients: ingredientsRouter,
   mealPlan: mealPlanRouter,
+  mealPlanTemplate: mealPlanTemplateRouter,
   profile: profileRouter,
   multiCourseMeal: multiCourseMealRouter,
 });

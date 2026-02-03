@@ -146,6 +146,11 @@ More content...
 ### Feature Documentation
 
 ```markdown
+---
+title: Feature Name
+date: YYYY-MM-DD
+---
+
 # Feature Name
 
 ## Overview
@@ -159,6 +164,80 @@ Code examples and usage instructions.
 
 ## Key Files
 - `path/to/file.ts` - Description
+```
+
+### Feature Architecture Documents
+
+Architecture documents (`*-architecture.md`) follow the UX Product Thinking skill output format:
+
+```markdown
+---
+title: Feature Name Architecture
+date: YYYY-MM-DD
+---
+
+# Feature Name: Information Architecture
+
+Brief description of the feature.
+
+---
+
+## Table of Contents
+1. [Overview](#overview)
+2. [User Flow](#user-flow)
+3. [System Architecture](#system-architecture)
+4. [Data Model](#data-model)
+5. [Feature Breakdown](#feature-breakdown)
+6. [UI Components](#ui-components)
+7. [Frontend Design Specification](#frontend-design-specification)
+8. [Technical Stack](#technical-stack)
+9. [Future Roadmap](#future-roadmap)
+
+---
+
+## Overview
+### Vision
+### Core Value Proposition
+### Competitive Positioning (quadrant chart)
+
+## User Flow
+### Primary Flow (flowchart)
+### State Machine (stateDiagram)
+### User Journey (journey diagram)
+
+## System Architecture
+### High-Level Architecture (flowchart)
+### Processing Sequence (sequenceDiagram)
+
+## Data Model
+### ER Diagram
+### TypeScript Interfaces
+
+## Feature Breakdown
+### Feature 1, 2, 3...
+
+## UI Components
+### Component Hierarchy
+### Screen Wireframes (ASCII art)
+### Design Tokens
+
+## Frontend Design Specification
+### Aesthetic Direction
+### Typography
+### Color Palette
+### Motion Design
+
+## Technical Stack
+### API Endpoints
+### New Files
+### Migration SQL
+
+## Future Roadmap
+### Phase 1, 2, 3...
+
+---
+
+*Architecture Document vX.X*
 ```
 
 ### Testing Plan

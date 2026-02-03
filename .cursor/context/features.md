@@ -358,3 +358,110 @@ sequenceDiagram
 
 ### Architecture Doc
 - `docs/features/meal-planner-upgrade-architecture.md` - Full architecture for save/share/print/loading
+
+---
+
+## Public Meal Plans
+
+### Overview
+Users can save their weekly meal plans as named templates, make them public, and share them. Visitors can import entire meal plans to their planner with one click.
+
+### Capabilities
+
+**Template Management:**
+- Save weekly meal plan as named template with optional description and theme tag
+- Toggle template visibility (public/private)
+- Edit template metadata (name, description, theme, cover image)
+- Delete templates
+- View all user's templates at "My Templates" page
+
+**Public Sharing:**
+- Public templates appear on user's profile at `/u/[username]/plans`
+- Individual template pages at `/u/[username]/plans/[slug]`
+- Template detail shows week preview grid, grocery preview, nutrition summary
+- Stats: import count, view count
+- Creator profile info displayed
+
+**Import Functionality:**
+- Visitors can import public templates to their planner for any week
+- One-click import creates meal plan entries for target week
+- Replaces existing entries if meal plan already exists for that week
+- Tracks imports for analytics
+
+### Flow: Creating and Sharing a Template
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant P as Planner
+    participant API as tRPC API
+    participant DB as Database
+    participant V as Visitor
+    participant PP as Public Page
+
+    U->>P: Save current week as template
+    P->>API: createTemplate(name, mealPlanId)
+    API->>DB: Copy meal_plan_entry → meal_plan_template_entry
+    DB-->>API: Template created
+    API-->>P: Template saved
+    
+    U->>P: Toggle visibility to public
+    P->>API: updateTemplate(isPublic: true)
+    API->>DB: Update visibility flag
+    DB-->>API: Updated
+    API-->>P: Template now public
+    
+    V->>PP: Visit /u/[username]/plans/[slug]
+    PP->>API: getPublicBySlug(username, slug)
+    API->>DB: Query template + entries + stats
+    DB-->>API: Template data
+    API-->>PP: Display template
+    
+    V->>PP: Click "Import to My Planner"
+    PP->>API: importTemplate(templateId, targetWeek)
+    API->>DB: Create meal_plan + meal_plan_entry (copy from template)
+    API->>DB: Create meal_plan_template_import record
+    API->>DB: Increment import_count
+    DB-->>API: Imported
+    API-->>PP: Success → redirect to planner
+```
+
+### Routes
+- `/recipes/templates` - User's templates list ("My Templates")
+- `/u/:username/plans` - Public meal plans list for a user
+- `/u/:username/plans/:slug` - Public meal plan template detail page
+
+### Data Model
+
+**`meal_plan_template` table:**
+- `id`, `createdById`, `name`, `slug` (URL-safe identifier)
+- `description`, `theme` (e.g., "Mediterranean", "Budget-Friendly")
+- `coverImageUrl`, `isPublic` (default: false)
+- `importCount`, `viewCount` (analytics)
+- `createdAt`, `updatedAt`
+
+**`meal_plan_template_entry` table:**
+- `id`, `templateId`, `recipeId`
+- `dayOfWeek` (0-6, Monday-Sunday)
+- `mealType` (breakfast/lunch/dinner/snacks)
+
+**`meal_plan_template_import` table:**
+- `id`, `templateId`, `importedById`
+- `importedAt` (timestamp)
+
+### Key Files
+
+**Routes:**
+- `app/routes/recipes/templates.tsx` - My Templates page
+- `app/routes/u.[username].plans.tsx` - Public plans list
+- `app/routes/u.[username].plans.[slug].tsx` - Public plan detail
+
+**Components:**
+- `app/components/meal-plan-template/save-template-modal.tsx` - Save template modal
+- `app/components/meal-plan-template/template-card.tsx` - Template card for lists
+- `app/components/meal-plan-template/week-preview-grid.tsx` - Week grid preview
+- `app/components/meal-plan-template/import-modal.tsx` - Import template modal
+
+**Core:**
+- `app/repositories/meal-plan-template.ts` - Data access (CRUD, public queries, import)
+- `app/trpc/routes/meal-plan-template.ts` - API routes

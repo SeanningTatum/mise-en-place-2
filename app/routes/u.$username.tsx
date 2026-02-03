@@ -4,7 +4,8 @@ import { api } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicProfileHeader, PublicRecipeCard, ShareModal } from "@/components/profile";
-import { ChefHat, ArrowLeft, Star } from "lucide-react";
+import { PublicTemplateCard } from "@/components/meal-plan-template";
+import { ChefHat, ArrowLeft, Star, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { Route } from "./+types/u.$username";
@@ -36,8 +37,8 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     throw new Response("Profile not found", { status: 404 });
   }
 
-  // Fetch original (custom) and collected (extracted) recipes separately
-  const [originalRecipes, collectedRecipes] = await Promise.all([
+  // Fetch original (custom), collected (extracted) recipes, and meal plan templates
+  const [originalRecipes, collectedRecipes, mealPlanTemplates] = await Promise.all([
     context.trpc.profile.getPublicRecipes({
       username,
       limit: 50,
@@ -50,6 +51,7 @@ export async function loader({ params, context }: Route.LoaderArgs) {
       offset: 0,
       isCustom: false,
     }),
+    context.trpc.mealPlanTemplate.listPublic({ username }),
   ]);
 
   // Increment view count (fire and forget)
@@ -63,11 +65,13 @@ export async function loader({ params, context }: Route.LoaderArgs) {
     originalCount: originalRecipes.total,
     collectedRecipes: collectedRecipes.recipes,
     collectedCount: collectedRecipes.total,
+    mealPlanTemplates,
+    mealPlanCount: mealPlanTemplates.length,
   };
 }
 
 export default function PublicProfilePage({ loaderData, params }: Route.ComponentProps) {
-  const { profile, originalRecipes, originalCount, collectedRecipes, collectedCount } = loaderData;
+  const { profile, originalRecipes, originalCount, collectedRecipes, collectedCount, mealPlanTemplates, mealPlanCount } = loaderData;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [showShareModal, setShowShareModal] = useState(false);
@@ -188,11 +192,40 @@ export default function PublicProfilePage({ loaderData, params }: Route.Componen
                 Collected Recipes
                 <span className="text-xs text-muted-foreground">({collectedCount})</span>
               </TabsTrigger>
+              {mealPlanCount > 0 && (
+                <TabsTrigger
+                  value="plans"
+                  className="gap-2 data-[state=active]:bg-card px-4 py-2"
+                  data-testid="profile-tab-plans"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Meal Plans
+                  <span className="text-xs text-muted-foreground">({mealPlanCount})</span>
+                </TabsTrigger>
+              )}
             </TabsList>
           </Tabs>
 
-          {/* Recipe Grid */}
-          {currentRecipes.length === 0 ? (
+          {/* Content Grid */}
+          {activeTab === "plans" ? (
+            // Meal Plans Grid
+            mealPlanTemplates.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>No meal plans shared yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {mealPlanTemplates.map((template) => (
+                  <PublicTemplateCard
+                    key={template.id}
+                    template={template}
+                    username={params.username}
+                  />
+                ))}
+              </div>
+            )
+          ) : // Recipe Grid
+          currentRecipes.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p>
                 {activeTab === "original"

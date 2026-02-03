@@ -99,9 +99,9 @@ Markdown docs at `/admin/docs` with syntax highlighting, Mermaid diagrams, TOC, 
 **Key files**: `app/routes/admin/docs.tsx`, `app/components/markdown-renderer.tsx`, `docs/`
 
 ### Week Meal Planner
-Plan meals for a week by assigning recipes to breakfast/lunch/dinner/snack slots across 7 days. Navigate between weeks, generate aggregated grocery lists with clipboard/print export.
-**Data model**: `meal_plan` (week_start_date, user_id) → `meal_plan_entry` (day_of_week 0-6, meal_type enum, recipe_id)
-**Key files**: `app/routes/recipes/planner.tsx`, `app/components/planner/`, `app/repositories/meal-plan.ts`, `app/trpc/routes/meal-plan.ts`
+Plan meals for a week by assigning recipes to breakfast/lunch/dinner/snack slots across 7 days. Navigate between weeks, generate aggregated grocery lists with clipboard/print export. **Save & share** weekly plans as named templates with theme tags, toggle visibility, and share at `/u/[username]/plans/[slug]`. Visitors can import entire meal plans to their planner.
+**Data model**: `meal_plan` (week_start_date, user_id) → `meal_plan_entry` (day_of_week 0-6, meal_type enum, recipe_id). Templates: `meal_plan_template` → `meal_plan_template_entry` → `meal_plan_template_import`
+**Key files**: `app/routes/recipes/planner.tsx`, `app/routes/recipes/templates.tsx`, `app/components/planner/`, `app/components/meal-plan-template/`, `app/repositories/meal-plan.ts`, `app/repositories/meal-plan-template.ts`, `app/trpc/routes/meal-plan.ts`, `app/trpc/routes/meal-plan-template.ts`
 
 ### Profile Sharing
 Public profile pages at `/u/[username]` for sharing recipe collections. Users create profiles with unique usernames, toggle profile/recipe visibility, and share via links/QR codes. Visitors can import (clone) public recipes to their own collections.
@@ -124,6 +124,7 @@ Plan elegant multi-course dining experiences with AI assistance. Create meals wi
 - `ingredient` - Ingredient master list
 - `ingredient_alias` - Ingredient name variations for similarity matching
 - `meal_plan` / `meal_plan_entry` - Weekly meal planning
+- `meal_plan_template` / `meal_plan_template_entry` / `meal_plan_template_import` - Public meal plan templates with sharing and import tracking
 - `multi_course_meal` / `meal_course` - Multi-course meal planning with AI timelines, sharing (slug, isPublic), generation tracking (generationStatus, generationError)
 - `user_profile` - Public profiles (username, displayName, bio, avatarUrl, isPublic, viewCount)
 - `recipe_import` - Tracks when users clone recipes from other profiles
@@ -139,6 +140,11 @@ erDiagram
     USER ||--o{ MEAL_PLAN : plans
     MEAL_PLAN ||--o{ MEAL_PLAN_ENTRY : contains
     MEAL_PLAN_ENTRY }o--|| RECIPE : references
+    USER ||--o{ MEAL_PLAN_TEMPLATE : creates
+    MEAL_PLAN_TEMPLATE ||--o{ MEAL_PLAN_TEMPLATE_ENTRY : contains
+    MEAL_PLAN_TEMPLATE_ENTRY }o--|| RECIPE : references
+    MEAL_PLAN_TEMPLATE ||--o{ MEAL_PLAN_TEMPLATE_IMPORT : "imported via"
+    USER ||--o{ MEAL_PLAN_TEMPLATE_IMPORT : imports
     USER ||--o{ MULTI_COURSE_MEAL : creates
     MULTI_COURSE_MEAL ||--o{ MEAL_COURSE : contains
     MEAL_COURSE }o--|| RECIPE : references
@@ -152,6 +158,7 @@ erDiagram
 - `admin.ts` - User management, analytics, docs
 - `recipes.ts` - Recipe CRUD, extraction, visibility
 - `meal-plan.ts` - Weekly planning, grocery lists
+- `meal-plan-template.ts` - Meal plan templates, public sharing, import functionality
 - `multi-course-meal.ts` - Multi-course meal planning, AI suggestions/timelines
 - `profile.ts` - Profile management, public profiles, recipe import
 - `ingredients.ts` - Ingredient management
@@ -203,6 +210,7 @@ sequenceDiagram
 
 ## Recent Changes
 
+- **Public Meal Plans** - Users can save their weekly meal plans as named templates with theme tags, toggle visibility (public/private), and share them at `/u/[username]/plans/[slug]`. Visitors can import entire meal plans to their planner with one click. Includes stats (import count, view count) and grocery/nutrition previews. New tables: `meal_plan_template`, `meal_plan_template_entry`, `meal_plan_template_import`. New routes: `/recipes/templates` (My Templates), `/u/[username]/plans` (public list), `/u/[username]/plans/[slug]` (public detail). Key files: `app/repositories/meal-plan-template.ts`, `app/trpc/routes/meal-plan-template.ts`, `app/components/meal-plan-template/`, `app/routes/recipes/templates.tsx`, `app/routes/u.[username].plans.tsx`, `app/routes/u.[username].plans.[slug].tsx`
 - **Meal Planner UX Upgrade** - Major upgrade to multi-course meal planner: (1) **Save & Share** - meals persist to "My Meals" list, public sharing at `/u/[username]/meals/[slug]`, visibility toggle, QR codes; (2) **Print Views** - cookbook-style guides in 4 formats (full guide, timeline-only, shopping list, recipe cards) with editorial typography; (3) **Loading UX** - dedicated loading page at `/recipes/meals/:id/generating` with progress bar, animated tips, error recovery. Schema additions: `multi_course_meal.slug`, `isPublic`, `generationStatus`, `generationError`. New files: `app/routes/recipes/meals.tsx`, `app/routes/recipes/meals.[id].tsx`, `app/routes/recipes/meals.$id.generating.tsx`, `app/routes/u.[username].meals.tsx`, `app/routes/u.[username].meals.[slug].tsx`, `app/components/meals/`, `app/components/loading/`, `app/components/sharing/`, `app/components/print/`, `app/lib/print/meal-guide.ts`
 - **Multi-Course Meal Planner** - Plan elegant multi-course dining experiences with AI assistance. Create meals with name, guest count, serving time, and service style (plated/family/buffet). Add courses from recipe library with type categorization. AI generates menu suggestions and cooking timelines. New tables: multi_course_meal, meal_course. New AI functions: generateMenuSuggestions, generateCookingTimeline
 - **Custom Recipe Enhancements** - Enhanced custom recipe creation with AI macro generation (Gemini), ingredient autocomplete with similarity detection (alias table + AI), metric unit standardization (all units normalized to ml/g on save), and "Original" source labeling. New tables: ingredient_alias. Schema additions: recipe_ingredient.quantity_metric, recipe_ingredient.unit_metric

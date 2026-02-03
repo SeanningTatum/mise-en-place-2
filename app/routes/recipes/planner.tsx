@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { redirect } from "react-router";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Save, FileText } from "lucide-react";
 import {
   WeeklyPlannerGrid,
   WeeklyPlannerGridSkeleton,
@@ -10,8 +10,10 @@ import {
   GroceryListPanel,
   WeeklyMacroSummary,
 } from "@/components/planner";
+import { SaveTemplateModal } from "@/components/meal-plan-template";
 import { api } from "@/trpc/client";
 import { toast } from "sonner";
+import { Link } from "react-router";
 import type { Route } from "./+types/planner";
 
 // Helper to get Monday of the week for a given date
@@ -70,6 +72,9 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
     dayOfWeek: number;
     mealType: "breakfast" | "lunch" | "dinner" | "snacks";
   } | null>(null);
+
+  // Save template modal state
+  const [saveTemplateOpen, setSaveTemplateOpen] = useState(false);
 
   // Fetch meal plan for current week
   const {
@@ -169,6 +174,10 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
     ? dayNames[selectedSlot.dayOfWeek]
     : "";
 
+  // Calculate meal count for template
+  const mealCount = mealPlan?.entries?.length ?? 0;
+  const canSaveAsTemplate = mealCount >= 3;
+
   return (
     <div className="space-y-6" data-testid="meal-planner-page">
       <PageHeader
@@ -176,6 +185,24 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
         subtitle={formatWeekRange(currentWeekStart)}
         actions={
           <div className="flex items-center gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/recipes/templates">
+                <FileText className="h-4 w-4 mr-1" />
+                Templates
+              </Link>
+            </Button>
+            {canSaveAsTemplate && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSaveTemplateOpen(true)}
+                className="gap-1.5"
+                data-testid="save-template-button"
+              >
+                <Save className="h-4 w-4" />
+                Save as Template
+              </Button>
+            )}
             {!isCurrentWeek && (
               <Button
                 variant="outline"
@@ -247,6 +274,17 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
         mealType={selectedSlot?.mealType ?? "dinner"}
         dayName={selectedDayName}
       />
+
+      {/* Save Template Modal */}
+      {mealPlan && (
+        <SaveTemplateModal
+          open={saveTemplateOpen}
+          onOpenChange={setSaveTemplateOpen}
+          mealPlanId={mealPlan.id}
+          mealCount={mealCount}
+          ingredientCount={groceryList?.totalIngredients}
+        />
+      )}
     </div>
   );
 }

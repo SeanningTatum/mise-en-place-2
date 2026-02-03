@@ -190,4 +190,35 @@ export const analyticsRouter = createTRPCRouter({
   getMealVisibilityDistribution: adminProcedure.query(({ ctx }) =>
     analyticsRepository.getMealVisibilityDistribution(ctx.db),
   ),
+
+  // Meal plan template analytics
+  getMealPlanTemplateStats: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getMealPlanTemplateStats(ctx.db),
+  ),
+
+  getTemplateCreationTrend: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      }),
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getTemplateCreationTrend(ctx.db, input),
+    ),
+
+  getTemplateImportTrend: adminProcedure
+    .input(
+      z.object({
+        startDate: z.date(),
+        endDate: z.date(),
+      }),
+    )
+    .query(({ ctx, input }) =>
+      analyticsRepository.getTemplateImportTrend(ctx.db, input),
+    ),
+
+  getTemplateThemeDistribution: adminProcedure.query(({ ctx }) =>
+    analyticsRepository.getTemplateThemeDistribution(ctx.db),
+  ),
 });

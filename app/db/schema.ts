@@ -344,3 +344,64 @@ export const mealCourse = sqliteTable("meal_course", {
 
 export type MealCourse = typeof mealCourse.$inferSelect;
 export type InsertMealCourse = typeof mealCourse.$inferInsert;
+
+// Meal plan template tables (for sharing weekly meal plans)
+export const mealPlanTemplate = sqliteTable("meal_plan_template", {
+  id: text("id").primaryKey(),
+  createdById: text("created_by_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(), // URL-safe identifier, unique per user
+  description: text("description"),
+  theme: text("theme"), // e.g., "Mediterranean", "Budget-Friendly", "Quick Weeknight"
+  coverImageUrl: text("cover_image_url"),
+  isPublic: integer("is_public", { mode: "boolean" }).default(false).notNull(),
+  importCount: integer("import_count").default(0).notNull(),
+  viewCount: integer("view_count").default(0).notNull(),
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export type MealPlanTemplate = typeof mealPlanTemplate.$inferSelect;
+export type InsertMealPlanTemplate = typeof mealPlanTemplate.$inferInsert;
+
+export const mealPlanTemplateEntry = sqliteTable("meal_plan_template_entry", {
+  id: text("id").primaryKey(),
+  templateId: text("template_id")
+    .notNull()
+    .references(() => mealPlanTemplate.id, { onDelete: "cascade" }),
+  recipeId: text("recipe_id")
+    .notNull()
+    .references(() => recipe.id, { onDelete: "cascade" }),
+  dayOfWeek: integer("day_of_week").notNull(), // 0=Monday, 6=Sunday
+  mealType: text("meal_type", {
+    enum: ["breakfast", "lunch", "dinner", "snacks"],
+  }).notNull(),
+});
+
+export type MealPlanTemplateEntry = typeof mealPlanTemplateEntry.$inferSelect;
+export type InsertMealPlanTemplateEntry =
+  typeof mealPlanTemplateEntry.$inferInsert;
+
+export const mealPlanTemplateImport = sqliteTable("meal_plan_template_import", {
+  id: text("id").primaryKey(),
+  templateId: text("template_id")
+    .notNull()
+    .references(() => mealPlanTemplate.id, { onDelete: "cascade" }),
+  importedById: text("imported_by_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  importedAt: integer("imported_at", { mode: "timestamp_ms" })
+    .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+    .notNull(),
+});
+
+export type MealPlanTemplateImport = typeof mealPlanTemplateImport.$inferSelect;
+export type InsertMealPlanTemplateImport =
+  typeof mealPlanTemplateImport.$inferInsert;

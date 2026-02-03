@@ -365,8 +365,10 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
         <ShareModal
           open={shareModalOpen}
           onOpenChange={setShareModalOpen}
-          url={recipeUrl}
-          title={`Share "${recipe.title}"`}
+          username={username}
+          displayName={null}
+          shareType="recipe"
+          slug={recipe.slug || undefined}
         />
       </div>
     );
@@ -440,8 +442,10 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
       <ShareModal
         open={shareModalOpen}
         onOpenChange={setShareModalOpen}
-        url={recipeUrl}
-        title={`Share "${recipe.title}"`}
+        username={username}
+        displayName={null}
+        shareType="recipe"
+        slug={recipe.slug || undefined}
       />
     </div>
   );

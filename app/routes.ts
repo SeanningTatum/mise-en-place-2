@@ -32,6 +32,7 @@ export default [
       route("/new", "routes/recipes/new.tsx"),
       route("/create", "routes/recipes/create.tsx"),
       route("/planner", "routes/recipes/planner.tsx"),
+      route("/templates", "routes/recipes/templates.tsx"),
       route("/meal", "routes/recipes/meal.tsx"),
       route("/meals", "routes/recipes/meals.tsx"),
       route("/meals/:id", "routes/recipes/meals.[id].tsx"),
@@ -47,6 +48,8 @@ export default [
   route("/u/:username/recipe/:slug", "routes/u.[username].recipe.[slug].tsx"),
   route("/u/:username/meals", "routes/u.[username].meals.tsx"),
   route("/u/:username/meals/:slug", "routes/u.[username].meals.[slug].tsx"),
+  route("/u/:username/plans", "routes/u.[username].plans.tsx"),
+  route("/u/:username/plans/:slug", "routes/u.[username].plans.[slug].tsx"),
 
   // Admin Routes
   ...prefix("admin", [
