@@ -33,6 +33,10 @@ mindmap
         AI Menu Suggestions
         Cooking Timeline
         Print Guides
+      Meal Plan Templates
+        Save Weekly Plans
+        Public Sharing
+        One-Click Import
       Grocery Lists
         Auto Aggregation
         Category Grouping
@@ -72,6 +76,8 @@ flowchart TD
             PROFILE_RECIPE["/u/:username/recipe/:slug"]
             PROFILE_MEALS["/u/:username/meals"]
             PROFILE_MEAL["/u/:username/meals/:slug"]
+            PROFILE_PLANS["/u/:username/plans"]
+            PROFILE_PLAN["/u/:username/plans/:slug"]
         end
     end
     
@@ -85,6 +91,7 @@ flowchart TD
         
         subgraph Planning["Meal Planning"]
             R_PLANNER["/recipes/planner - Weekly Planner"]
+            R_TEMPLATES["/recipes/templates - My Templates"]
             R_MEAL["/recipes/meal - Create Multi-Course"]
             R_MEALS["/recipes/meals - My Meals"]
             R_MEALS_ID["/recipes/meals/:id - Meal Detail"]
@@ -138,6 +145,7 @@ flowchart TD
 | `/recipes/create` | Create custom recipe manually | User | CustomRecipeForm, IngredientInput |
 | `/recipes/:id` | Recipe detail with player/ingredients | User | YouTubePlayer, RecipeSteps, IngredientsList |
 | `/recipes/planner` | Weekly meal planner + grocery list | User | WeeklyGrid, RecipePicker, GroceryPanel |
+| `/recipes/templates` | User's meal plan templates | User | TemplateGrid, SaveTemplateModal, ShareModal |
 | `/recipes/meal` | Create multi-course meal wizard | User | MealSetupForm, CoursePicker |
 | `/recipes/meals` | User's saved meals list | User | MealGrid, MealCard |
 | `/recipes/meals/:id` | Meal detail with share/print | User | MealDetail, ShareModal, PrintModal |
@@ -148,6 +156,8 @@ flowchart TD
 | `/u/:username/recipe/:slug` | Public recipe detail | Public | PublicRecipeDetail, ImportButton |
 | `/u/:username/meals` | Public meals list | Public | PublicMealsList |
 | `/u/:username/meals/:slug` | Public meal detail | Public | PublicMealDetail |
+| `/u/:username/plans` | Public meal plan templates list | Public | PublicPlansList, TemplateCard |
+| `/u/:username/plans/:slug` | Public meal plan template detail | Public | PublicPlanDetail, ImportButton |
 | `/admin` | Analytics dashboard | Admin | StatCards, TimeSeriesChart, DistributionChart |
 | `/admin/users` | User management table | Admin | UserDataTable, BanModal, ImpersonateButton |
 | `/admin/recipes` | All recipes across users | Admin | RecipeDataTable |
@@ -237,6 +247,25 @@ sequenceDiagram
     DB-->>V: Clone recipe to visitor's collection
 ```
 
+### Public Meal Plan Templates
+
+```mermaid
+flowchart TD
+    A[User creates weekly plan] --> B[Click Save as Template]
+    B --> C[Template Modal]
+    C --> D[Enter name, description, theme]
+    D --> E[Save Template]
+    E --> F[Copy entries to template]
+    F --> G[Toggle Public Visibility]
+    G --> H{Public?}
+    H -->|Yes| I[Appears on /u/username/plans]
+    H -->|No| J[Private template only]
+    I --> K[Visitor views template]
+    K --> L[Click Import]
+    L --> M[One-click import to visitor's planner]
+    M --> N[Increment import count]
+```
+
 ---
 
 ## Data Relationships
@@ -247,6 +276,8 @@ erDiagram
     USER ||--o{ RECIPE : "creates"
     USER ||--o{ MEAL_PLAN : "owns"
     USER ||--o{ MULTI_COURSE_MEAL : "creates"
+    USER ||--o{ MEAL_PLAN_TEMPLATE : "creates"
+    USER ||--o{ MEAL_PLAN_TEMPLATE_IMPORT : "imports"
     
     RECIPE ||--|{ RECIPE_STEP : "has steps"
     RECIPE ||--|{ RECIPE_INGREDIENT : "has ingredients"
@@ -261,6 +292,10 @@ erDiagram
     
     MULTI_COURSE_MEAL ||--|{ MEAL_COURSE : "contains"
     MEAL_COURSE }o--|| RECIPE : "references"
+    
+    MEAL_PLAN_TEMPLATE ||--|{ MEAL_PLAN_TEMPLATE_ENTRY : "contains"
+    MEAL_PLAN_TEMPLATE_ENTRY }o--|| RECIPE : "references"
+    MEAL_PLAN_TEMPLATE ||--o{ MEAL_PLAN_TEMPLATE_IMPORT : "imported as"
 ```
 
 ### Core Tables
@@ -278,6 +313,9 @@ erDiagram
 | `meal_plan_entry` | Plan slots | dayOfWeek (0-6), mealType (breakfast/lunch/dinner/snacks) |
 | `multi_course_meal` | Multi-course meals | name, guestCount, servingTime, serviceStyle, slug, isPublic |
 | `meal_course` | Courses in a meal | courseType, courseOrder, recipeId |
+| `meal_plan_template` | Meal plan templates | name, slug, description, theme, coverImageUrl, isPublic, importCount, viewCount |
+| `meal_plan_template_entry` | Template entries | templateId, recipeId, dayOfWeek, mealType |
+| `meal_plan_template_import` | Template import tracking | templateId, importedById, importedAt |
 | `recipe_import` | Tracks recipe cloning | sourceRecipeId, importedRecipeId |
 
 ---
@@ -337,6 +375,17 @@ flowchart TB
 ---
 
 ## Changelog
+
+### 2026-02-03 - Public Meal Plan Templates
+- Added: `/recipes/templates` route for user's meal plan templates
+- Added: `/u/:username/plans` public route for user's public templates list
+- Added: `/u/:username/plans/:slug` public route for template detail
+- Added: `meal_plan_template` table with metadata (name, slug, description, theme, coverImageUrl, isPublic, importCount, viewCount)
+- Added: `meal_plan_template_entry` table linking templates to recipes with day/meal type
+- Added: `meal_plan_template_import` table tracking template imports
+- Added: `mealPlanTemplate` tRPC router with create, update, delete, getById, list, getPublicBySlug, listPublic, import, incrementViewCount routes
+- Added: Save as Template flow from weekly planner
+- Added: One-click template import functionality
 
 ### 2026-02-03 - Custom Recipes & Ingredient Enhancements
 - Added: `/recipes/create` route for manual recipe creation

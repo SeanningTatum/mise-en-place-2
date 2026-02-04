@@ -141,8 +141,8 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
       : null;
 
   const isYouTubeRecipe = recipe.sourceType === "youtube" && recipe.youtubeVideoId;
-  const recipeUrl = typeof window !== "undefined" 
-    ? window.location.href 
+  const recipeUrl = typeof window !== "undefined"
+    ? window.location.href
     : `https://miseenplace.app/u/${username}/recipe/${recipe.slug}`;
 
   // Recipe header with back button and save
@@ -163,7 +163,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
           <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight leading-tight text-foreground">
             {recipe.title}
           </h1>
-          
+
           {/* Meta info pills */}
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="secondary" className="gap-1.5 px-3 py-1 bg-card border border-border/50">
@@ -192,7 +192,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
               </Badge>
             )}
           </div>
-          
+
           {/* Description */}
           {recipe.description && (
             <p className="text-muted-foreground text-sm leading-relaxed">
@@ -365,8 +365,10 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
         <ShareModal
           open={shareModalOpen}
           onOpenChange={setShareModalOpen}
-          url={recipeUrl}
-          title={`Share "${recipe.title}"`}
+          username={username}
+          displayName={null}
+          shareType="recipe"
+          slug={recipe.slug || undefined}
         />
       </div>
     );
@@ -440,8 +442,10 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
       <ShareModal
         open={shareModalOpen}
         onOpenChange={setShareModalOpen}
-        url={recipeUrl}
-        title={`Share "${recipe.title}"`}
+        username={username}
+        displayName={null}
+        shareType="recipe"
+        slug={recipe.slug || undefined}
       />
     </div>
   );

@@ -7,7 +7,7 @@ import {
   InsightsCard,
   type Insight,
 } from "@/components/analytics";
-import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays, Share2, Eye, Bookmark, Globe, UtensilsCrossed, CheckCircle2, XCircle, Clock, Loader2 } from "lucide-react";
+import { Users, ShieldCheck, UserX, Shield, ChefHat, Youtube, FileText, Calendar, Utensils, CalendarDays, Share2, Eye, Bookmark, Globe, UtensilsCrossed, CheckCircle2, XCircle, Clock, Loader2, FileStack, Download } from "lucide-react";
 import type { Route } from "./+types/_index";
 
 export const loader = async ({ context }: Route.LoaderArgs) => {
@@ -39,6 +39,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     multiCourseMealGrowthData,
     generationStatusDistribution,
     mealVisibilityDistribution,
+    templateStats,
+    templateCreationTrend,
+    templateImportTrend,
+    templateThemeDistribution,
   ] = await Promise.all([
     context.trpc.analytics.getUserStats(),
     context.trpc.analytics.getUserGrowth({ startDate, endDate }),
@@ -63,6 +67,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     context.trpc.analytics.getMultiCourseMealGrowth({ startDate, endDate }),
     context.trpc.analytics.getGenerationStatusDistribution(),
     context.trpc.analytics.getMealVisibilityDistribution(),
+    context.trpc.analytics.getMealPlanTemplateStats(),
+    context.trpc.analytics.getTemplateCreationTrend({ startDate, endDate }),
+    context.trpc.analytics.getTemplateImportTrend({ startDate, endDate }),
+    context.trpc.analytics.getTemplateThemeDistribution(),
   ]);
 
   return {
@@ -89,6 +97,10 @@ export const loader = async ({ context }: Route.LoaderArgs) => {
     multiCourseMealGrowthData,
     generationStatusDistribution,
     mealVisibilityDistribution,
+    templateStats,
+    templateCreationTrend,
+    templateImportTrend,
+    templateThemeDistribution,
   };
 };
 
@@ -129,6 +141,10 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
     multiCourseMealGrowthData,
     generationStatusDistribution,
     mealVisibilityDistribution,
+    templateStats,
+    templateCreationTrend,
+    templateImportTrend,
+    templateThemeDistribution,
   } = loaderData;
 
   // Generate insights based on the data
@@ -338,6 +354,55 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
   } else {
     mealPlannerInsights.push({
       text: "No multi-course meals created yet - users can create meal plans with multiple courses",
+      type: "neutral",
+    });
+  }
+
+  // Meal plan template insights
+  const templateInsights: Insight[] = [];
+  if (templateStats.totalTemplates > 0) {
+    templateInsights.push({
+      text: `${templateStats.totalTemplates} meal plan template${templateStats.totalTemplates !== 1 ? "s" : ""} created`,
+      type: "positive",
+    });
+
+    templateInsights.push({
+      text: `${templateStats.publicRate}% of templates are shared publicly`,
+      type: templateStats.publicRate >= 30 ? "positive" : "neutral",
+    });
+
+    if (templateStats.totalImports > 0) {
+      templateInsights.push({
+        text: `${templateStats.totalImports} template import${templateStats.totalImports !== 1 ? "s" : ""} (avg ${templateStats.avgImportsPerTemplate} per template)`,
+        type: "positive",
+      });
+    }
+
+    if (templateStats.totalViews > 0) {
+      templateInsights.push({
+        text: `${templateStats.totalViews.toLocaleString()} total template view${templateStats.totalViews !== 1 ? "s" : ""}`,
+        type: "positive",
+      });
+    }
+
+    if (templateCreationTrend.length > 0) {
+      const recentTemplates = templateCreationTrend.slice(-7).reduce((sum, d) => sum + d.count, 0);
+      templateInsights.push({
+        text: `${recentTemplates} new template${recentTemplates !== 1 ? "s" : ""} created in the last 7 days`,
+        type: recentTemplates > 0 ? "positive" : "neutral",
+      });
+    }
+
+    if (templateImportTrend.length > 0) {
+      const recentImports = templateImportTrend.slice(-7).reduce((sum, d) => sum + d.count, 0);
+      templateInsights.push({
+        text: `${recentImports} template import${recentImports !== 1 ? "s" : ""} in the last 7 days`,
+        type: recentImports > 0 ? "positive" : "neutral",
+      });
+    }
+  } else {
+    templateInsights.push({
+      text: "No meal plan templates created yet - users can create and share weekly meal plan templates",
       type: "neutral",
     });
   }
@@ -808,6 +873,87 @@ export default function AdminHome({ loaderData }: Route.ComponentProps) {
                   title="Meal Planner Insights"
                   description="Key observations about multi-course meal planning"
                   insights={mealPlannerInsights}
+                />
+              </div>
+            </div>
+
+            {/* Meal Plan Template Analytics Section */}
+            <div className="px-4 lg:px-6 border-t pt-6">
+              <h2 className="text-2xl font-semibold mb-4">Meal Plan Template Analytics</h2>
+
+              {/* Template Stats Cards */}
+              <div className="mb-6">
+                <StatCardGrid columns={4}>
+                  <StatCard
+                    label="Total Templates"
+                    value={templateStats.totalTemplates}
+                    icon={FileStack}
+                    description="Meal plan templates created"
+                  />
+                  <StatCard
+                    label="Public Templates"
+                    value={templateStats.publicTemplates}
+                    icon={Share2}
+                    description={`${templateStats.publicRate}% share rate`}
+                  />
+                  <StatCard
+                    label="Total Imports"
+                    value={templateStats.totalImports}
+                    icon={Download}
+                    description="Templates imported by users"
+                  />
+                  <StatCard
+                    label="Total Views"
+                    value={templateStats.totalViews}
+                    icon={Eye}
+                    description="Template page visits"
+                  />
+                </StatCardGrid>
+              </div>
+
+              {/* Template Charts Row */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6 mb-6">
+                <TimeSeriesChart
+                  title="Template Creation Growth"
+                  description="Templates created over time"
+                  data={templateCreationTrend}
+                  dataKey="count"
+                  dataLabel="New Templates"
+                  type="area"
+                  showTimeRangeSelector
+                />
+                <TimeSeriesChart
+                  title="Template Import Activity"
+                  description="Templates imported over time"
+                  data={templateImportTrend}
+                  dataKey="count"
+                  dataLabel="Imports"
+                  type="bar"
+                  showTimeRangeSelector
+                />
+              </div>
+
+              {/* Second Row: Theme Distribution + Insights */}
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-6">
+                {templateThemeDistribution.length > 0 ? (
+                  <DistributionChart
+                    title="Template Themes"
+                    description="Distribution by theme"
+                    data={templateThemeDistribution}
+                    type="donut"
+                  />
+                ) : (
+                  <div className="rounded-lg border bg-card p-6">
+                    <h3 className="text-lg font-semibold mb-2">Template Themes</h3>
+                    <p className="text-sm text-muted-foreground">
+                      No themes assigned yet
+                    </p>
+                  </div>
+                )}
+                <InsightsCard
+                  title="Template Insights"
+                  description="Key observations about meal plan templates"
+                  insights={templateInsights}
                 />
               </div>
             </div>

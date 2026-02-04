@@ -20,6 +20,8 @@ import {
   userProfile,
   recipeImport,
   multiCourseMeal,
+  mealPlanTemplate,
+  mealPlanTemplateImport,
 } from "@/db/schema";
 
 type Database = Context["db"];
@@ -883,6 +885,151 @@ export async function getMealVisibilityDistribution(db: Database) {
     ];
   } catch (error) {
     console.error("Failed to get meal visibility distribution:", error);
+    return [];
+  }
+}
+
+// ============================================
+// Meal Plan Template Analytics
+// ============================================
+
+/**
+ * Get summary statistics for meal plan templates
+ */
+export async function getMealPlanTemplateStats(db: Database) {
+  try {
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(mealPlanTemplate);
+    const [publicResult] = await db
+      .select({ count: count() })
+      .from(mealPlanTemplate)
+      .where(eq(mealPlanTemplate.isPublic, true));
+    const [totalImportsResult] = await db
+      .select({ count: count() })
+      .from(mealPlanTemplateImport);
+    const [totalViewsResult] = await db
+      .select({ total: sum(mealPlanTemplate.viewCount) })
+      .from(mealPlanTemplate);
+
+    const totalTemplates = totalResult?.count ?? 0;
+    const publicTemplates = publicResult?.count ?? 0;
+    const totalImports = totalImportsResult?.count ?? 0;
+    const totalViews = Number(totalViewsResult?.total) || 0;
+
+    const publicRate =
+      totalTemplates > 0
+        ? Math.round((publicTemplates / totalTemplates) * 100)
+        : 0;
+
+    const avgImportsPerTemplate =
+      totalTemplates > 0
+        ? Math.round((totalImports / totalTemplates) * 10) / 10
+        : 0;
+
+    return {
+      totalTemplates,
+      publicTemplates,
+      privateTemplates: totalTemplates - publicTemplates,
+      totalImports,
+      totalViews,
+      publicRate,
+      avgImportsPerTemplate,
+    };
+  } catch (error) {
+    console.error("Failed to get meal plan template stats:", error);
+    return {
+      totalTemplates: 0,
+      publicTemplates: 0,
+      privateTemplates: 0,
+      totalImports: 0,
+      totalViews: 0,
+      publicRate: 0,
+      avgImportsPerTemplate: 0,
+    };
+  }
+}
+
+/**
+ * Get template creation trend data grouped by day
+ */
+export async function getTemplateCreationTrend(
+  db: Database,
+  input: DateRangeInput,
+) {
+  try {
+    return await db
+      .select({
+        date: sql<string>`date(${mealPlanTemplate.createdAt} / 1000, 'unixepoch')`,
+        count: count(),
+      })
+      .from(mealPlanTemplate)
+      .where(
+        and(
+          gte(mealPlanTemplate.createdAt, input.startDate),
+          lte(mealPlanTemplate.createdAt, input.endDate),
+        ),
+      )
+      .groupBy(sql`date(${mealPlanTemplate.createdAt} / 1000, 'unixepoch')`)
+      .orderBy(sql`date(${mealPlanTemplate.createdAt} / 1000, 'unixepoch')`);
+  } catch (error) {
+    console.error("Failed to get template creation trend:", error);
+    return [];
+  }
+}
+
+/**
+ * Get template import trend data grouped by day
+ */
+export async function getTemplateImportTrend(
+  db: Database,
+  input: DateRangeInput,
+) {
+  try {
+    return await db
+      .select({
+        date: sql<string>`date(${mealPlanTemplateImport.importedAt} / 1000, 'unixepoch')`,
+        count: count(),
+      })
+      .from(mealPlanTemplateImport)
+      .where(
+        and(
+          gte(mealPlanTemplateImport.importedAt, input.startDate),
+          lte(mealPlanTemplateImport.importedAt, input.endDate),
+        ),
+      )
+      .groupBy(
+        sql`date(${mealPlanTemplateImport.importedAt} / 1000, 'unixepoch')`,
+      )
+      .orderBy(
+        sql`date(${mealPlanTemplateImport.importedAt} / 1000, 'unixepoch')`,
+      );
+  } catch (error) {
+    console.error("Failed to get template import trend:", error);
+    return [];
+  }
+}
+
+/**
+ * Get template distribution by theme
+ */
+export async function getTemplateThemeDistribution(db: Database) {
+  try {
+    const results = await db
+      .select({
+        name: mealPlanTemplate.theme,
+        value: count(),
+      })
+      .from(mealPlanTemplate)
+      .where(isNotNull(mealPlanTemplate.theme))
+      .groupBy(mealPlanTemplate.theme);
+
+    return results.map((r) => ({
+      name: r.name ?? "Uncategorized",
+      value: r.value,
+    }));
+  } catch (error) {
+    console.error("Failed to get template theme distribution:", error);
     return [];
   }
 }

@@ -16,6 +16,8 @@ interface ShareModalProps {
   onOpenChange: (open: boolean) => void;
   username: string;
   displayName: string | null;
+  shareType?: "profile" | "plan" | "recipe";
+  slug?: string; // For meal plans or recipes
 }
 
 export function ShareModal({
@@ -23,10 +25,35 @@ export function ShareModal({
   onOpenChange,
   username,
   displayName,
+  shareType = "profile",
+  slug,
 }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/u/${username}`;
-  const shareText = `Check out ${displayName || username}'s recipe collection on mise en place!`;
+
+  // Build URL based on share type
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  let shareUrl: string;
+  let shareText: string;
+  let modalTitle: string;
+
+  switch (shareType) {
+    case "plan":
+      shareUrl = `${baseUrl}/u/${username}/plans/${slug}`;
+      shareText = `Check out this meal plan from ${displayName || username} on mise en place!`;
+      modalTitle = "Share Meal Plan";
+      break;
+    case "recipe":
+      shareUrl = `${baseUrl}/u/${username}/recipe/${slug}`;
+      shareText = `Check out this recipe from ${displayName || username} on mise en place!`;
+      modalTitle = "Share Recipe";
+      break;
+    default:
+      shareUrl = `${baseUrl}/u/${username}`;
+      shareText = `Check out ${displayName || username}'s recipe collection on mise en place!`;
+      modalTitle = "Share Your Collection";
+  }
+
+  const profileUrl = shareUrl; // Keep variable name for backwards compatibility
 
   const handleCopy = async () => {
     try {
@@ -89,7 +116,7 @@ export function ShareModal({
       <DialogContent className="sm:max-w-md bg-card">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">
-            Share Your Collection
+            {modalTitle}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6 py-4">

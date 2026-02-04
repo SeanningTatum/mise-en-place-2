@@ -21,6 +21,10 @@ user ◄─────┬───── session (userId)
            ├───── meal_plan (userId)
            │         └── meal_plan_entry (mealPlanId) → recipe
            │
+           ├───── meal_plan_template (createdById)
+           │         ├── meal_plan_template_entry (templateId) → recipe
+           │         └── meal_plan_template_import (templateId, importedById)
+           │
            ├───── multi_course_meal (userId)
            │         └── meal_course (mealId) → recipe
            │
@@ -68,6 +72,9 @@ user ◄─────┬───── session (userId)
 |-------|---------|------------|
 | `meal_plan` | Weekly meal plans | userId, weekStartDate |
 | `meal_plan_entry` | Individual meal assignments | mealPlanId, dayOfWeek (0-6), mealType enum, recipeId |
+| `meal_plan_template` | Saved meal plan templates for sharing | createdById, name, slug, description, theme, coverImageUrl, isPublic, importCount, viewCount |
+| `meal_plan_template_entry` | Meal assignments in templates | templateId, recipeId, dayOfWeek (0-6), mealType enum |
+| `meal_plan_template_import` | Tracks template imports | templateId, importedById, importedAt |
 | `multi_course_meal` | Multi-course dining events | userId, name, guestCount, servingTime, serviceStyle, slug, isPublic, generationStatus, generationError, aiSuggestionsJson, timelineJson |
 | `meal_course` | Courses within a meal | mealId, recipeId, courseType, courseOrder, servingsOverride |
 
