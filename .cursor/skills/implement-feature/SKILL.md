@@ -271,18 +271,29 @@ Add logs for:
 
 **When:** After core implementation is complete
 
+## ⚠️ CRITICAL: SEED TEST DATA FIRST ⚠️
+
+**Before running any tests, ensure test data is seeded:**
+```bash
+bun run seed:all  # Seeds test users AND mock data
+```
+
+Available test users: `admin@test.local` (TestAdmin123!), `user1@test.local` (TestUser123!)
+
 ## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
 
 **Testing is NOT complete without screenshots. The tester MUST:**
-1. Take screenshots with Playwright MCP for each scenario
-2. Save screenshots to the workspace (not just temp folder)
-3. Embed screenshots in test documentation
-4. Copy screenshots to public folder for docs viewer
+1. Ensure test data is seeded first
+2. Take screenshots with Playwright MCP for each scenario
+3. Save screenshots to the workspace (not just temp folder)
+4. Embed screenshots in test documentation
+5. Copy screenshots to public folder for docs viewer
 
 **Delegation Pattern:**
 ```markdown
 Test the {feature} implementation:
 
+0. **PREREQUISITE: Ensure test data is seeded** (`bun run seed:all`)
 1. Create testing plan at `docs/testing/{feature}/{feature}.md`
 2. Create screenshots folder at `docs/testing/{feature}/screenshots/`
 3. Verify with Playwright MCP:
@@ -296,8 +307,8 @@ Test the {feature} implementation:
 4. **MANDATORY: Save screenshots to `docs/testing/{feature}/screenshots/`**
 5. **MANDATORY: Copy screenshots to `public/docs/testing/{feature}/screenshots/`**
 6. **MANDATORY: Embed screenshots in test documentation with markdown image links**
-5. Write E2E tests at `e2e/{feature}.spec.ts`
-6. Add data-testid attributes to interactive elements
+7. Write E2E tests at `e2e/{feature}.spec.ts`
+8. Add data-testid attributes to interactive elements
 ```
 
 ### Analytics: `data-analytics`
@@ -500,9 +511,11 @@ Before marking implementation complete:
 - [ ] Figma implementations use CSS variables (no hardcoded colors)
 - [ ] Structured logging added to key operations
 
-### Quality
+### Testing & Quality
+- [ ] Test data seeded (`bun run seed:all`)
 - [ ] E2E tests written and passing
 - [ ] Test documentation created with screenshots
 - [ ] context.md updated with new feature
 - [ ] high-level-architecture.md updated (routes, flows, changelog)
 - [ ] Analytics dashboard created (if applicable)
+- [ ] Mock data script updated if new data models added (scripts/seed-mock-data.ts)
