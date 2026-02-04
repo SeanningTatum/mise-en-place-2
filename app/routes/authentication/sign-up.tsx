@@ -1,5 +1,19 @@
+import { redirect } from "react-router"
 import { SignupForm } from "./components/signup-form"
 import { ChefHat } from "lucide-react"
+import type { Route } from "./+types/sign-up"
+
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const session = await context.auth.api.getSession({
+    headers: request.headers,
+  })
+
+  if (session) {
+    return redirect("/recipes")
+  }
+
+  return null
+}
 
 export default function SignUp() {
   return (
