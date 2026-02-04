@@ -144,59 +144,62 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
   const BackLink = () => (
     <Link
       to="/recipes"
-      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group mb-4"
+      className="inline-flex items-center gap-1.5 font-ui text-xs font-semibold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors group mb-6"
     >
-      <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+      <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
       <span>Back to Recipes</span>
     </Link>
   );
 
   // Shared header component
   const RecipeHeader = () => (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-4 border-b-2 border-ink pb-6 dark:border-paper">
       <div className="space-y-4">
         {/* Title */}
-        <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight leading-tight text-foreground" data-testid="recipe-title">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[0.95] text-foreground" data-testid="recipe-title">
           {recipe.title}
         </h1>
         
-        {/* Meta info pills */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="secondary" className="gap-1.5 px-3 py-1 bg-card border border-border/50">
+        {/* Meta info pills - editorial style */}
+        <div className="flex flex-wrap items-center gap-3">
+          <Badge variant="outline" className="gap-1.5 px-3 py-1 border-ink dark:border-paper">
             {recipe.sourceType === "youtube" ? (
               <>
-                <Youtube className="h-3.5 w-3.5 text-red-500" />
-                <span>YouTube</span>
+                <Youtube className="h-3.5 w-3.5" />
+                <span>Video</span>
               </>
             ) : recipe.sourceType === "custom" ? (
               <>
-                <PenLine className="h-3.5 w-3.5 text-accent" />
+                <PenLine className="h-3.5 w-3.5" />
                 <span>Original</span>
               </>
             ) : (
               <>
-                <Globe className="h-3.5 w-3.5 text-primary" />
+                <Globe className="h-3.5 w-3.5" />
                 <span>Blog</span>
               </>
             )}
           </Badge>
           {recipe.servings && (
-            <Badge variant="outline" className="gap-1.5 px-3 py-1 border-border/50">
-              <Users className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>{recipe.servings} servings</span>
-            </Badge>
+            <span className="font-mono text-xs text-muted-foreground">
+              <Users className="h-3.5 w-3.5 inline mr-1" />
+              {recipe.servings} servings
+            </span>
           )}
           {totalTime && (
-            <Badge variant="outline" className="gap-1.5 px-3 py-1 border-border/50">
-              <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>{totalTime} min</span>
-            </Badge>
+            <span className="font-mono text-xs text-muted-foreground">
+              <Clock className="h-3.5 w-3.5 inline mr-1" />
+              {totalTime} min
+            </span>
           )}
         </div>
         
-        {/* Description */}
+        {/* Description - editorial with drop cap for long descriptions */}
         {recipe.description && (
-          <p className="text-muted-foreground text-sm leading-relaxed">
+          <p className={cn(
+            "font-body text-muted-foreground leading-relaxed max-w-2xl",
+            recipe.description.length > 100 && "drop-cap"
+          )}>
             {recipe.description}
           </p>
         )}
@@ -257,23 +260,25 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               fiber={recipe.fiber}
               servings={recipe.servings}
             />
-            <Card className="border-border/50 shadow-warm overflow-hidden">
-              <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-5">
+            <Card className="border-border overflow-hidden">
+              <div className="p-6 border-b-2 border-ink dark:border-paper">
+                <div className="flex items-center gap-2">
                   <UtensilsCrossed className="h-5 w-5 text-primary" />
-                  <h2 className="font-display text-lg font-semibold text-foreground">Ingredients</h2>
+                  <h2 className="font-display text-xl font-bold text-foreground">Ingredients</h2>
                 </div>
+              </div>
+              <div className="p-6">
                 <IngredientsList ingredients={recipe.ingredients} checkable />
               </div>
             </Card>
-            <Card className="border-border/50 shadow-warm overflow-hidden">
-              <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
-              <div className="p-6">
-                <div className="flex items-center gap-2 mb-5">
+            <Card className="border-border overflow-hidden">
+              <div className="p-6 border-b-2 border-ink dark:border-paper">
+                <div className="flex items-center gap-2">
                   <ListOrdered className="h-5 w-5 text-primary" />
-                  <h2 className="font-display text-lg font-semibold text-foreground">Instructions</h2>
+                  <h2 className="font-display text-xl font-bold text-foreground">Instructions</h2>
                 </div>
+              </div>
+              <div className="p-6">
                 <RecipeSteps
                   steps={recipe.steps}
                   onTimestampClick={handleTimestampClick}

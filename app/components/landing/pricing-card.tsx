@@ -1,7 +1,8 @@
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface PricingFeature {
@@ -38,32 +39,30 @@ export function PricingCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-2xl border p-8",
+        "relative flex flex-col rounded-xl border-2 p-8",
         highlighted
-          ? "border-primary bg-card shadow-warm-lg"
-          : "border-border/50 bg-card shadow-warm",
+          ? "border-primary bg-card shadow-soft-lg"
+          : "border-border bg-card",
         className
       )}
     >
       {badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
-            {badge}
-          </span>
+        <div className="absolute -top-3 left-6">
+          <Badge variant="highlight">{badge}</Badge>
         </div>
       )}
 
       {/* Header */}
       <div className="mb-6">
-        <h3 className="font-display text-xl font-semibold">{name}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <h3 className="font-display text-xl font-bold tracking-tight">{name}</h3>
+        <p className="mt-1 font-body text-sm text-muted-foreground">{description}</p>
       </div>
 
       {/* Price */}
-      <div className="mb-6">
-        <span className="font-display text-4xl font-semibold">{price}</span>
+      <div className="mb-6 pb-6 border-b border-border">
+        <span className="font-display text-4xl font-extrabold tracking-tight">{price}</span>
         {period && (
-          <span className="text-muted-foreground">/{period}</span>
+          <span className="font-ui text-sm text-muted-foreground">/{period}</span>
         )}
       </div>
 
@@ -73,16 +72,15 @@ export function PricingCard({
           <li
             key={index}
             className={cn(
-              "flex items-start gap-3 text-sm",
+              "flex items-start gap-3 font-body text-sm",
               !feature.included && "text-muted-foreground/60"
             )}
           >
-            <Check
-              className={cn(
-                "mt-0.5 size-4 shrink-0",
-                feature.included ? "text-primary" : "text-muted-foreground/40"
-              )}
-            />
+            {feature.included ? (
+              <Check className="mt-0.5 size-4 shrink-0 text-sage" />
+            ) : (
+              <X className="mt-0.5 size-4 shrink-0 text-muted-foreground/40" />
+            )}
             <span>{feature.text}</span>
           </li>
         ))}
@@ -93,7 +91,7 @@ export function PricingCard({
         asChild
         variant={highlighted ? "default" : "outline"}
         size="lg"
-        className={cn(highlighted && "shadow-warm")}
+        className={cn(highlighted && "shadow-soft-md")}
       >
         <Link to={cta.href}>{cta.label}</Link>
       </Button>
@@ -109,7 +107,7 @@ interface PricingSectionProps {
 }
 
 export function PricingSection({
-  headline = "Simple, transparent pricing",
+  headline = "Simple, honest pricing",
   subheadline,
   children,
   className,
@@ -118,11 +116,14 @@ export function PricingSection({
     <section id="pricing" className={cn("py-20", className)}>
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+          <span className="label-section mb-3 block">
+            Pricing
+          </span>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight md:text-4xl">
             {headline}
           </h2>
           {subheadline && (
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 font-body text-lg text-muted-foreground max-w-2xl mx-auto">
               {subheadline}
             </p>
           )}

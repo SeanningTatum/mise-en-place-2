@@ -19,42 +19,42 @@ interface CTASectionProps {
 export function CTASection({
   headline,
   subheadline,
-  primaryCta = { label: "Start Free", href: "/sign-up" },
+  primaryCta = { label: "Get Started Free", href: "/sign-up" },
   secondaryCta,
   className,
 }: CTASectionProps) {
   return (
     <section
       className={cn(
-        "relative overflow-hidden py-20 md:py-28",
+        "relative py-20 md:py-28 bg-primary text-primary-foreground",
         className
       )}
     >
-      {/* Background gradient */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 via-primary/10 to-primary/5" />
-
-      {/* Decorative elements */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-0 size-64 rounded-full bg-accent/20 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 size-64 rounded-full bg-primary/20 blur-3xl" />
-      </div>
-
       <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl">
+          <h2 className="font-display text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">
             {headline}
           </h2>
           {subheadline && (
-            <p className="mt-6 text-lg text-muted-foreground md:text-xl">
+            <p className="mt-4 font-body text-lg opacity-90 md:text-xl leading-relaxed">
               {subheadline}
             </p>
           )}
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Button asChild size="lg" className="shadow-warm-lg">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-background text-foreground hover:bg-background/90 shadow-soft-md"
+            >
               <Link to={primaryCta.href}>{primaryCta.label}</Link>
             </Button>
             {secondaryCta && (
-              <Button asChild variant="outline" size="lg">
+              <Button 
+                asChild 
+                variant="outline" 
+                size="lg"
+                className="border-2 border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10"
+              >
                 <Link to={secondaryCta.href}>{secondaryCta.label}</Link>
               </Button>
             )}

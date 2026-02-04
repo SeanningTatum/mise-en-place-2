@@ -201,15 +201,20 @@ sequenceDiagram
 
 ## Design System
 
-**Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
+**"The Culinary Chronicle"** - Newsprint editorial authority blended with cookbook warmth. Think *Bon Appetit* meets *The New York Times Food Section*.
 
-- **Colors**: OKLCH - terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds
-- **Typography**: `.font-display` for Playfair Display headings, letter spacing -0.02em
-- **Effects**: Grain texture (3% SVG noise), `.shadow-warm` / `.shadow-warm-lg`, `.heading-underline`
+- **Philosophy**: Sharp geometry (2px radius max), high contrast, visible grid structure, typographic drama
+- **Colors**: OKLCH - `--ink` (warm black), `--paper` (newsprint), terracotta primary, `--accent-red` (editorial red for badges)
+- **Typography**: Playfair Display (headlines), Lora (body), Inter (UI), JetBrains Mono (timestamps)
+- **Effects**: Grain texture, hard offset shadows (`.shadow-hard`), newsprint dot patterns (`.newsprint-dots`)
+- **Utilities**: `.drop-cap`, `.label-editorial`, `.edition-meta`, `.ornament-divider`, `.img-editorial` (grayscale→sepia hover)
+- **Dark Mode**: "Evening Edition" - deep charcoal backgrounds, inverted shadows
 - **Key file**: `app/app.css`
+- **Architecture doc**: `docs/features/design-system-architecture.md`
 
 ## Recent Changes
 
+- **Design System Rebrand: "The Culinary Chronicle"** - Complete visual rebrand blending newsprint editorial aesthetic with cookbook warmth. Sharp corners (2px max), hard offset shadows, visible grid structure, four-font typography system (Playfair Display, Lora, Inter, JetBrains Mono), editorial utilities (drop caps, grayscale images, ornamental dividers), "Evening Edition" dark mode. Updated: `app/app.css`, all shadcn/ui components, landing page components, recipe cards, planner grid, app layout. New doc: `docs/features/design-system-architecture.md`
 - **Public Meal Plans** - Users can save their weekly meal plans as named templates with theme tags, toggle visibility (public/private), and share them at `/u/[username]/plans/[slug]`. Visitors can import entire meal plans to their planner with one click. Includes stats (import count, view count) and grocery/nutrition previews. New tables: `meal_plan_template`, `meal_plan_template_entry`, `meal_plan_template_import`. New routes: `/recipes/templates` (My Templates), `/u/[username]/plans` (public list), `/u/[username]/plans/[slug]` (public detail). Key files: `app/repositories/meal-plan-template.ts`, `app/trpc/routes/meal-plan-template.ts`, `app/components/meal-plan-template/`, `app/routes/recipes/templates.tsx`, `app/routes/u.[username].plans.tsx`, `app/routes/u.[username].plans.[slug].tsx`
 - **Meal Planner UX Upgrade** - Major upgrade to multi-course meal planner: (1) **Save & Share** - meals persist to "My Meals" list, public sharing at `/u/[username]/meals/[slug]`, visibility toggle, QR codes; (2) **Print Views** - cookbook-style guides in 4 formats (full guide, timeline-only, shopping list, recipe cards) with editorial typography; (3) **Loading UX** - dedicated loading page at `/recipes/meals/:id/generating` with progress bar, animated tips, error recovery. Schema additions: `multi_course_meal.slug`, `isPublic`, `generationStatus`, `generationError`. New files: `app/routes/recipes/meals.tsx`, `app/routes/recipes/meals.[id].tsx`, `app/routes/recipes/meals.$id.generating.tsx`, `app/routes/u.[username].meals.tsx`, `app/routes/u.[username].meals.[slug].tsx`, `app/components/meals/`, `app/components/loading/`, `app/components/sharing/`, `app/components/print/`, `app/lib/print/meal-guide.ts`
 - **Multi-Course Meal Planner** - Plan elegant multi-course dining experiences with AI assistance. Create meals with name, guest count, serving time, and service style (plated/family/buffet). Add courses from recipe library with type categorization. AI generates menu suggestions and cooking timelines. New tables: multi_course_meal, meal_course. New AI functions: generateMenuSuggestions, generateCookingTimeline

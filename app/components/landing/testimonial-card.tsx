@@ -22,7 +22,7 @@ export function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-2xl border border-border/50 bg-card p-6 shadow-warm",
+        "flex flex-col gap-4 rounded-xl border border-border bg-card p-6",
         className
       )}
     >
@@ -32,19 +32,19 @@ export function TestimonialCard({
           {Array.from({ length: rating }).map((_, i) => (
             <Star
               key={i}
-              className="size-4 fill-primary text-primary"
+              className="size-4 fill-amber-400 text-amber-400"
             />
           ))}
         </div>
       )}
 
       {/* Quote */}
-      <blockquote className="flex-1 text-foreground leading-relaxed">
+      <blockquote className="flex-1 font-body text-base text-foreground leading-relaxed">
         "{quote}"
       </blockquote>
 
       {/* Author */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 pt-2">
         {avatar ? (
           <img
             src={avatar}
@@ -52,14 +52,14 @@ export function TestimonialCard({
             className="size-10 rounded-full object-cover"
           />
         ) : (
-          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 font-display text-sm font-semibold text-primary">
+          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 font-display text-sm font-bold text-primary">
             {author.charAt(0)}
           </div>
         )}
         <div>
-          <div className="font-medium">{author}</div>
+          <div className="font-ui text-sm font-semibold text-foreground">{author}</div>
           {role && (
-            <div className="text-sm text-muted-foreground">{role}</div>
+            <div className="font-ui text-xs text-muted-foreground">{role}</div>
           )}
         </div>
       </div>
@@ -75,7 +75,7 @@ interface TestimonialSectionProps {
 }
 
 export function TestimonialSection({
-  headline = "Loved by home cooks",
+  headline = "Loved by Home Cooks",
   subheadline,
   children,
   className,
@@ -84,11 +84,14 @@ export function TestimonialSection({
     <section className={cn("py-20", className)}>
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+          <span className="label-section mb-3 block">
+            Testimonials
+          </span>
+          <h2 className="font-display text-3xl font-extrabold tracking-tight md:text-4xl">
             {headline}
           </h2>
           {subheadline && (
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-4 font-body text-lg text-muted-foreground max-w-2xl mx-auto">
               {subheadline}
             </p>
           )}

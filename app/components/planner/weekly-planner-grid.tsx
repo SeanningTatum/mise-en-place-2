@@ -61,7 +61,7 @@ export function WeeklyPlannerGrid({
 
   return (
     <div
-      className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 lg:gap-3"
+      className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 border-t border-l border-border"
       data-testid="weekly-planner-grid"
     >
       {weekDates.map((date, index) => {
@@ -90,7 +90,7 @@ export function WeeklyPlannerGrid({
 
 export function WeeklyPlannerGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 lg:gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 border-t border-l border-border">
       {Array.from({ length: 7 }).map((_, index) => (
         <DayColumnSkeleton key={index} />
       ))}

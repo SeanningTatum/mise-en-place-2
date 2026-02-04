@@ -23,7 +23,7 @@ interface HeroSectionProps {
 export function HeroSection({
   headline,
   subheadline,
-  primaryCta = { label: "Start Free", href: "/sign-up" },
+  primaryCta = { label: "Get Started Free", href: "/sign-up" },
   secondaryCta,
   badge,
   children,
@@ -33,21 +33,15 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden py-20 md:py-28 lg:py-32",
+        "relative overflow-hidden py-16 md:py-24 lg:py-32",
         className
       )}
     >
-      {/* Decorative background elements */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -right-20 -top-20 size-96 rounded-full bg-accent/20 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 size-96 rounded-full bg-primary/10 blur-3xl" />
-      </div>
-
       <div className="container relative mx-auto px-4">
         <div
           className={cn(
             "grid gap-12 lg:gap-16",
-            children ? "lg:grid-cols-2 lg:items-center" : "lg:grid-cols-1",
+            children ? "lg:grid-cols-[1.1fr_1fr] lg:items-center" : "lg:grid-cols-1",
             align === "center" && !children && "text-center"
           )}
         >
@@ -59,23 +53,23 @@ export function HeroSection({
             )}
           >
             {badge && (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 font-ui text-xs font-semibold text-primary">
                   {badge}
                 </span>
               </div>
             )}
 
-            <h1 className="animate-in fade-in slide-in-from-bottom-4 font-display text-4xl font-semibold tracking-tight text-balance duration-500 delay-100 md:text-5xl lg:text-6xl">
+            <h1 className="animate-in fade-in slide-in-from-bottom-4 font-display text-4xl font-extrabold tracking-tight text-balance duration-300 delay-75 md:text-5xl lg:text-6xl xl:text-7xl">
               {headline}
             </h1>
 
-            <p className="animate-in fade-in slide-in-from-bottom-4 max-w-xl text-lg text-muted-foreground text-balance duration-500 delay-200 md:text-xl">
+            <p className="animate-in fade-in slide-in-from-bottom-4 max-w-2xl font-body text-lg text-muted-foreground text-balance duration-300 delay-150 md:text-xl leading-relaxed">
               {subheadline}
             </p>
 
-            <div className="animate-in fade-in slide-in-from-bottom-4 flex flex-wrap gap-4 duration-500 delay-300">
-              <Button asChild size="lg" className="shadow-warm-lg">
+            <div className="animate-in fade-in slide-in-from-bottom-4 flex flex-wrap gap-3 duration-300 delay-200">
+              <Button asChild size="lg" className="shadow-soft-md">
                 <Link to={primaryCta.href}>{primaryCta.label}</Link>
               </Button>
               {secondaryCta && (
@@ -88,7 +82,7 @@ export function HeroSection({
 
           {/* Visual slot */}
           {children && (
-            <div className="animate-in fade-in slide-in-from-right-8 duration-700 delay-300">
+            <div className="animate-in fade-in slide-in-from-right-8 duration-500 delay-200">
               {children}
             </div>
           )}
@@ -97,3 +91,26 @@ export function HeroSection({
     </section>
   );
 }
+
+// Simple intro paragraph component (non-editorial)
+export function IntroText({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        "font-body text-lg leading-relaxed text-foreground md:text-xl",
+        className
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
+// Renamed export for backwards compatibility
+export const EditorialIntro = IntroText;

@@ -1,6 +1,6 @@
 export { LandingNav } from "./landing-nav";
 export { LandingFooter } from "./landing-footer";
-export { HeroSection } from "./hero-section";
+export { HeroSection, IntroText, EditorialIntro } from "./hero-section";
 export { FeatureCard, FeatureGrid } from "./feature-card";
 export { TestimonialCard, TestimonialSection } from "./testimonial-card";
 export { PricingCard, PricingSection } from "./pricing-card";

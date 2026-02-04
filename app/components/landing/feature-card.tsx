@@ -23,10 +23,10 @@ export function FeatureCard({
       <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
         {icon}
       </div>
-      <h3 className="mb-2 font-display text-lg font-semibold">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="mb-2 font-display text-lg font-bold tracking-tight">{title}</h3>
+      <p className="font-body text-sm text-muted-foreground leading-relaxed">{description}</p>
       {href && (
-        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="mt-4 flex items-center gap-1 font-ui text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
           Learn more
           <ArrowRight className="size-4" />
         </div>
@@ -39,7 +39,7 @@ export function FeatureCard({
       <Link
         to={href}
         className={cn(
-          "group flex flex-col rounded-2xl border border-border/50 bg-card p-6 shadow-warm transition-all hover:border-primary/30 hover:shadow-warm-lg",
+          "group flex flex-col rounded-xl border border-border bg-card p-6 transition-all duration-200 hover:shadow-soft-lg hover:border-primary/20",
           className
         )}
       >
@@ -51,7 +51,7 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "group flex flex-col rounded-2xl border border-border/50 bg-card p-6 shadow-warm",
+        "group flex flex-col rounded-xl border border-border bg-card p-6",
         className
       )}
     >
