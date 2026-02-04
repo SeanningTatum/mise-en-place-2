@@ -7,11 +7,11 @@
  *
  * Run with: bun run seed:users
  *
- * Test users created:
- * - admin@test.local (admin role) - password: TestAdmin123!
- * - user1@test.local (user role) - password: TestUser123!
- * - user2@test.local (user role) - password: TestUser123!
- * - premium@test.local (user role) - password: TestPremium123!
+ * Test users created (all use password: TestPassword123!):
+ * - admin@test.local (admin role)
+ * - user1@test.local (user role)
+ * - user2@test.local (user role)
+ * - premium@test.local (user role)
  *
  * Note: Passwords are pre-hashed using bcrypt (Better Auth default)
  */
@@ -22,42 +22,38 @@ import crypto from "node:crypto";
 // Pre-hashed passwords using bcrypt (Better Auth default)
 // These are hashed versions of the passwords for direct DB insertion
 // In production, Better Auth handles password hashing during sign-up
+// All test users share the same password for simplicity
+const TEST_PASSWORD = "TestPassword123!";
+const TEST_PASSWORD_HASH = "$2a$10$HKVqz7DMFU/p.KVZ7DKJwOJYhNnXlXQB0EYtB4iVPRLdnPKqBxHyC";
+
 const TEST_USERS = [
   {
     id: "test-admin-user-001",
     name: "Test Admin",
     email: "admin@test.local",
     role: "admin",
-    // Password: TestAdmin123!
-    passwordHash:
-      "$2a$10$HKVqz7DMFU/p.KVZ7DKJwOJYhNnXlXQB0EYtB4iVPRLdnPKqBxHyC",
+    passwordHash: TEST_PASSWORD_HASH,
   },
   {
     id: "test-user-001",
     name: "Test User One",
     email: "user1@test.local",
     role: "user",
-    // Password: TestUser123!
-    passwordHash:
-      "$2a$10$HKVqz7DMFU/p.KVZ7DKJwOJYhNnXlXQB0EYtB4iVPRLdnPKqBxHyC",
+    passwordHash: TEST_PASSWORD_HASH,
   },
   {
     id: "test-user-002",
     name: "Test User Two",
     email: "user2@test.local",
     role: "user",
-    // Password: TestUser123!
-    passwordHash:
-      "$2a$10$HKVqz7DMFU/p.KVZ7DKJwOJYhNnXlXQB0EYtB4iVPRLdnPKqBxHyC",
+    passwordHash: TEST_PASSWORD_HASH,
   },
   {
     id: "test-premium-user",
     name: "Premium User",
     email: "premium@test.local",
     role: "user",
-    // Password: TestPremium123!
-    passwordHash:
-      "$2a$10$HKVqz7DMFU/p.KVZ7DKJwOJYhNnXlXQB0EYtB4iVPRLdnPKqBxHyC",
+    passwordHash: TEST_PASSWORD_HASH,
   },
 ];
 
@@ -159,10 +155,10 @@ function printUsage() {
 ║    ┌──────────────────────┬───────────────────┬────────────┐                   ║
 ║    │ Email                │ Password          │ Role       │                   ║
 ║    ├──────────────────────┼───────────────────┼────────────┤                   ║
-║    │ admin@test.local     │ TestAdmin123!     │ admin      │                   ║
-║    │ user1@test.local     │ TestUser123!      │ user       │                   ║
-║    │ user2@test.local     │ TestUser123!      │ user       │                   ║
-║    │ premium@test.local   │ TestPremium123!   │ user       │                   ║
+║    │ admin@test.local     │ TestPassword123!  │ admin      │                   ║
+║    │ user1@test.local     │ TestPassword123!  │ user       │                   ║
+║    │ user2@test.local     │ TestPassword123!  │ user       │                   ║
+║    │ premium@test.local   │ TestPassword123!  │ user       │                   ║
 ║    └──────────────────────┴───────────────────┴────────────┘                   ║
 ║                                                                                ║
 ║  Profiles Created:                                                             ║
@@ -216,14 +212,8 @@ async function main() {
     console.log("│ Email                │ Password          │ Role   │");
     console.log("├──────────────────────┼───────────────────┼────────┤");
     for (const user of TEST_USERS) {
-      const password =
-        user.role === "admin"
-          ? "TestAdmin123!"
-          : user.email.includes("premium")
-            ? "TestPremium123!"
-            : "TestUser123!";
       console.log(
-        `│ ${user.email.padEnd(20)} │ ${password.padEnd(17)} │ ${user.role.padEnd(6)} │`
+        `│ ${user.email.padEnd(20)} │ ${TEST_PASSWORD.padEnd(17)} │ ${user.role.padEnd(6)} │`
       );
     }
     console.log("└──────────────────────┴───────────────────┴────────┘");

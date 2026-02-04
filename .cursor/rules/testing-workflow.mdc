@@ -25,10 +25,10 @@ bun run seed:mock-data   # Create mock recipes, meal plans, ingredients
 
 | Email                | Password          | Role   |
 |----------------------|-------------------|--------|
-| `admin@test.local`   | `TestAdmin123!`   | admin  |
-| `user1@test.local`   | `TestUser123!`    | user   |
-| `user2@test.local`   | `TestUser123!`    | user   |
-| `premium@test.local` | `TestPremium123!` | user   |
+| `admin@test.local`   | `TestPassword123!` | admin  |
+| `user1@test.local`   | `TestPassword123!` | user   |
+| `user2@test.local`   | `TestPassword123!` | user   |
+| `premium@test.local` | `TestPassword123!` | user   |
 
 See `test-credentials.mdc` for full details on available test data.
 
@@ -52,7 +52,7 @@ Brief description of what was implemented and what needs to be tested.
 ## Prerequisites
 - [ ] Development server running on port 5173 (`bun run dev`)
 - [ ] Test data seeded (`bun run seed:all`)
-- [ ] Test user credentials: admin@test.local / TestAdmin123!
+- [ ] Test user credentials: admin@test.local / TestPassword123!
 
 ## Test Scenarios
 

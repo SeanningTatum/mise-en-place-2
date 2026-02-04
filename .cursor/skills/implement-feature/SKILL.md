@@ -278,7 +278,7 @@ Add logs for:
 bun run seed:all  # Seeds test users AND mock data
 ```
 
-Available test users: `admin@test.local` (TestAdmin123!), `user1@test.local` (TestUser123!)
+Available test users (all use `TestPassword123!`): `admin@test.local`, `user1@test.local`
 
 ## ⚠️ CRITICAL: SCREENSHOTS ARE MANDATORY ⚠️
 

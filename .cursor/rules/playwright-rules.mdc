@@ -11,9 +11,9 @@ Before running e2e tests, ensure test data is seeded:
 bun run seed:all  # Seeds test users and mock data
 ```
 
-Available test users: See `test-credentials.mdc` for full list.
-- `admin@test.local` / `TestAdmin123!` (admin)
-- `user1@test.local` / `TestUser123!` (user)
+Available test users (all use password `TestPassword123!`):
+- `admin@test.local` (admin)
+- `user1@test.local` (user)
 
 ## Best Practices
 
