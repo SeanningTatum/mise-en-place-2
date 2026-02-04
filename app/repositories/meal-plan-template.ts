@@ -867,33 +867,36 @@ export async function importTemplate(
       );
     }
 
-    // Get or create meal plan for target week
-    let targetMealPlan = await db
-      .select({ id: mealPlan.id })
-      .from(mealPlan)
-      .where(
-        and(
-          eq(mealPlan.userId, input.userId),
-          eq(mealPlan.weekStartDate, input.targetWeekStart),
-        ),
-      )
-      .limit(1);
+    // Get or create meal plan for target week - use transaction for atomicity
+    const mealPlanId = await db.transaction(async (tx) => {
+      let targetMealPlan = await tx
+        .select({ id: mealPlan.id })
+        .from(mealPlan)
+        .where(
+          and(
+            eq(mealPlan.userId, input.userId),
+            eq(mealPlan.weekStartDate, input.targetWeekStart),
+          ),
+        )
+        .limit(1);
 
-    let mealPlanId: string;
-    if (targetMealPlan.length === 0) {
-      mealPlanId = generateId();
-      await db.insert(mealPlan).values({
-        id: mealPlanId,
-        userId: input.userId,
-        weekStartDate: input.targetWeekStart,
-      });
-    } else {
-      mealPlanId = targetMealPlan[0].id;
-      // Clear existing entries for this week
-      await db
-        .delete(mealPlanEntry)
-        .where(eq(mealPlanEntry.mealPlanId, mealPlanId));
-    }
+      let id: string;
+      if (targetMealPlan.length === 0) {
+        id = generateId();
+        await tx.insert(mealPlan).values({
+          id,
+          userId: input.userId,
+          weekStartDate: input.targetWeekStart,
+        });
+      } else {
+        id = targetMealPlan[0].id;
+        // Clear existing entries for this week
+        await tx
+          .delete(mealPlanEntry)
+          .where(eq(mealPlanEntry.mealPlanId, id));
+      }
+      return id;
+    });
 
     // Copy entries to meal plan
     const newEntries = entries.map((entry) => ({
