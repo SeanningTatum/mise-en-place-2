@@ -11,7 +11,7 @@ import {
   PricingSection,
   CTASection,
 } from "@/components/landing";
-import { Link } from "react-router";
+import { Link, redirect } from "react-router";
 import {
   Play,
   Calendar,
@@ -36,7 +36,15 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ context }: Route.LoaderArgs) {
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const session = await context.auth.api.getSession({
+    headers: request.headers,
+  });
+
+  if (session) {
+    return redirect("/recipes");
+  }
+
   return {};
 }
 
