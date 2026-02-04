@@ -57,12 +57,31 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
     },
   });
 
+  const updateVisibilityMutation = api.profile.updateProfile.useMutation({
+    onSuccess: (_, variables) => {
+      toast.success(variables.isPublic ? "Profile is now public!" : "Profile is now private");
+      utils.profile.getMyProfile.invalidate();
+    },
+    onError: (error) => {
+      // Revert local state on error
+      setIsPublic((prev) => !prev);
+      toast.error(error.message);
+    },
+  });
+
   // Local form state
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+
+  // Handle visibility toggle - save immediately
+  const handleVisibilityToggle = (checked: boolean) => {
+    if (!profile) return;
+    setIsPublic(checked); // Optimistic update
+    updateVisibilityMutation.mutate({ isPublic: checked });
+  };
 
   // Username validation
   const [usernameChecking, setUsernameChecking] = useState(false);
@@ -177,8 +196,8 @@ export default function ProfileSettingsPage({ loaderData }: Route.ComponentProps
             </div>
             <Switch
               checked={isPublic}
-              onCheckedChange={setIsPublic}
-              disabled={!profile}
+              onCheckedChange={handleVisibilityToggle}
+              disabled={!profile || updateVisibilityMutation.isPending}
             />
           </div>
         </CardHeader>

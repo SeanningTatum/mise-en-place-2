@@ -20,7 +20,10 @@
     "test:e2e": "bunx playwright test",
     "test:e2e:ui": "bunx playwright test --ui",
     "test:e2e:report": "bunx playwright show-report",
-    "seed:aliases": "bun run scripts/seed-ingredient-aliases.ts"
+    "seed:aliases": "bun run scripts/seed-ingredient-aliases.ts",
+    "seed:users": "bun run scripts/seed-test-users.ts",
+    "seed:mock-data": "bun run scripts/seed-mock-data.ts",
+    "seed:all": "bun run seed:users && bun run seed:mock-data"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

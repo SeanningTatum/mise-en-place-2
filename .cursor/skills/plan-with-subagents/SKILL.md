@@ -169,6 +169,7 @@ When a task touches certain files, note the validation requirement:
 ```markdown
 #### Task: Test Implementation
 **Subagent:** `tester`
+**Prerequisites:** Test data must be seeded (`bun run seed:all`)
 **Description:** Generate testing plan, verify with browser, write e2e tests
 **Outputs:**
   - Browser verification (screenshots)
@@ -179,10 +180,23 @@ When a task touches certain files, note the validation requirement:
 ### Testing Workflow
 The testing task MUST follow this workflow:
 
+0. **Seed Test Data** - Run `bun run seed:all` to create test users and mock data
 1. **Browser Verification** - Use Playwright MCP to manually verify the feature works
 2. **Capture Screenshots** - Take screenshots of key states for documentation
 3. **Write E2E Tests** - Convert successful browser actions into Playwright e2e tests
 4. **Create Test Summary** - Document test cases with screenshots in `docs/features/`
+
+### Test Data Seeding Task (when adding new data models)
+```markdown
+#### Task: Update Test Data Scripts
+**Subagent:** `generalPurpose`
+**Files:** `scripts/seed-mock-data.ts`
+**Description:** If new data models were added, update the mock data script to include:
+  - Sample data for the new tables
+  - Associations with existing test users
+  - Realistic test scenarios
+**When to include:** Any feature that adds new database tables or data models
+```
 
 ### Feature Architecture Documentation Task
 ```markdown
@@ -394,10 +408,12 @@ Run the `pr-checker` skill which validates:
 - [ ] **Feature architecture doc exists** (`docs/features/{feature}-architecture.md`)
 - [ ] context.md updated (if feature/architecture change)
 - [ ] Testing plan exists (`docs/testing/{feature}/`)
+- [ ] **Test data seeded** (`bun run seed:all`)
 - [ ] **E2E tests written in `e2e/`**
 - [ ] Migrations use db-migration skill (if applicable)
 - [ ] **Debug logging added** (if complex logic/integrations)
 - [ ] **Analytics dashboard created** (if new trackable data)
+- [ ] **Mock data scripts updated** (if new data models - `scripts/seed-mock-data.ts`)
 ```
 
 ---
@@ -426,7 +442,18 @@ Run the `pr-checker` skill which validates:
 | Testing | `docs/testing/{feature}/{feature}.md` | All features |
 | Context | `.cursor/context.md` | All features/changes |
 | High-Level Architecture | `.cursor/context/high-level-architecture.md` | New routes, features, schema changes |
+| **Mock Data** | `scripts/seed-mock-data.ts` | New database tables or data models |
 
 **Important:** After implementation is complete, save the plan to `docs/plans/` for future reference.
 | Debug Logs | In implementation files | Complex logic, integrations, error-prone paths |
 | Analytics | Admin dashboard | Features with trackable data (signups, usage, conversions) |
+
+## Test Data Scripts
+
+| Script | Command | Purpose |
+|--------|---------|---------|
+| Seed Users | `bun run seed:users` | Create test users (admin, user1, user2, premium) |
+| Seed Mock Data | `bun run seed:mock-data` | Create recipes, meal plans, templates |
+| Seed All | `bun run seed:all` | Run both scripts |
+
+**Always run `bun run seed:all` before testing!**

@@ -2,6 +2,21 @@
 globs: e2e/**/*,e2e/*
 alwaysApply: false
 ---
+
+## Test Data Setup
+
+Before running e2e tests, ensure test data is seeded:
+
+```bash
+bun run seed:all  # Seeds test users and mock data
+```
+
+Available test users (all use password `TestPassword123!`):
+- `admin@test.local` (admin)
+- `user1@test.local` (user)
+
+## Best Practices
+
 - Write comprehensive tests that verify:
   - UI components render correctly
   - User interactions work as expected

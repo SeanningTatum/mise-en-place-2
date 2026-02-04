@@ -8,6 +8,30 @@ alwaysApply: false
 
 After implementing a plan or feature, follow this workflow to generate a testing plan, verify with Playwright, fix issues, and write an e2e test.
 
+## Step 0: Seed Test Data
+
+**IMPORTANT**: Before running e2e tests, ensure test users and mock data are seeded.
+
+```bash
+# Quick setup - seeds both users and mock data
+bun run seed:all
+
+# Or run individually
+bun run seed:users       # Create test users (admin, user1, user2, premium)
+bun run seed:mock-data   # Create mock recipes, meal plans, ingredients
+```
+
+### Available Test Users
+
+| Email                | Password          | Role   |
+|----------------------|-------------------|--------|
+| `admin@test.local`   | `TestPassword123!` | admin  |
+| `user1@test.local`   | `TestPassword123!` | user   |
+| `user2@test.local`   | `TestPassword123!` | user   |
+| `premium@test.local` | `TestPassword123!` | user   |
+
+See `test-credentials.mdc` for full details on available test data.
+
 ## Step 1: Generate Testing Plan
 
 After completing implementation, create a testing plan folder at:
@@ -26,9 +50,9 @@ docs/testing/{feature-name}/
 Brief description of what was implemented and what needs to be tested.
 
 ## Prerequisites
-- [ ] Development server running on port {port}
-- [ ] Database seeded with test data
-- [ ] Test user credentials available
+- [ ] Development server running on port 5173 (`bun run dev`)
+- [ ] Test data seeded (`bun run seed:all`)
+- [ ] Test user credentials: admin@test.local / TestPassword123!
 
 ## Test Scenarios
 
