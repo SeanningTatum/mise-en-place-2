@@ -74,19 +74,19 @@ export function DayColumn({
     <>
       <div
         className={cn(
-          "flex flex-col gap-2 p-2 rounded-lg min-w-0",
-          isToday && "bg-primary/5 ring-1 ring-primary/20"
+          "flex flex-col gap-3 p-3 rounded-[20px] min-w-0 transition-all duration-300",
+          isToday && "bg-accent/20 ring-1 ring-accent/40"
         )}
         data-testid={`day-column-${dayOfWeek}`}
       >
         {/* Day header */}
-        <div className="text-center pb-2 border-b border-border/40 relative">
+        <div className="text-center pb-3 border-b border-border/30 relative">
           {/* Print button - only show when there are meals */}
           {hasMeals && !isLoading && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-6 w-6 text-muted-foreground hover:text-foreground"
+              className="absolute right-0 top-0 h-7 w-7 text-muted-foreground hover:text-foreground rounded-[10px]"
               onClick={() => setExportModalOpen(true)}
               data-testid={`print-day-${dayOfWeek}`}
             >
@@ -94,12 +94,12 @@ export function DayColumn({
               <span className="sr-only">Print day's recipes</span>
             </Button>
           )}
-          <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.2em]">
             {dayName}
           </div>
           <div
             className={cn(
-              "text-lg font-display font-semibold",
+              "text-2xl font-display",
               isToday && "text-primary"
             )}
           >
@@ -109,7 +109,7 @@ export function DayColumn({
           <MacroSummary
             totals={dailyTotals}
             variant="compact"
-            className="justify-center mt-1"
+            className="justify-center mt-2"
           />
         </div>
 
@@ -154,15 +154,15 @@ export function DayColumn({
 
 export function DayColumnSkeleton() {
   return (
-    <div className="flex flex-col gap-2 p-2 rounded-lg min-w-0">
-      <div className="text-center pb-2 border-b border-border/40">
-        <div className="h-3 w-8 bg-secondary animate-pulse rounded mx-auto mb-1" />
-        <div className="h-6 w-6 bg-secondary animate-pulse rounded mx-auto" />
+    <div className="flex flex-col gap-3 p-3 rounded-[20px] min-w-0">
+      <div className="text-center pb-3 border-b border-border/30">
+        <div className="h-3 w-10 bg-secondary animate-pulse rounded-[6px] mx-auto mb-2" />
+        <div className="h-8 w-8 bg-secondary animate-pulse rounded-[8px] mx-auto" />
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         {mealTypes.map((mealType) => (
           <div key={mealType}>
-            <div className="h-2 w-12 bg-secondary animate-pulse rounded mb-1" />
+            <div className="h-2.5 w-14 bg-secondary animate-pulse rounded-[4px] mb-2" />
             <MealSlotSkeleton />
           </div>
         ))}

@@ -76,11 +76,11 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              className="data-[slot=sidebar-menu-button]:p-2! rounded-[12px]"
             >
               <Link to="/admin/">
                 <IconToolsKitchen2 className="size-5!" />
-                <span className="text-base font-semibold">mise en place</span>
+                <span className="font-display text-lg">mise en place</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

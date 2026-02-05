@@ -11,6 +11,7 @@ import {
   PricingSection,
   CTASection,
 } from "@/components/landing";
+import { HeroImageBlock } from "@/components/ui/grayscale-image";
 import { Link, redirect } from "react-router";
 import {
   Play,
@@ -56,69 +57,78 @@ export default function Home({}: Route.ComponentProps) {
       {/* Hero Section */}
       <HeroSection
         badge="Now with YouTube timestamp extraction"
-        headline="Stop pausing. Start cooking."
+        italicFirstLine="Stop pausing."
+        headline="Start {underline:cooking}."
         subheadline="AI extracts recipes from YouTube with timestamps—so you can cook along without scrubbing back. Plus meal planning and smart grocery lists."
         primaryCta={{ label: "Start Free", href: "/sign-up" }}
         secondaryCta={{ label: "See How It Works", href: "#features" }}
+        annotation="scroll to explore"
       >
         {/* Hero Visual - Video Player Mockup */}
         <div className="relative">
-          <div className="rounded-2xl border border-border/50 bg-card p-2 shadow-warm-lg">
+          <div className="rounded-[40px] border border-border/30 bg-card p-3 shadow-warm-lg">
             {/* Video player mockup */}
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-muted">
+            <div className="relative aspect-video overflow-hidden rounded-[32px] bg-muted">
               <img
                 src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop&q=80"
                 alt="Cooking demonstration"
-                className="size-full object-cover"
+                className="size-full object-cover grayscale transition-all duration-[2000ms] hover:grayscale-0"
               />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                <div className="flex size-16 items-center justify-center rounded-full bg-white/90 shadow-lg">
-                  <Play className="ml-1 size-6 text-primary" fill="currentColor" />
+                <div className="flex size-20 items-center justify-center rounded-full bg-white/90 shadow-warm-lg transition-transform duration-500 hover:scale-110">
+                  <Play className="ml-1 size-8 text-primary" fill="currentColor" />
                 </div>
               </div>
               {/* YouTube logo */}
-              <div className="absolute bottom-4 right-4">
-                <Youtube className="size-8 text-white drop-shadow-lg" />
+              <div className="absolute bottom-6 right-6">
+                <Youtube className="size-10 text-white drop-shadow-lg" />
               </div>
             </div>
           </div>
 
           {/* Timestamp annotations */}
-          <div className="absolute -right-4 top-8 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-500 duration-500">
+          <div className="absolute -right-4 top-8 animate-fade-slide-up-delay-500 rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm">
             <span className="font-mono">2:34</span> Prep onions
           </div>
-          <div className="absolute -right-8 top-24 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-700 duration-500">
+          <div className="absolute -right-8 top-28 animate-fade-slide-up rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm" style={{ animationDelay: "0.7s" }}>
             <span className="font-mono">5:12</span> Add garlic
           </div>
-          <div className="absolute -right-4 top-40 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-900 duration-500">
+          <div className="absolute -right-4 top-48 animate-fade-slide-up rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm" style={{ animationDelay: "0.9s" }}>
             <span className="font-mono">8:45</span> Simmer sauce
           </div>
         </div>
       </HeroSection>
 
-      {/* Problem Statement */}
-      <section className="border-y border-border/40 bg-muted/30 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <p className="mx-auto max-w-3xl text-lg text-muted-foreground md:text-xl">
-            <span className="font-semibold text-foreground">
-              Your recipes are everywhere.
-            </span>{" "}
+      {/* Hero Image Block */}
+      <HeroImageBlock
+        src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=1600&auto=format&fit=crop&q=80"
+        alt="Fresh ingredients on a cutting board"
+        label="Our Philosophy"
+        title="Cook with intention"
+      />
+
+      {/* Problem Statement - with 160px spacing */}
+      <section className="py-40 px-6 lg:px-12">
+        <div className="container mx-auto text-center">
+          <p className="mx-auto max-w-4xl text-2xl md:text-3xl lg:text-4xl text-foreground leading-relaxed font-display">
+            Your recipes are{" "}
+            <span className="italic">everywhere</span>.{" "}
             Bookmarked YouTube videos, screenshots, browser tabs, old recipe cards.
-            It's a <span className="italic">chaotic mix</span> that makes cooking stressful
-            instead of enjoyable.
+            It's a chaotic mix that makes cooking{" "}
+            <span className="text-muted-foreground">stressful instead of enjoyable</span>.
           </p>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+      <section id="features" className="py-24 lg:py-40">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="mb-16 text-center">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
               Everything you need to cook smarter
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Built for how people actually discover recipes today
             </p>
           </div>
@@ -159,13 +169,13 @@ export default function Home({}: Route.ComponentProps) {
       </section>
 
       {/* ICP Sections */}
-      <section className="border-y border-border/40 bg-muted/30 py-20">
-        <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+      <section className="py-24 lg:py-40 bg-secondary">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="mb-16 text-center">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
               Made for how you cook
             </h2>
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Whether you're a video recipe enthusiast, meal prep master, or family recipe keeper
             </p>
           </div>
@@ -174,19 +184,19 @@ export default function Home({}: Route.ComponentProps) {
             {/* Video Recipes Card */}
             <Link
               to="/lp/video-recipes"
-              className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 shadow-warm transition-all hover:border-primary/30 hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
             >
-              <div className="mb-6 flex size-14 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <Youtube className="size-7" />
+              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Youtube className="size-8" />
               </div>
-              <h3 className="mb-2 font-display text-xl font-semibold">
+              <h3 className="mb-3 font-display text-2xl">
                 Video Recipe Lovers
               </h3>
-              <p className="mb-4 text-muted-foreground">
+              <p className="mb-6 text-muted-foreground leading-relaxed">
                 Finally, an app that works with YouTube. Extract timestamps, ingredients,
                 and steps from your favorite cooking channels.
               </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>
@@ -194,19 +204,19 @@ export default function Home({}: Route.ComponentProps) {
             {/* Meal Planning Card */}
             <Link
               to="/lp/meal-planning"
-              className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 shadow-warm transition-all hover:border-primary/30 hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
             >
-              <div className="mb-6 flex size-14 items-center justify-center rounded-xl bg-accent/50 text-accent-foreground transition-colors group-hover:bg-accent">
-                <Calendar className="size-7" />
+              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Calendar className="size-8" />
               </div>
-              <h3 className="mb-2 font-display text-xl font-semibold">
+              <h3 className="mb-3 font-display text-2xl">
                 Busy Meal Planners
               </h3>
-              <p className="mb-4 text-muted-foreground">
+              <p className="mb-6 text-muted-foreground leading-relaxed">
                 Answer "what's for dinner?" once a week. Plan meals, generate grocery lists,
                 and reclaim your evenings.
               </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>
@@ -214,19 +224,19 @@ export default function Home({}: Route.ComponentProps) {
             {/* Family Recipes Card */}
             <Link
               to="/lp/family-recipes"
-              className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-8 shadow-warm transition-all hover:border-primary/30 hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
             >
-              <div className="mb-6 flex size-14 items-center justify-center rounded-xl bg-secondary text-secondary-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <BookOpen className="size-7" />
+              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+                <BookOpen className="size-8" />
               </div>
-              <h3 className="mb-2 font-display text-xl font-semibold">
+              <h3 className="mb-3 font-display text-2xl">
                 Family Recipe Keepers
               </h3>
-              <p className="mb-4 text-muted-foreground">
+              <p className="mb-6 text-muted-foreground leading-relaxed">
                 Digitize grandma's recipes before they're lost forever. Share your
                 culinary heritage across generations.
               </p>
-              <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>
@@ -263,7 +273,7 @@ export default function Home({}: Route.ComponentProps) {
       <PricingSection
         headline="Free to start, powerful when you need it"
         subheadline="No subscription required for core features. Upgrade when you're ready."
-        className="bg-muted/30"
+        className="bg-secondary"
       >
         <PricingCard
           name="Free"
@@ -315,7 +325,7 @@ export default function Home({}: Route.ComponentProps) {
 
       {/* Final CTA */}
       <CTASection
-        headline="Ready to simplify your cooking?"
+        headline="Ready to evolve?"
         subheadline="Join thousands of home cooks who've organized their recipes, planned their meals, and rediscovered the joy of cooking."
         primaryCta={{ label: "Start Free Today", href: "/sign-up" }}
         secondaryCta={{ label: "See Pricing", href: "#pricing" }}

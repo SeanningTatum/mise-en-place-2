@@ -46,34 +46,34 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn("space-y-6", className)}>
       {/* Top row: Back link + Actions */}
       {(backTo || actions) && (
         <div className="flex items-center justify-between gap-4">
           {backTo ? (
             <Link
               to={backTo.href}
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors duration-300 group font-medium"
             >
-              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
+              <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               <span>{backTo.label}</span>
             </Link>
           ) : (
             <div />
           )}
           {actions && (
-            <div className="flex items-center gap-2">{actions}</div>
+            <div className="flex items-center gap-3">{actions}</div>
           )}
         </div>
       )}
 
       {/* Title + Subtitle */}
       <div>
-        <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[0.9]">
           {title}
         </h1>
         {subtitle && (
-          <p className="text-muted-foreground mt-1">{subtitle}</p>
+          <p className="text-muted-foreground mt-3 text-lg">{subtitle}</p>
         )}
       </div>
     </div>

@@ -64,8 +64,8 @@ When working on this project, consult the rules in `.cursor/rules/` and detailed
 - **Database**: Cloudflare D1 (SQLite) + Drizzle ORM
 - **Auth**: Better Auth with roles (user/admin)
 - **API**: tRPC for type-safe routes
-- **Styling**: Tailwind v4, shadcn/ui, editorial cookbook design system
-- **Typography**: Playfair Display (serif headings), Source Sans 3 (body)
+- **Styling**: Tailwind v4, shadcn/ui, Modern Organic Editorial design system
+- **Typography**: DM Serif Display (headings), Inter (body), Reenie Beanie (accents)
 - **AI**: Google Gemini, Anthropic Claude
 - **Package Manager**: Bun
 
@@ -201,15 +201,19 @@ sequenceDiagram
 
 ## Design System
 
-**Editorial Cookbook Aesthetic** - Warm, artisanal design inspired by classic cookbooks.
+**Modern Organic Editorial** - High-contrast editorial style balancing technological precision with organic, human-centric elements.
 
-- **Colors**: OKLCH - terracotta primary (`oklch(0.55 0.14 35)`), sage accent (`oklch(0.70 0.08 145)`), warm cream backgrounds
-- **Typography**: `.font-display` for Playfair Display headings, letter spacing -0.02em
-- **Effects**: Grain texture (3% SVG noise), `.shadow-warm` / `.shadow-warm-lg`, `.heading-underline`
+- **Colors**: Charcoal primary (#202A2D), cream backgrounds (#F7F5EB, #F0EDE1), sage accent (#CBD0B5)
+- **Typography**: `.font-display` for DM Serif Display headings (48-160px), Inter for body, `.font-handwritten` for Reenie Beanie accents
+- **Border Radii**: Organic radii (24-64px for containers, 999px pills). Never use standard 4-8px radii.
+- **Effects**: Noise texture (40% opacity), `.shadow-warm` / `.shadow-warm-lg`, hand-drawn SVG underlines
+- **Animations**: `fadeSlideUp` (0.8s), grayscale-to-color image hover (2000ms)
+- **Special Components**: `HandDrawnUnderline`, `PhilosophyCard`, `GrayscaleImage`, `HeroImageBlock`
 - **Key file**: `app/app.css`
 
 ## Recent Changes
 
+- **Modern Organic Editorial Rebrand** - Complete design system rebrand from "Editorial Cookbook" to "Modern Organic Editorial". New color palette (charcoal #202A2D, cream #F7F5EB, sage #CBD0B5), typography (DM Serif Display, Inter, Reenie Beanie), organic border radii (24-64px), 40% noise texture, hand-drawn SVG underlines, grayscale-to-color image transitions. New components: `HandDrawnUnderline`, `PhilosophyCard`, `GrayscaleImage`, `HeroImageBlock`, `TeamGrid`, `HorizontalGallery`. Updated all landing pages, auth forms, recipe cards, planner components, and UI primitives. Key files: `app/app.css`, `app/components/ui/hand-drawn-underline.tsx`, `app/components/ui/philosophy-card.tsx`, `app/components/ui/grayscale-image.tsx`, `app/components/landing/*`
 - **Public Meal Plans** - Users can save their weekly meal plans as named templates with theme tags, toggle visibility (public/private), and share them at `/u/[username]/plans/[slug]`. Visitors can import entire meal plans to their planner with one click. Includes stats (import count, view count) and grocery/nutrition previews. New tables: `meal_plan_template`, `meal_plan_template_entry`, `meal_plan_template_import`. New routes: `/recipes/templates` (My Templates), `/u/[username]/plans` (public list), `/u/[username]/plans/[slug]` (public detail). Key files: `app/repositories/meal-plan-template.ts`, `app/trpc/routes/meal-plan-template.ts`, `app/components/meal-plan-template/`, `app/routes/recipes/templates.tsx`, `app/routes/u.[username].plans.tsx`, `app/routes/u.[username].plans.[slug].tsx`
 - **Meal Planner UX Upgrade** - Major upgrade to multi-course meal planner: (1) **Save & Share** - meals persist to "My Meals" list, public sharing at `/u/[username]/meals/[slug]`, visibility toggle, QR codes; (2) **Print Views** - cookbook-style guides in 4 formats (full guide, timeline-only, shopping list, recipe cards) with editorial typography; (3) **Loading UX** - dedicated loading page at `/recipes/meals/:id/generating` with progress bar, animated tips, error recovery. Schema additions: `multi_course_meal.slug`, `isPublic`, `generationStatus`, `generationError`. New files: `app/routes/recipes/meals.tsx`, `app/routes/recipes/meals.[id].tsx`, `app/routes/recipes/meals.$id.generating.tsx`, `app/routes/u.[username].meals.tsx`, `app/routes/u.[username].meals.[slug].tsx`, `app/components/meals/`, `app/components/loading/`, `app/components/sharing/`, `app/components/print/`, `app/lib/print/meal-guide.ts`
 - **Multi-Course Meal Planner** - Plan elegant multi-course dining experiences with AI assistance. Create meals with name, guest count, serving time, and service style (plated/family/buffet). Add courses from recipe library with type categorization. AI generates menu suggestions and cooking timelines. New tables: multi_course_meal, meal_course. New AI functions: generateMenuSuggestions, generateCookingTimeline

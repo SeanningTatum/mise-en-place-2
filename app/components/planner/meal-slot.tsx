@@ -97,18 +97,18 @@ export function MealSlot({
         disabled={isLoading}
         data-testid={`meal-slot-${mealType}-empty`}
         className={cn(
-          "w-full border-2 border-dashed border-border/60 rounded-lg",
+          "w-full border-2 border-dashed border-border/40 rounded-[16px]",
           slotHeight,
-          "flex flex-col items-center justify-center gap-1",
+          "flex flex-col items-center justify-center gap-2",
           "text-muted-foreground hover:text-foreground",
-          "hover:border-primary/40 hover:bg-secondary/30",
-          "transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-primary/20",
+          "hover:border-accent/60 hover:bg-accent/10",
+          "transition-all duration-500",
+          "focus:outline-none focus:ring-2 focus:ring-accent/30",
           isLoading && "opacity-50 cursor-not-allowed"
         )}
       >
         <Plus className="h-5 w-5" />
-        <span className="text-xs font-medium">Add {mealTypeLabels[mealType]}</span>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-medium">Add {mealTypeLabels[mealType]}</span>
       </button>
     );
   }
@@ -118,7 +118,7 @@ export function MealSlot({
       <HoverCardTrigger asChild>
         <Card
           className={cn(
-            "group relative overflow-hidden bg-card border-border/50 hover:shadow-warm transition-shadow cursor-pointer",
+            "group relative overflow-hidden bg-card border-border/30 hover:shadow-warm transition-all duration-500 cursor-pointer rounded-[16px]",
             slotHeight,
             "py-0!" // Override Card's default padding
           )}
@@ -135,8 +135,8 @@ export function MealSlot({
             disabled={isLoading}
             aria-label={`Remove ${mealTypeLabels[mealType]}`}
             className={cn(
-              "absolute top-1 right-1 z-10 h-6 w-6",
-              "opacity-60 hover:opacity-100 transition-opacity",
+              "absolute top-1.5 right-1.5 z-10 h-6 w-6 rounded-[8px]",
+              "opacity-60 hover:opacity-100 transition-all duration-300",
               "bg-background/80 hover:bg-destructive hover:text-destructive-foreground"
             )}
             data-testid={`meal-slot-${mealType}-remove`}
@@ -144,30 +144,30 @@ export function MealSlot({
             <X className="h-3 w-3" />
           </Button>
 
-          <div className="flex gap-2 p-2 h-full">
+          <div className="flex gap-2.5 p-2.5 h-full">
             {/* Thumbnail */}
             {recipe.thumbnailUrl ? (
-              <div className="w-16 h-16 shrink-0 rounded overflow-hidden bg-secondary my-auto">
+              <div className="w-16 h-16 shrink-0 rounded-[12px] overflow-hidden bg-secondary my-auto">
                 <img
                   src={recipe.thumbnailUrl}
                   alt={recipe.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[2000ms]"
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 shrink-0 rounded bg-secondary flex items-center justify-center my-auto">
-                <span className="text-xs text-muted-foreground">No image</span>
+              <div className="w-16 h-16 shrink-0 rounded-[12px] bg-secondary flex items-center justify-center my-auto">
+                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">No image</span>
               </div>
             )}
 
             {/* Info - simplified for card view */}
             <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-              <h4 className="font-medium text-sm line-clamp-2 leading-tight">
+              <h4 className="font-display text-sm line-clamp-2 leading-tight">
                 {recipe.title}
               </h4>
               {recipe.calories && (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <Flame className="h-3 w-3 text-orange-500" />
+                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1.5">
+                  <Flame className="h-3 w-3 text-accent" />
                   <span>{recipe.calories} cal</span>
                 </div>
               )}
@@ -279,12 +279,12 @@ export function MealSlot({
 
 export function MealSlotSkeleton() {
   return (
-    <Card className="overflow-hidden border-border/50 h-[88px] py-0!">
-      <div className="flex gap-2 p-2 h-full">
-        <div className="w-16 h-16 shrink-0 rounded bg-secondary animate-pulse my-auto" />
+    <Card className="overflow-hidden border-border/30 h-[88px] py-0! rounded-[16px]">
+      <div className="flex gap-2.5 p-2.5 h-full">
+        <div className="w-16 h-16 shrink-0 rounded-[12px] bg-secondary animate-pulse my-auto" />
         <div className="flex-1 flex flex-col justify-center py-0.5">
-          <div className="h-4 bg-secondary animate-pulse rounded w-full" />
-          <div className="h-3 bg-secondary animate-pulse rounded w-1/2 mt-1" />
+          <div className="h-4 bg-secondary animate-pulse rounded-[6px] w-full" />
+          <div className="h-3 bg-secondary animate-pulse rounded-[6px] w-1/2 mt-2" />
         </div>
       </div>
     </Card>

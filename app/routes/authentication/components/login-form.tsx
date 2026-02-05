@@ -62,17 +62,17 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-border/50 shadow-warm">
+      <Card className="border-border/30 shadow-warm rounded-[32px] overflow-hidden">
         {/* Decorative top accent */}
-        <div className="h-1 bg-linear-to-r from-primary via-primary/50 to-accent" />
+        <div className="h-1.5 bg-linear-to-r from-primary via-accent to-primary" />
         
-        <CardContent className="p-6 sm:p-8">
+        <CardContent className="p-8 sm:p-10">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="font-display text-2xl font-semibold text-foreground">
+          <div className="text-center mb-10">
+            <h1 className="font-display text-3xl text-foreground">
               Welcome back
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-2">
               Sign in to access your recipe collection
             </p>
           </div>
@@ -127,16 +127,17 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
               />
               
               {authError && (
-                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-3 py-2">
+                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-[12px] px-4 py-3">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{authError}</span>
                 </div>
               )}
               
-              <div className="space-y-4 pt-2">
+              <div className="space-y-5 pt-4">
                 <Button
                   type="submit"
-                  className="w-full h-11 gap-2 shadow-warm hover:shadow-warm-lg font-medium"
+                  size="pill-lg"
+                  className="w-full gap-2 shadow-warm hover:shadow-warm-lg"
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting ? (
@@ -150,12 +151,12 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                 </Button>
                 
                 {/* Divider */}
-                <div className="relative py-2">
+                <div className="relative py-3">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border/50" />
+                    <div className="w-full border-t border-border/30" />
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="bg-card px-3 text-xs text-muted-foreground">
+                    <span className="bg-card px-4 text-xs text-muted-foreground">
                       New to mise en place?
                     </span>
                   </div>
@@ -165,7 +166,8 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full h-11 border-border/50 hover:bg-secondary/50"
+                    size="pill-lg"
+                    className="w-full border-border/30"
                   >
                     Create an account
                   </Button>

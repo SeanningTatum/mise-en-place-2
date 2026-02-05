@@ -38,49 +38,49 @@ export function PricingCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-2xl border p-8",
+        "relative flex flex-col rounded-[32px] border p-8 lg:p-10 transition-all duration-500",
         highlighted
-          ? "border-primary bg-card shadow-warm-lg"
-          : "border-border/50 bg-card shadow-warm",
+          ? "border-primary bg-card shadow-warm-lg scale-[1.02]"
+          : "border-border/50 bg-card shadow-warm hover:border-accent",
         className
       )}
     >
       {badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+          <span className="rounded-full bg-primary px-5 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground">
             {badge}
           </span>
         </div>
       )}
 
       {/* Header */}
-      <div className="mb-6">
-        <h3 className="font-display text-xl font-semibold">{name}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+      <div className="mb-8">
+        <h3 className="font-display text-2xl">{name}</h3>
+        <p className="mt-2 text-muted-foreground">{description}</p>
       </div>
 
       {/* Price */}
-      <div className="mb-6">
-        <span className="font-display text-4xl font-semibold">{price}</span>
+      <div className="mb-8">
+        <span className="font-display text-5xl lg:text-6xl">{price}</span>
         {period && (
-          <span className="text-muted-foreground">/{period}</span>
+          <span className="text-muted-foreground ml-1">/{period}</span>
         )}
       </div>
 
       {/* Features */}
-      <ul className="mb-8 flex-1 space-y-3">
+      <ul className="mb-10 flex-1 space-y-4">
         {features.map((feature, index) => (
           <li
             key={index}
             className={cn(
-              "flex items-start gap-3 text-sm",
-              !feature.included && "text-muted-foreground/60"
+              "flex items-start gap-3",
+              !feature.included && "text-muted-foreground/50"
             )}
           >
             <Check
               className={cn(
-                "mt-0.5 size-4 shrink-0",
-                feature.included ? "text-primary" : "text-muted-foreground/40"
+                "mt-0.5 size-5 shrink-0",
+                feature.included ? "text-primary" : "text-muted-foreground/30"
               )}
             />
             <span>{feature.text}</span>
@@ -92,8 +92,11 @@ export function PricingCard({
       <Button
         asChild
         variant={highlighted ? "default" : "outline"}
-        size="lg"
-        className={cn(highlighted && "shadow-warm")}
+        size="pill-lg"
+        className={cn(
+          "w-full",
+          highlighted && "shadow-warm hover:scale-105 transition-transform"
+        )}
       >
         <Link to={cta.href}>{cta.label}</Link>
       </Button>
@@ -115,19 +118,19 @@ export function PricingSection({
   className,
 }: PricingSectionProps) {
   return (
-    <section id="pricing" className={cn("py-20", className)}>
-      <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+    <section id="pricing" className={cn("py-24 lg:py-40", className)}>
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="mb-16 text-center">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
             {headline}
           </h2>
           {subheadline && (
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               {subheadline}
             </p>
           )}
         </div>
-        <div className="mx-auto grid max-w-5xl gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-2 lg:grid-cols-3 items-start">
           {children}
         </div>
       </div>

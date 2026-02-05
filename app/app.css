@@ -1,5 +1,5 @@
-/* Google Fonts - Editorial Cookbook Typography */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+/* Google Fonts - Modern Organic Editorial Typography */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&family=Reenie+Beanie&display=swap');
 
 @import "tailwindcss" source(".");
 @import "tw-animate-css";
@@ -8,11 +8,13 @@
 
 
 @theme {
-  /* Display/Headlines: Elegant Serif */
-  --font-display: "Playfair Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  /* Body: Clean, readable sans-serif */
-  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif,
+  /* Display/Headlines: High-contrast Serif */
+  --font-display: "DM Serif Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  /* Body: Clean, modern sans-serif */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* Handwritten accents */
+  --font-handwritten: "Reenie Beanie", cursive;
 }
 
 html,
@@ -27,22 +29,26 @@ body {
   }
 }
 
-/* Grain texture overlay for that paper/artisanal feel */
+/* Paper texture overlay - natural, organic feel */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.03;
+  opacity: 0.4;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* Organic radius system */
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 40px;
+  --radius-xl: 64px;
+  --radius-pill: 999px;
+  
+  /* Semantic color mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -74,111 +80,135 @@ body::before {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  /* Custom theme colors */
-  --color-terracotta: var(--terracotta);
-  --color-terracotta-foreground: var(--terracotta-foreground);
+  /* Custom organic theme colors */
+  --color-charcoal: var(--charcoal);
+  --color-charcoal-foreground: var(--charcoal-foreground);
   --color-sage: var(--sage);
   --color-sage-foreground: var(--sage-foreground);
+  --color-cream: var(--cream);
+  --color-cream-secondary: var(--cream-secondary);
 }
 
 :root {
-  --radius: 0.75rem;
-  /* Warm cream/paper backgrounds */
-  --background: oklch(0.98 0.008 85);
-  --foreground: oklch(0.22 0.02 50);
-  /* Card: slightly warmer white like parchment */
-  --card: oklch(0.995 0.005 85);
-  --card-foreground: oklch(0.22 0.02 50);
-  --popover: oklch(0.995 0.005 85);
-  --popover-foreground: oklch(0.22 0.02 50);
-  /* Primary: Rich terracotta/burnt sienna */
-  --primary: oklch(0.55 0.14 35);
-  --primary-foreground: oklch(0.98 0.005 85);
-  /* Secondary: Warm taupe */
-  --secondary: oklch(0.94 0.012 70);
-  --secondary-foreground: oklch(0.30 0.02 50);
+  /* Modern Organic Editorial Palette */
+  --background: #F7F5EB;
+  --foreground: #202A2D;
+  
+  /* Card: Same cream for seamless feel */
+  --card: #F7F5EB;
+  --card-foreground: #202A2D;
+  --popover: #F7F5EB;
+  --popover-foreground: #202A2D;
+  
+  /* Primary: Deep charcoal */
+  --primary: #202A2D;
+  --primary-foreground: #F7F5EB;
+  
+  /* Secondary: Slightly darker cream */
+  --secondary: #F0EDE1;
+  --secondary-foreground: #202A2D;
+  
   /* Muted: Soft warm gray */
-  --muted: oklch(0.94 0.01 80);
-  --muted-foreground: oklch(0.50 0.02 60);
-  /* Accent: Sage green - fresh and natural */
-  --accent: oklch(0.88 0.05 145);
-  --accent-foreground: oklch(0.30 0.05 145);
+  --muted: #F0EDE1;
+  --muted-foreground: #6B7280;
+  
+  /* Accent: Sage green - organic and natural */
+  --accent: #CBD0B5;
+  --accent-foreground: #202A2D;
+  
   /* Destructive: Muted rust red */
-  --destructive: oklch(0.55 0.18 25);
+  --destructive: #B85450;
+  
   /* Borders: Subtle warm tone */
-  --border: oklch(0.90 0.015 75);
-  --input: oklch(0.92 0.01 80);
-  --ring: oklch(0.55 0.14 35);
-  /* Chart colors - warm, earthy palette */
-  --chart-1: oklch(0.55 0.14 35);
-  --chart-2: oklch(0.65 0.08 145);
-  --chart-3: oklch(0.70 0.12 70);
-  --chart-4: oklch(0.60 0.10 25);
-  --chart-5: oklch(0.50 0.06 200);
+  --border: #E5E2D6;
+  --input: #F0EDE1;
+  --ring: #202A2D;
+  
+  /* Chart colors - organic, muted palette */
+  --chart-1: #202A2D;
+  --chart-2: #CBD0B5;
+  --chart-3: #A3A899;
+  --chart-4: #8B9A7D;
+  --chart-5: #6B7280;
+  
   /* Sidebar */
-  --sidebar: oklch(0.96 0.01 80);
-  --sidebar-foreground: oklch(0.22 0.02 50);
-  --sidebar-primary: oklch(0.55 0.14 35);
-  --sidebar-primary-foreground: oklch(0.98 0.005 85);
-  --sidebar-accent: oklch(0.92 0.015 75);
-  --sidebar-accent-foreground: oklch(0.30 0.02 50);
-  --sidebar-border: oklch(0.88 0.02 75);
-  --sidebar-ring: oklch(0.55 0.14 35);
-  /* Custom: Terracotta accent */
-  --terracotta: oklch(0.55 0.14 35);
-  --terracotta-foreground: oklch(0.98 0.005 85);
-  /* Custom: Sage green accent */
-  --sage: oklch(0.70 0.08 145);
-  --sage-foreground: oklch(0.25 0.05 145);
+  --sidebar: #F0EDE1;
+  --sidebar-foreground: #202A2D;
+  --sidebar-primary: #202A2D;
+  --sidebar-primary-foreground: #F7F5EB;
+  --sidebar-accent: #CBD0B5;
+  --sidebar-accent-foreground: #202A2D;
+  --sidebar-border: #E5E2D6;
+  --sidebar-ring: #202A2D;
+  
+  /* Custom: Named organic colors */
+  --charcoal: #202A2D;
+  --charcoal-foreground: #F7F5EB;
+  --sage: #CBD0B5;
+  --sage-foreground: #202A2D;
+  --cream: #F7F5EB;
+  --cream-secondary: #F0EDE1;
 }
 
 .dark {
-  /* Dark: Deep espresso/coffee tones */
-  --background: oklch(0.18 0.015 50);
-  --foreground: oklch(0.94 0.01 80);
-  /* Card: Slightly lighter espresso */
-  --card: oklch(0.22 0.018 50);
-  --card-foreground: oklch(0.94 0.01 80);
-  --popover: oklch(0.22 0.018 50);
-  --popover-foreground: oklch(0.94 0.01 80);
-  /* Primary: Lighter terracotta for dark mode */
-  --primary: oklch(0.72 0.12 40);
-  --primary-foreground: oklch(0.18 0.015 50);
+  /* Dark: Inverted organic palette */
+  --background: #202A2D;
+  --foreground: #F7F5EB;
+  
+  /* Card: Slightly lighter charcoal */
+  --card: #2A3538;
+  --card-foreground: #F7F5EB;
+  --popover: #2A3538;
+  --popover-foreground: #F7F5EB;
+  
+  /* Primary: Cream on dark */
+  --primary: #F7F5EB;
+  --primary-foreground: #202A2D;
+  
   /* Secondary */
-  --secondary: oklch(0.28 0.02 50);
-  --secondary-foreground: oklch(0.92 0.01 80);
+  --secondary: #353F42;
+  --secondary-foreground: #F7F5EB;
+  
   /* Muted */
-  --muted: oklch(0.28 0.015 50);
-  --muted-foreground: oklch(0.68 0.02 70);
-  /* Accent: Muted sage */
-  --accent: oklch(0.32 0.04 145);
-  --accent-foreground: oklch(0.85 0.05 145);
+  --muted: #353F42;
+  --muted-foreground: #9CA3AF;
+  
+  /* Accent: Muted sage for dark */
+  --accent: #8B9A7D;
+  --accent-foreground: #F7F5EB;
+  
   /* Destructive */
-  --destructive: oklch(0.65 0.18 25);
+  --destructive: #DC6B67;
+  
   /* Borders */
-  --border: oklch(0.32 0.02 50);
-  --input: oklch(0.30 0.015 50);
-  --ring: oklch(0.72 0.12 40);
+  --border: #404A4D;
+  --input: #353F42;
+  --ring: #F7F5EB;
+  
   /* Charts */
-  --chart-1: oklch(0.72 0.12 40);
-  --chart-2: oklch(0.60 0.08 145);
-  --chart-3: oklch(0.65 0.10 70);
-  --chart-4: oklch(0.58 0.12 25);
-  --chart-5: oklch(0.55 0.08 200);
+  --chart-1: #F7F5EB;
+  --chart-2: #CBD0B5;
+  --chart-3: #A3A899;
+  --chart-4: #8B9A7D;
+  --chart-5: #9CA3AF;
+  
   /* Sidebar */
-  --sidebar: oklch(0.20 0.018 50);
-  --sidebar-foreground: oklch(0.94 0.01 80);
-  --sidebar-primary: oklch(0.72 0.12 40);
-  --sidebar-primary-foreground: oklch(0.18 0.015 50);
-  --sidebar-accent: oklch(0.28 0.02 50);
-  --sidebar-accent-foreground: oklch(0.92 0.01 80);
-  --sidebar-border: oklch(0.32 0.02 50);
-  --sidebar-ring: oklch(0.72 0.12 40);
+  --sidebar: #2A3538;
+  --sidebar-foreground: #F7F5EB;
+  --sidebar-primary: #F7F5EB;
+  --sidebar-primary-foreground: #202A2D;
+  --sidebar-accent: #8B9A7D;
+  --sidebar-accent-foreground: #F7F5EB;
+  --sidebar-border: #404A4D;
+  --sidebar-ring: #F7F5EB;
+  
   /* Custom */
-  --terracotta: oklch(0.72 0.12 40);
-  --terracotta-foreground: oklch(0.18 0.015 50);
-  --sage: oklch(0.55 0.08 145);
-  --sage-foreground: oklch(0.92 0.05 145);
+  --charcoal: #F7F5EB;
+  --charcoal-foreground: #202A2D;
+  --sage: #8B9A7D;
+  --sage-foreground: #F7F5EB;
+  --cream: #202A2D;
+  --cream-secondary: #2A3538;
 }
 
 @layer base {
@@ -189,41 +219,145 @@ body::before {
     @apply bg-background text-foreground;
   }
   
-  /* Editorial typography - serifs for headings */
+  /* Editorial typography - high-contrast serifs for headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
-    font-weight: 500;
+    font-weight: 400;
+    line-height: 0.95;
   }
   
   /* Smooth transitions */
   a, button {
-    @apply transition-colors duration-200;
+    @apply transition-all duration-500;
   }
 }
 
-/* Utility classes for the cookbook aesthetic */
+/* Animation keyframes for Modern Organic Editorial */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes grayscaleReveal {
+  from {
+    filter: grayscale(100%);
+    transform: scale(1);
+  }
+  to {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Utility classes for the Modern Organic Editorial aesthetic */
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
+  }
+  
+  .font-handwritten {
+    font-family: var(--font-handwritten);
   }
   
   .text-balance {
     text-wrap: balance;
   }
   
-  /* Warm paper shadow */
+  /* Organic border radii */
+  .rounded-organic {
+    border-radius: 40px;
+  }
+  
+  .rounded-organic-lg {
+    border-radius: 64px;
+  }
+  
+  .rounded-pill {
+    border-radius: 999px;
+  }
+  
+  /* Fade slide up animation with configurable delay */
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .animate-fade-slide-up-delay-100 {
+    animation: fadeSlideUp 0.8s ease-out 0.1s forwards;
+    opacity: 0;
+  }
+  
+  .animate-fade-slide-up-delay-200 {
+    animation: fadeSlideUp 0.8s ease-out 0.2s forwards;
+    opacity: 0;
+  }
+  
+  .animate-fade-slide-up-delay-300 {
+    animation: fadeSlideUp 0.8s ease-out 0.3s forwards;
+    opacity: 0;
+  }
+  
+  .animate-fade-slide-up-delay-500 {
+    animation: fadeSlideUp 0.8s ease-out 0.5s forwards;
+    opacity: 0;
+  }
+  
+  /* Grayscale hover effect for images */
+  .grayscale-hover {
+    filter: grayscale(100%);
+    transition: all 2000ms ease-out;
+  }
+  
+  .grayscale-hover:hover,
+  .group:hover .grayscale-hover {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+  
+  /* Subtle float animation */
+  .animate-float {
+    animation: subtleFloat 4s ease-in-out infinite;
+  }
+  
+  /* Glassmorphism backdrop */
+  .backdrop-blur-organic {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  
+  /* Subtle white glow for CTA sections */
+  .glow-white {
+    box-shadow: 0 -120px 120px -60px rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Warm paper shadow - updated for organic feel */
   .shadow-warm {
-    box-shadow: 0 4px 20px -4px oklch(0.30 0.03 50 / 0.12),
-                0 2px 8px -2px oklch(0.30 0.03 50 / 0.08);
+    box-shadow: 0 4px 24px -4px rgba(32, 42, 45, 0.08),
+                0 2px 8px -2px rgba(32, 42, 45, 0.04);
   }
   
   .shadow-warm-lg {
-    box-shadow: 0 8px 32px -8px oklch(0.30 0.03 50 / 0.15),
-                0 4px 12px -4px oklch(0.30 0.03 50 / 0.10);
+    box-shadow: 0 8px 40px -8px rgba(32, 42, 45, 0.12),
+                0 4px 16px -4px rgba(32, 42, 45, 0.06);
   }
   
-  /* Decorative underline for headings */
+  /* Decorative underline for headings - organic style */
   .heading-underline {
     position: relative;
     display: inline-block;
@@ -235,8 +369,27 @@ body::before {
     left: 0;
     bottom: -4px;
     width: 40%;
-    height: 2px;
-    background: var(--primary);
-    border-radius: 1px;
+    height: 3px;
+    background: var(--sage);
+    border-radius: 2px;
+  }
+  
+  /* UI Label styling */
+  .label-uppercase {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 500;
+  }
+  
+  /* Large organic section spacing */
+  .section-spacing {
+    padding-top: 160px;
+    padding-bottom: 160px;
+  }
+  
+  .section-spacing-sm {
+    padding-top: 80px;
+    padding-bottom: 80px;
   }
 }

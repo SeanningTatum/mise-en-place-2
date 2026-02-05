@@ -4,6 +4,33 @@ alwaysApply: false
 ---
 # Tailwind CSS & Color Variables Rules
 
+## Design System: Modern Organic Editorial
+
+The app uses a "Modern Organic Editorial" design system with high-contrast editorial typography and organic, human-centric elements.
+
+**Core Palette:**
+- Primary Background: `#F7F5EB` (cream) - `bg-background`
+- Primary Text: `#202A2D` (charcoal) - `text-foreground`
+- Accent: `#CBD0B5` (sage) - `bg-accent`
+- Secondary Background: `#F0EDE1` - `bg-secondary`
+
+**Typography:**
+- Headings: DM Serif Display (`.font-display`) - 48px to 160px
+- Body: Inter (default sans) - weights 300, 400, 500
+- Accents: Reenie Beanie (`.font-handwritten`) - handwritten annotations
+- UI Labels: 10px uppercase with 0.2em-0.3em tracking (`.label-uppercase`)
+
+**Border Radii (IMPORTANT):**
+- Main containers/images: `rounded-[64px]` or `.rounded-organic-lg`
+- Cards: `rounded-[24px]` to `rounded-[40px]` or `.rounded-organic`
+- Buttons: `rounded-full` (pills) or `rounded-[16px]`
+- **NEVER use `rounded-sm`, `rounded-md`, or small radii for visible containers**
+
+**Animations:**
+- Text entry: `.animate-fade-slide-up` (0.8s ease-out with translateY)
+- Image hover: `.grayscale-hover` (2000ms grayscale-to-color + scale)
+- Subtle float: `.animate-float` (4s infinite)
+
 ## Core Principles
 
 1. **ALWAYS prefer CSS variables over hardcoded colors.** This ensures consistency, maintainability, and proper dark mode support.
@@ -59,11 +86,15 @@ These are defined in `app/app.css` and automatically switch for dark mode:
 | `--text-body` | Body text | `text-text-body` |
 | `--text-body-subtle` | Secondary text | `text-text-body-subtle` |
 
-### Brand Colors (Full Palette)
-For brand-specific styling, use the brand scale:
-- `bg-brand-50` through `bg-brand-950`
-- `text-brand-50` through `text-brand-950`
-- `border-brand-50` through `border-brand-950`
+### Organic Theme Colors
+| Variable | Usage | Tailwind Class |
+|----------|-------|----------------|
+| `--charcoal` | Primary dark color | `bg-charcoal`, `text-charcoal` |
+| `--charcoal-foreground` | Text on charcoal | `text-charcoal-foreground` |
+| `--sage` | Accent green | `bg-sage`, `text-sage` |
+| `--sage-foreground` | Text on sage | `text-sage-foreground` |
+| `--cream` | Primary cream | `bg-cream` |
+| `--cream-secondary` | Secondary cream | `bg-cream-secondary` |
 
 ### Sidebar Variables
 For sidebar-specific styling:
@@ -174,14 +205,50 @@ Using Tailwind's gray scale is acceptable for subtle layout purposes:
 | Instead of... | Use... |
 |---------------|--------|
 | `bg-white` | `bg-background` or `bg-card` |
-| `text-gray-900` | `text-foreground` or `text-text-heading` |
-| `text-gray-600` | `text-muted-foreground` or `text-text-body` |
-| `text-gray-400` | `text-text-body-subtle` |
+| `text-gray-900` | `text-foreground` |
+| `text-gray-600` | `text-muted-foreground` |
 | `bg-blue-600` | `bg-primary` |
-| `bg-blue-100` | `bg-brand-100` |
+| `bg-green-100` | `bg-accent` |
 | `border-gray-200` | `border-border` |
-| `bg-gray-100` | `bg-muted` |
+| `bg-gray-100` | `bg-muted` or `bg-secondary` |
 | `bg-red-500` | `bg-destructive` |
+| `rounded-lg` | `rounded-[24px]` (for cards) |
+| `rounded-md` | `rounded-[16px]` (for inputs/buttons) |
+
+## Organic Design Patterns
+
+### Card Components
+```tsx
+// ✅ CORRECT - Organic card styling
+<div className="rounded-[24px] border-border/30 bg-card p-8 shadow-warm">
+
+// ❌ WRONG - Standard radii
+<div className="rounded-lg border bg-white p-4 shadow">
+```
+
+### Buttons
+```tsx
+// ✅ CORRECT - Pill buttons for CTAs
+<Button size="pill-lg" className="shadow-warm">Get Started</Button>
+
+// ✅ CORRECT - Organic radius for standard buttons
+<Button className="rounded-[16px]">Submit</Button>
+```
+
+### Image Containers
+```tsx
+// ✅ CORRECT - Grayscale hover effect
+<div className="rounded-[24px] overflow-hidden">
+  <img className="grayscale group-hover:grayscale-0 transition-all duration-[2000ms]" />
+</div>
+```
+
+### Animations
+```tsx
+// ✅ CORRECT - Entry animations with delays
+<div className="animate-fade-slide-up">First element</div>
+<div className="animate-fade-slide-up-delay-200">Second element</div>
+```
 
 ## Adding New CSS Variables
 

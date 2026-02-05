@@ -22,37 +22,37 @@ export function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-2xl border border-border/50 bg-card p-6 shadow-warm",
+        "flex flex-col gap-6 rounded-[24px] border border-border/50 bg-card p-8 shadow-warm",
         className
       )}
     >
       {/* Rating */}
       {rating > 0 && (
-        <div className="flex gap-0.5">
+        <div className="flex gap-1">
           {Array.from({ length: rating }).map((_, i) => (
             <Star
               key={i}
-              className="size-4 fill-primary text-primary"
+              className="size-5 fill-accent text-accent"
             />
           ))}
         </div>
       )}
 
       {/* Quote */}
-      <blockquote className="flex-1 text-foreground leading-relaxed">
+      <blockquote className="flex-1 font-display text-xl leading-relaxed text-foreground">
         "{quote}"
       </blockquote>
 
       {/* Author */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4 pt-4 border-t border-border/50">
         {avatar ? (
           <img
             src={avatar}
             alt={author}
-            className="size-10 rounded-full object-cover"
+            className="size-12 rounded-full object-cover"
           />
         ) : (
-          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 font-display text-sm font-semibold text-primary">
+          <div className="flex size-12 items-center justify-center rounded-full bg-accent font-display text-lg text-accent-foreground">
             {author.charAt(0)}
           </div>
         )}
@@ -81,19 +81,19 @@ export function TestimonialSection({
   className,
 }: TestimonialSectionProps) {
   return (
-    <section className={cn("py-20", className)}>
-      <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+    <section className={cn("py-24 lg:py-40", className)}>
+      <div className="container mx-auto px-6 lg:px-12">
+        <div className="mb-16 text-center">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
             {headline}
           </h2>
           {subheadline && (
-            <p className="mt-4 text-lg text-muted-foreground">
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
               {subheadline}
             </p>
           )}
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {children}
         </div>
       </div>

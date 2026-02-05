@@ -20,70 +20,70 @@ export function LandingNav({ className }: LandingNavProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+        "sticky top-0 z-50 w-full h-20 bg-background/80 backdrop-blur-md border-b border-border/30",
         className
       )}
     >
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto flex h-full items-center justify-between px-6 lg:px-12">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-primary">
-            <span className="font-display text-lg font-semibold text-primary-foreground">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-[12px] bg-primary">
+            <span className="font-display text-xl text-primary-foreground">
               M
             </span>
           </div>
-          <span className="font-display text-xl font-semibold tracking-tight">
+          <span className="font-display text-xl tracking-tight">
             mise en place
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground font-medium"
             >
               {link.label}
             </Link>
           ))}
-          <Button asChild className="shadow-warm">
-            <Link to="/sign-up">Start Free</Link>
+          <Button asChild size="pill" className="shadow-warm">
+            <Link to="/sign-up">Get Started</Link>
           </Button>
         </nav>
 
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground md:hidden"
+          className="inline-flex items-center justify-center rounded-[12px] p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground md:hidden transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? (
-            <X className="size-6" />
+            <X className="size-5" />
           ) : (
-            <Menu className="size-6" />
+            <Menu className="size-5" />
           )}
         </button>
       </div>
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="border-t border-border/40 bg-background md:hidden">
-          <nav className="container mx-auto flex flex-col gap-4 px-4 py-6">
+        <div className="border-t border-border/30 bg-background/95 backdrop-blur-md md:hidden">
+          <nav className="container mx-auto flex flex-col gap-4 px-6 py-8">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
-            <Button asChild className="w-full shadow-warm">
-              <Link to="/sign-up">Start Free</Link>
+            <Button asChild size="pill" className="w-full shadow-warm mt-4">
+              <Link to="/sign-up">Get Started</Link>
             </Button>
           </nav>
         </div>

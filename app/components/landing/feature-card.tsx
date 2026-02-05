@@ -20,14 +20,14 @@ export function FeatureCard({
 }: FeatureCardProps) {
   const content = (
     <>
-      <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+      <div className="mb-6 flex size-14 items-center justify-center rounded-[16px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
         {icon}
       </div>
-      <h3 className="mb-2 font-display text-lg font-semibold">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <h3 className="mb-3 font-display text-xl">{title}</h3>
+      <p className="text-muted-foreground leading-relaxed">{description}</p>
       {href && (
-        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-          Learn more
+        <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary opacity-0 transition-all duration-500 group-hover:opacity-100">
+          <span className="text-[10px] uppercase tracking-[0.2em]">Learn more</span>
           <ArrowRight className="size-4" />
         </div>
       )}
@@ -39,7 +39,7 @@ export function FeatureCard({
       <Link
         to={href}
         className={cn(
-          "group flex flex-col rounded-2xl border border-border/50 bg-card p-6 shadow-warm transition-all hover:border-primary/30 hover:shadow-warm-lg",
+          "group flex flex-col rounded-[24px] border border-border/50 bg-card p-8 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg",
           className
         )}
       >
@@ -51,7 +51,7 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "group flex flex-col rounded-2xl border border-border/50 bg-card p-6 shadow-warm",
+        "group flex flex-col rounded-[24px] border border-border/50 bg-card p-8 shadow-warm",
         className
       )}
     >
@@ -74,7 +74,7 @@ export function FeatureGrid({
   return (
     <div
       className={cn(
-        "grid gap-6",
+        "grid gap-8",
         columns === 2 && "md:grid-cols-2",
         columns === 3 && "md:grid-cols-2 lg:grid-cols-3",
         columns === 4 && "md:grid-cols-2 lg:grid-cols-4",
