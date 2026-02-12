@@ -213,7 +213,7 @@ export function GroceryListPanel({
             }
             
             h1 {
-              font-family: 'Playfair Display', serif;
+              font-family: 'Instrument Serif', Georgia, serif;
               font-size: 2rem;
               font-weight: 600;
               margin-bottom: 0.5rem;
@@ -396,7 +396,7 @@ export function GroceryListPanel({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {categories.map((category) => (
                   <div key={category}>
-                    <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+                    <h4 className="text-xs text-muted-foreground font-semibold mb-2">
                       {category}
                     </h4>
                     <ul className="space-y-1">

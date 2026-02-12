@@ -73,7 +73,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
     return (
       <div className="space-y-8">
         <div className="flex flex-col gap-2">
-          <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight">
+          <h1 className="font-display text-3xl sm:text-4xl font-semibold">
             Your Cookbook
           </h1>
           <p className="text-muted-foreground">Loading your recipes...</p>
@@ -95,7 +95,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
       <div className="space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground">
               Your Cookbook
             </h1>
             <p className="text-muted-foreground mt-1">

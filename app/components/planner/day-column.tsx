@@ -94,7 +94,7 @@ export function DayColumn({
               <span className="sr-only">Print day's recipes</span>
             </Button>
           )}
-          <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.2em]">
+          <div className="text-xs font-medium text-muted-foreground">
             {dayName}
           </div>
           <div
@@ -119,7 +119,7 @@ export function DayColumn({
             const entry = getEntryForMealType(mealType);
             return (
               <div key={mealType}>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1 px-1">
+                <div className="text-xs text-muted-foreground font-medium mb-1 px-1">
                   {mealType}
                 </div>
                 {isLoading ? (

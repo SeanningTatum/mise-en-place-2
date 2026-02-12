@@ -108,7 +108,7 @@ export function GrayscaleImageWithCaption({
           <div className="w-12 h-0.5 bg-accent mb-4" />
           
           {label && (
-            <span className="block text-[10px] uppercase tracking-[0.2em] text-white/80 mb-2">
+            <span className="block text-xs font-medium text-white/80 mb-2">
               {label}
             </span>
           )}
@@ -166,7 +166,7 @@ export function HeroImageBlock({
             <div className="w-12 h-0.5 bg-accent mb-6" />
             
             {label && (
-              <span className="block text-[10px] uppercase tracking-[0.2em] text-white/80 mb-3">
+              <span className="block text-xs font-medium text-white/80 mb-3">
                 {label}
               </span>
             )}

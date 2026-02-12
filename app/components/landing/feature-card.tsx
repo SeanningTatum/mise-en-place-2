@@ -27,7 +27,7 @@ export function FeatureCard({
       <p className="text-muted-foreground leading-relaxed">{description}</p>
       {href && (
         <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary opacity-0 transition-all duration-500 group-hover:opacity-100">
-          <span className="text-[10px] uppercase tracking-[0.2em]">Learn more</span>
+          <span className="text-sm font-medium">Learn more</span>
           <ArrowRight className="size-4" />
         </div>
       )}

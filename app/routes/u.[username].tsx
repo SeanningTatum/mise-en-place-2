@@ -104,7 +104,7 @@ export default function PublicProfilePage({ loaderData, params }: Route.Componen
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
               <ChefHat className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-display text-base font-semibold tracking-tight">
+            <span className="font-display text-base font-semibold">
               mise en place
             </span>
           </Link>

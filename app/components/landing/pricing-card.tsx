@@ -47,7 +47,7 @@ export function PricingCard({
     >
       {badge && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="rounded-sm bg-primary px-5 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground">
+          <span className="rounded-sm bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground">
             {badge}
           </span>
         </div>
@@ -118,7 +118,7 @@ export function PricingSection({
     <section id="pricing" className={cn("py-24 lg:py-40", className)}>
       <div className="container mx-auto px-6 lg:px-12">
         <div className="mb-16 text-center">
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl">
             {headline}
           </h2>
           {subheadline && (

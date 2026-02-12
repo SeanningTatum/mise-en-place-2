@@ -104,7 +104,7 @@ export default function PublicPlanDetailPage({
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
               <ChefHat className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-display text-base font-semibold tracking-tight">
+            <span className="font-display text-base font-semibold">
               mise en place
             </span>
           </Link>
@@ -141,7 +141,7 @@ export default function PublicPlanDetailPage({
           <CardHeader className="pb-4">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="space-y-2">
-                <h1 className="font-display text-3xl font-bold tracking-tight">
+                <h1 className="font-display text-3xl font-bold">
                   {template.name}
                 </h1>
                 {template.theme && (

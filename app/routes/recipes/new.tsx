@@ -54,7 +54,7 @@ export default function NewRecipePage() {
           <Sparkles className="h-5 w-5" />
           <div className="h-px w-8 bg-primary/30" />
         </div>
-        <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+        <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground">
           Add to Your Collection
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto leading-relaxed">
@@ -71,7 +71,7 @@ export default function NewRecipePage() {
           <div className="bg-card/50 border border-border/50 rounded-sm p-6 sm:p-8">
             <div className="flex items-center justify-center gap-2 mb-6">
               <BookOpen className="h-4 w-4 text-primary" />
-              <h2 className="font-display text-sm font-medium uppercase tracking-wider text-muted-foreground">
+              <h2 className="font-display text-sm font-medium text-muted-foreground">
                 How it works
               </h2>
             </div>

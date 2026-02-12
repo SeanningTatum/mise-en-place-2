@@ -36,7 +36,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
         <div className="mb-16">
           <Link to="/" className="flex items-center gap-3 mb-6">
             <span className="font-display text-2xl italic">m</span>
-            <span className="font-display text-2xl tracking-tight">
+            <span className="font-display text-2xl ">
               mise en place
             </span>
           </Link>
@@ -50,7 +50,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-16">
           {/* Product Links */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="text-xs font-semibold text-foreground mb-6 uppercase tracking-wide">
               Product
             </h3>
             <ul className="space-y-4">
@@ -69,7 +69,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="text-xs font-semibold text-foreground mb-6 uppercase tracking-wide">
               Company
             </h3>
             <ul className="space-y-4">
@@ -88,7 +88,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="text-xs font-semibold text-foreground mb-6 uppercase tracking-wide">
               Legal
             </h3>
             <ul className="space-y-4">
@@ -109,10 +109,10 @@ export function LandingFooter({ className }: LandingFooterProps) {
         {/* Bottom Bar */}
         <div className="border-t border-border pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               &copy; {currentYear} Mise En Place. All rights reserved.
             </p>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Made with care for home cooks everywhere.
             </p>
           </div>

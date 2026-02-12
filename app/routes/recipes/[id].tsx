@@ -156,7 +156,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
     <div className="flex items-start justify-between gap-4">
       <div className="space-y-4">
         {/* Title */}
-        <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight leading-tight text-foreground" data-testid="recipe-title">
+        <h1 className="font-display text-2xl sm:text-3xl font-semibold leading-tight text-foreground" data-testid="recipe-title">
           {recipe.title}
         </h1>
         

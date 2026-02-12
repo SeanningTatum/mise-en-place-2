@@ -34,7 +34,7 @@ export function CTASection({
         {/* Centered card with sage background */}
         <div className="relative mx-auto max-w-4xl border-t border-b border-border py-16 md:py-24 lg:py-32">
           <div className="relative text-center">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight text-foreground leading-[0.9]">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-[0.9]">
               {headline}
             </h2>
             {subheadline && (

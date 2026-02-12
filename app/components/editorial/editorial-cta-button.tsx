@@ -16,9 +16,9 @@ export function EditorialCtaButton({
   const classes = cn(
     "group relative inline-flex items-center justify-center overflow-hidden",
     "rounded-sm bg-primary px-8 py-3",
-    "font-mono text-[10px] uppercase tracking-[0.2em] text-primary-foreground",
+    "text-sm font-semibold text-primary-foreground",
     "transition-all duration-700 ease-editorial",
-    "hover:tracking-[0.4em]",
+    "hover:opacity-90",
     className
   );
 

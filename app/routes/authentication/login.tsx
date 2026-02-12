@@ -31,7 +31,7 @@ export default function Login() {
             <ChefHat className="h-7 w-7 text-primary" />
           </div>
           <div className="text-center">
-            <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
+            <span className="font-display text-2xl font-semibold text-foreground">
               mise en place
             </span>
             <p className="text-xs text-muted-foreground mt-0.5 italic">

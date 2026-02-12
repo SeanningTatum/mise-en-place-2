@@ -81,7 +81,7 @@ export function HeroSection({
           >
             {badge && (
               <div className="animate-fade-slide-up">
-                <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-secondary px-4 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-foreground">
+                <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-secondary px-4 py-2 text-xs font-medium text-foreground">
                   <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse-dot" />
                   {badge}
                 </span>
@@ -95,7 +95,7 @@ export function HeroSection({
                   {italicFirstLine}
                 </span>
               )}
-              <h1 className="font-display text-5xl md:text-6xl lg:text-[96px] xl:text-[120px] tracking-tight text-balance leading-[0.85]">
+              <h1 className="font-display text-5xl md:text-6xl lg:text-[96px] xl:text-[120px] text-balance leading-[0.85]">
                 {parseHeadline(headline)}
               </h1>
             </div>
@@ -118,7 +118,7 @@ export function HeroSection({
             {/* Handwritten annotation */}
             {annotation && (
               <div className="animate-fade-slide-up-delay-500 flex items-center gap-2 text-muted-foreground mt-2">
-                <span className="font-mono text-sm">{annotation}</span>
+                <span className="text-sm">{annotation}</span>
                 <ArrowDown className="size-4" />
               </div>
             )}

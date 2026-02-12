@@ -25,8 +25,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BackgroundGrid } from "@/components/editorial";
-
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Mise En Place - Recipe Management for Modern Home Cooks" },
@@ -53,7 +51,6 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 export default function Home({}: Route.ComponentProps) {
   return (
     <div className="min-h-screen">
-      <BackgroundGrid />
       <LandingNav />
 
       {/* Hero Section */}
@@ -127,7 +124,7 @@ export default function Home({}: Route.ComponentProps) {
       <section id="features" className="py-24 lg:py-40">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="mb-16 text-center">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl">
               Everything you need to cook smarter
             </h2>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -174,7 +171,7 @@ export default function Home({}: Route.ComponentProps) {
       <section className="py-24 lg:py-40 border-t border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="mb-16 text-center">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl">
               Made for how you cook
             </h2>
             <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -198,7 +195,7 @@ export default function Home({}: Route.ComponentProps) {
                 Finally, an app that works with YouTube. Extract timestamps, ingredients,
                 and steps from your favorite cooking channels.
               </p>
-              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>
@@ -218,7 +215,7 @@ export default function Home({}: Route.ComponentProps) {
                 Answer "what's for dinner?" once a week. Plan meals, generate grocery lists,
                 and reclaim your evenings.
               </p>
-              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>
@@ -238,7 +235,7 @@ export default function Home({}: Route.ComponentProps) {
                 Digitize grandma's recipes before they're lost forever. Share your
                 culinary heritage across generations.
               </p>
-              <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-primary">
                 Learn more <ArrowRight className="size-4" />
               </span>
             </Link>

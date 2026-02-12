@@ -1,5 +1,5 @@
-/* Google Fonts - Modern Organic Editorial Typography */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+/* Google Fonts - Warm Organic Typography */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 @import "tailwindcss" source(".");
 @import "tw-animate-css";
@@ -8,13 +8,13 @@
 
 
 @theme {
-  /* Display: Elegant serif for headings */
-  --font-display: "Playfair Display", Georgia, serif;
-  /* Body: Clean geometric sans */
-  --font-sans: "Space Grotesk", system-ui, sans-serif,
+  /* Display: Warm serif for headings */
+  --font-display: "Instrument Serif", Georgia, serif;
+  /* Body: Friendly humanist sans */
+  --font-sans: "Work Sans", system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* Mono: Technical labels and buttons */
-  --font-mono: "Space Mono", monospace;
+  /* Mono: Code blocks and technical data only */
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 html,
@@ -30,11 +30,11 @@ body {
 }
 
 @theme inline {
-  /* Modern Organic Editorial radius system - sharp, precise */
-  --radius-sm: 1px;
-  --radius-md: 2px;
-  --radius-lg: 2px;
-  --radius-xl: 2px;
+  /* Warm, approachable radius system */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
 
   /* Core color mappings */
   --color-background: var(--background);
@@ -102,15 +102,15 @@ body {
 }
 
 :root {
-  /* Modern Organic Editorial Palette - Muted, Sophisticated */
-  --background: #f7f6f2;
-  --foreground: #1c1c1c;
+  /* Warm Organic Palette - Clean, High Contrast */
+  --background: #fafaf8;
+  --foreground: #1a1a1a;
 
   /* Surface Hierarchy */
-  --background-subtle: #f2f1ed;
+  --background-subtle: #f3f2ee;
   --background-elevated: #ffffff;
-  --foreground-muted: #707068;
-  --foreground-subtle: #B4B4B4;
+  --foreground-muted: #5c5c56;
+  --foreground-subtle: #9c9c96;
 
   /* Card: White elevated surface */
   --card: #ffffff;
@@ -265,12 +265,12 @@ body {
     @apply bg-background text-foreground;
   }
 
-  /* Modern Organic Editorial typography - light serif headings */
+  /* Warm serif headings - open and inviting */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
-    font-weight: 300;
-    line-height: 1.1;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+    line-height: 1.15;
   }
 
   /* Smooth editorial transitions for interactive elements */
@@ -349,13 +349,7 @@ body {
     transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* === Mono Label Shorthand === */
-  .font-mono-label {
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    font-size: 10px;
-  }
+  /* === Label Shorthand (removed mono/uppercase treatment) === */
 
   /* === Shadows - Redefined to none (editorial: no shadows) === */
   .shadow-pop {
@@ -474,13 +468,10 @@ body {
     padding-bottom: 48px;
   }
 
-  /* === Label Uppercase (UI labels) === */
+  /* === Label Style (UI labels) === */
   .label-uppercase {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    font-weight: 400;
+    font-size: 12px;
+    font-weight: 500;
   }
 
   /* === Status Badges === */
@@ -489,12 +480,9 @@ body {
     align-items: center;
     gap: 6px;
     padding: 4px 12px;
-    border-radius: 2px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
     border: 1px solid var(--border);
   }
 
@@ -529,7 +517,7 @@ body {
     align-items: flex-start;
     gap: 12px;
     padding: 16px 20px;
-    border-radius: 2px;
+    border-radius: 12px;
     border-width: 1px;
   }
 

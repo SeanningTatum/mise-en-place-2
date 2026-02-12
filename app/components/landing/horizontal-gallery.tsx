@@ -40,7 +40,7 @@ export function GalleryCard({
         {/* Phase tag - glassmorphism style */}
         {phase && (
           <div className="absolute top-4 left-4">
-            <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-[10px] uppercase tracking-[0.2em] font-medium text-white border border-white/20">
+            <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-4 py-1.5 text-xs font-medium text-white border border-white/20">
               {phase}
             </span>
           </div>
@@ -136,7 +136,7 @@ export function GallerySection({
       <div className="container mx-auto px-6 lg:px-12 mb-12">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl">
               {headline}
             </h2>
             {subheadline && (

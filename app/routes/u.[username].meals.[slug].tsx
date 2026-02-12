@@ -92,7 +92,7 @@ export default function PublicMealDetailPage({ loaderData, params }: Route.Compo
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
               <ChefHat className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-display text-base font-semibold tracking-tight">
+            <span className="font-display text-base font-semibold">
               mise en place
             </span>
           </Link>
@@ -123,7 +123,7 @@ export default function PublicMealDetailPage({ loaderData, params }: Route.Compo
               @{username}
             </Link>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight mb-2">{meal.name}</h1>
+          <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
           <div className="flex flex-wrap gap-4 text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />

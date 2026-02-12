@@ -53,7 +53,7 @@ export function PageHeader({
           {backTo ? (
             <Link
               to={backTo.href}
-              className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors duration-300 group font-medium"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 group font-medium"
             >
               <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" />
               <span>{backTo.label}</span>
@@ -69,7 +69,7 @@ export function PageHeader({
 
       {/* Title + Subtitle */}
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-[0.9]">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl leading-[0.9]">
           {title}
         </h1>
         {subtitle && (

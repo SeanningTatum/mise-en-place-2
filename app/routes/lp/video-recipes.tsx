@@ -118,7 +118,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Existing recipe apps don't understand video
             </h2>
             <p className="mt-6 text-lg text-muted-foreground">
@@ -139,7 +139,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
       <section id="how-it-works" className="border-y border-border/40 bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               How it works
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -188,7 +188,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Built for video recipe lovers
             </h2>
           </div>
@@ -257,7 +257,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Why video recipes need different tools
             </h2>
           </div>

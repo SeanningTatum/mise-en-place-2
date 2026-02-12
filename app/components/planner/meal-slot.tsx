@@ -108,7 +108,7 @@ export function MealSlot({
         )}
       >
         <Plus className="h-5 w-5" />
-        <span className="text-[10px] uppercase tracking-[0.15em] font-medium">Add {mealTypeLabels[mealType]}</span>
+        <span className="text-xs font-medium">Add {mealTypeLabels[mealType]}</span>
       </button>
     );
   }
@@ -156,7 +156,7 @@ export function MealSlot({
               </div>
             ) : (
               <div className="w-16 h-16 shrink-0 rounded-sm bg-secondary flex items-center justify-center my-auto">
-                <span className="text-[9px] uppercase tracking-wider text-muted-foreground">No image</span>
+                <span className="text-xs text-muted-foreground">No image</span>
               </div>
             )}
 

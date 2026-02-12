@@ -35,7 +35,7 @@ export default function CreateRecipePage() {
           <PenLine className="h-5 w-5" />
           <div className="h-px w-8 bg-primary/30" />
         </div>
-        <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+        <h1 className="font-display text-3xl sm:text-4xl font-semibold text-foreground">
           Create Your Own Recipe
         </h1>
         <p className="text-muted-foreground max-w-lg mx-auto leading-relaxed">

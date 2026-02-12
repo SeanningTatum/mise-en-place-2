@@ -59,7 +59,7 @@ export function RecipeCard({
           {/* Source badge - top right */}
           <Badge
             variant="secondary"
-            className="absolute top-3 right-3 gap-1.5 bg-card/90 backdrop-blur-md border-0 text-[10px] uppercase tracking-[0.1em] font-medium rounded-full px-2.5 py-1"
+            className="absolute top-3 right-3 gap-1.5 bg-card/90 backdrop-blur-md border-0 text-xs font-medium rounded-full px-2.5 py-1"
           >
             {sourceType === "youtube" ? (
               <Youtube className="h-3 w-3 text-red-500" />
@@ -73,7 +73,7 @@ export function RecipeCard({
 
           {/* Time badge - bottom left, overlaid on image */}
           {totalTime && (
-            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-[10px] uppercase tracking-[0.1em] font-medium bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full">
+            <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-xs font-medium bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full">
               <Clock className="h-3 w-3" />
               {totalTime} min
             </div>

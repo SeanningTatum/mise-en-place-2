@@ -27,8 +27,8 @@ export function LandingNav({ className }: LandingNavProps) {
       <div className="container mx-auto flex h-full items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
-          <span className="font-display text-2xl italic tracking-tight">m</span>
-          <span className="font-display text-xl tracking-tight">
+          <span className="font-display text-2xl italic ">m</span>
+          <span className="font-display text-xl ">
             mise en place
           </span>
         </Link>
@@ -39,7 +39,7 @@ export function LandingNav({ className }: LandingNavProps) {
             <Link
               key={link.href}
               to={link.href}
-              className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground font-medium"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground font-medium"
             >
               {link.label}
             </Link>
@@ -72,7 +72,7 @@ export function LandingNav({ className }: LandingNavProps) {
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-foreground font-medium py-2"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground font-medium py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}

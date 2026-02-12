@@ -143,7 +143,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
       <section id="why-preserve" className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Recipe cards don't last forever
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -187,7 +187,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
       <section className="border-y border-border/40 bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Preserve, organize, and share
             </h2>
           </div>
@@ -231,7 +231,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Share your culinary legacy
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">

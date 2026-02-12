@@ -107,7 +107,7 @@ function Admonition({ type, title, children }: AdmonitionProps) {
     >
       <div className="flex items-center gap-2 mb-2">
         <Icon className={cn("size-5", config.iconClassName)} />
-        <span className={cn("font-semibold text-sm uppercase tracking-wide", config.titleClassName)}>
+        <span className={cn("font-semibold text-sm", config.titleClassName)}>
           {displayTitle}
         </span>
       </div>
@@ -775,9 +775,9 @@ function Heading({ level, children, className }: HeadingProps) {
   
   const baseStyles = "group relative scroll-mt-20";
   const levelStyles = {
-    1: "text-[1.75rem] font-bold tracking-tight text-foreground border-b border-border pb-3 !mb-6 !mt-10 first:!mt-0",
-    2: "text-xl font-semibold tracking-tight text-foreground !mb-4 !mt-10 first:!mt-0",
-    3: "text-lg font-semibold tracking-tight text-foreground !mb-3 !mt-8 first:!mt-0",
+    1: "text-[1.75rem] font-bold text-foreground border-b border-border pb-3 !mb-6 !mt-10 first:!mt-0",
+    2: "text-xl font-semibold text-foreground !mb-4 !mt-10 first:!mt-0",
+    3: "text-lg font-semibold text-foreground !mb-3 !mt-8 first:!mt-0",
     4: "text-base font-semibold text-foreground !mb-2 !mt-6 first:!mt-0",
   };
 

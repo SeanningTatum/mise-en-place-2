@@ -142,7 +142,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
       <section id="how-it-works" className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Plan once, eat well all week
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
@@ -154,7 +154,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
             {/* Steps */}
             <div className="space-y-8">
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
                   1
                 </div>
                 <div>
@@ -169,7 +169,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
                   2
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary text-sm font-semibold text-primary-foreground">
                   3
                 </div>
                 <div>
@@ -238,7 +238,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
       <section className="border-y border-border/40 bg-muted/30 py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Meal planning that works for busy families
             </h2>
           </div>
@@ -282,7 +282,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-4xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">
               Get hours back every week
             </h2>
           </div>

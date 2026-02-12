@@ -164,7 +164,7 @@ export function DayExportModal({
             </div>
           ) : data && data.meals.length > 0 ? (
             <div className="mt-4 p-3 bg-secondary/30 rounded-sm">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+              <p className="text-xs font-medium text-muted-foreground mb-2">
                 Included recipes
               </p>
               <ul className="space-y-1">

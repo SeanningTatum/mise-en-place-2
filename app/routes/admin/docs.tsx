@@ -132,7 +132,7 @@ function TableOfContents({ headings, activeId, onHeadingClick }: TableOfContents
 
   return (
     <nav className="space-y-0.5">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+      <p className="text-xs font-semibold text-muted-foreground mb-2">
         On This Page
       </p>
       {headings.map((heading) => (

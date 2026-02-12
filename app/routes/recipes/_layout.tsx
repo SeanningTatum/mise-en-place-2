@@ -116,7 +116,7 @@ export default function RecipesLayout({ loaderData }: Route.ComponentProps) {
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 group-hover:bg-primary/15 transition-colors">
                 <ChefHat className="h-4 w-4 text-primary" />
               </div>
-              <span className="font-display text-lg font-semibold tracking-tight text-foreground hidden sm:inline">
+              <span className="font-display text-lg font-semibold text-foreground hidden sm:inline">
                 mise en place
               </span>
             </Link>

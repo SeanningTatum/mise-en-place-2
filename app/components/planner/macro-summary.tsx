@@ -131,7 +131,7 @@ function MacroItem({ icon, label, value, unit }: MacroItemProps) {
     <div className="flex items-center gap-2">
       {icon}
       <div className="flex flex-col">
-        <span className="text-xs text-muted-foreground uppercase tracking-wider">
+        <span className="text-xs text-muted-foreground">
           {label}
         </span>
         <span className="font-display text-lg font-semibold text-foreground">
@@ -185,7 +185,7 @@ export function WeeklyMacroSummary({
       data-testid="weekly-macro-summary"
     >
       <div className="text-center mb-4">
-        <h3 className="font-display text-sm font-medium uppercase tracking-wider text-muted-foreground">
+        <h3 className="font-display text-sm font-medium text-muted-foreground">
           Weekly Totals
         </h3>
       </div>

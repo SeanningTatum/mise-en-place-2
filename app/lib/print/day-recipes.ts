@@ -191,7 +191,7 @@ const printStyles = `
   }
   
   h1 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Instrument Serif', Georgia, serif;
     font-size: 2rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
@@ -199,7 +199,7 @@ const printStyles = `
   }
   
   h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Instrument Serif', Georgia, serif;
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -385,7 +385,7 @@ const printStyles = `
   }
   
   .timeline-meal-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Instrument Serif', Georgia, serif;
     font-size: 1.25rem;
     font-weight: 600;
   }

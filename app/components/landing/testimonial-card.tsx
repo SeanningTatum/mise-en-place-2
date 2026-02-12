@@ -84,7 +84,7 @@ export function TestimonialSection({
     <section className={cn("py-24 lg:py-40", className)}>
       <div className="container mx-auto px-6 lg:px-12">
         <div className="mb-16 text-center">
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl">
             {headline}
           </h2>
           {subheadline && (

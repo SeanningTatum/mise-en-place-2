@@ -177,7 +177,7 @@ export function MealShoppingList({
       <div className="space-y-6">
         {sortedCategories.map((category) => (
           <div key={category}>
-            <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            <h4 className="text-sm font-semibold text-muted-foreground mb-2">
               {category}
             </h4>
             <div className="space-y-1">

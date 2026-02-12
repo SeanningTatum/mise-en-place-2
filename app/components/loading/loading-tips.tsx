@@ -47,7 +47,7 @@ export function LoadingTips({
           <Lightbulb className="h-4 w-4 text-accent-foreground" />
         </div>
         <div className="flex-1 min-h-[3rem]">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+          <p className="text-xs font-medium text-muted-foreground mb-1">
             Did you know?
           </p>
           <p
