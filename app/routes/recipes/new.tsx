@@ -68,7 +68,7 @@ export default function NewRecipePage() {
           <RecipeExtractor onExtracted={setExtractedRecipe} />
           
           {/* How it works section */}
-          <div className="bg-card/50 border border-border/50 rounded-xl p-6 sm:p-8">
+          <div className="bg-card/50 border border-border/50 rounded-sm p-6 sm:p-8">
             <div className="flex items-center justify-center gap-2 mb-6">
               <BookOpen className="h-4 w-4 text-primary" />
               <h2 className="font-display text-sm font-medium uppercase tracking-wider text-muted-foreground">

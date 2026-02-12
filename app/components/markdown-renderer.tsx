@@ -101,7 +101,7 @@ function Admonition({ type, title, children }: AdmonitionProps) {
   return (
     <div
       className={cn(
-        "my-6 rounded-lg border-l-4 p-4",
+        "my-6 rounded-sm border-l-4 p-4",
         config.className
       )}
     >
@@ -278,7 +278,7 @@ function DiagramViewer({ svg, isOpen, onClose }: DiagramViewerProps) {
         <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Toolbar */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-background/95 backdrop-blur rounded-lg border shadow-lg px-2 py-1.5">
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2 bg-background/95 backdrop-blur rounded-sm border shadow-lg px-2 py-1.5">
             <button
               onClick={handleZoomOut}
               className="p-2 rounded-md hover:bg-muted transition-colors"
@@ -315,7 +315,7 @@ function DiagramViewer({ svg, isOpen, onClose }: DiagramViewerProps) {
           </div>
 
           {/* Hint text */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-sm text-muted-foreground bg-background/80 backdrop-blur rounded-lg px-3 py-1.5 border">
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-sm text-muted-foreground bg-background/80 backdrop-blur rounded-sm px-3 py-1.5 border">
             Scroll to zoom • Drag to pan • Press Esc to close
           </div>
 
@@ -344,7 +344,7 @@ function DiagramViewer({ svg, isOpen, onClose }: DiagramViewerProps) {
               }}
             >
               <div
-                className="bg-white rounded-xl p-8 shadow-2xl [&_svg]:max-w-none [&_svg]:w-auto [&_svg]:h-auto [&_svg]:max-h-[80vh]"
+                className="bg-white rounded-sm p-8 shadow-2xl [&_svg]:max-w-none [&_svg]:w-auto [&_svg]:h-auto [&_svg]:max-h-[80vh]"
                 dangerouslySetInnerHTML={{ __html: fullscreenSvg }}
               />
             </div>
@@ -564,7 +564,7 @@ function MermaidBlock({ code }: MermaidBlockProps) {
 
   if (error) {
     return (
-      <div className="my-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+      <div className="my-6 rounded-sm border border-destructive/50 bg-destructive/10 p-4">
         <p className="text-sm text-destructive">Failed to render diagram: {error}</p>
         <pre className="mt-2 text-xs text-muted-foreground overflow-x-auto whitespace-pre-wrap">
           {code}
@@ -575,7 +575,7 @@ function MermaidBlock({ code }: MermaidBlockProps) {
 
   if (!svg) {
     return (
-      <div className="my-6 flex justify-center items-center rounded-xl border bg-muted/30 p-6 min-h-[200px]">
+      <div className="my-6 flex justify-center items-center rounded-sm border bg-muted/30 p-6 min-h-[200px]">
         <div className="text-muted-foreground text-sm">Loading diagram...</div>
       </div>
     );
@@ -587,7 +587,7 @@ function MermaidBlock({ code }: MermaidBlockProps) {
         ref={containerRef}
         onClick={() => setIsViewerOpen(true)}
         className={cn(
-          "group my-6 relative rounded-xl border bg-muted/30 p-6",
+          "group my-6 relative rounded-sm border bg-muted/30 p-6",
           "cursor-pointer transition-all hover:border-primary/50 hover:shadow-md",
           "overflow-x-auto"
         )}
@@ -711,7 +711,7 @@ function CodeBlock({ code, language, title }: CodeBlockProps) {
 
   if (isLoading) {
     return (
-      <div className="my-6 rounded-xl border bg-[#f6f8fa] dark:bg-[#161b22] overflow-hidden">
+      <div className="my-6 rounded-sm border bg-[#f6f8fa] dark:bg-[#161b22] overflow-hidden">
         <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/50">
           <span className="text-xs font-medium text-muted-foreground">{displayLanguage}</span>
         </div>
@@ -723,7 +723,7 @@ function CodeBlock({ code, language, title }: CodeBlockProps) {
   }
 
   return (
-    <div className="group my-6 rounded-xl border bg-[#f6f8fa] dark:bg-[#161b22] overflow-hidden shadow-sm">
+    <div className="group my-6 rounded-sm border bg-[#f6f8fa] dark:bg-[#161b22] overflow-hidden shadow-sm">
       {/* Header with language and copy button */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-border/50 bg-muted/30">
         <span className="text-xs font-medium text-muted-foreground">{displayLanguage}</span>
@@ -825,7 +825,7 @@ export function MarkdownRenderer({ content, className, hideFirstH1 = true, baseP
         // Horizontal rules
         "[&>hr]:my-8 [&>hr]:border-border",
         // Images
-        "[&_img]:rounded-xl [&_img]:border [&_img]:my-6",
+        "[&_img]:rounded-sm [&_img]:border [&_img]:my-6",
         className
       )}
     >
@@ -884,7 +884,7 @@ export function MarkdownRenderer({ content, className, hideFirstH1 = true, baseP
               return <>{children}</>;
             }
             return (
-              <pre className="my-6 rounded-xl border bg-muted/50 p-4 overflow-x-auto" {...props}>
+              <pre className="my-6 rounded-sm border bg-muted/50 p-4 overflow-x-auto" {...props}>
                 {children}
               </pre>
             );
@@ -892,7 +892,7 @@ export function MarkdownRenderer({ content, className, hideFirstH1 = true, baseP
           // Custom table with proper styling
           table({ children, ...props }) {
             return (
-              <div className="my-6 w-full overflow-x-auto rounded-xl border shadow-sm">
+              <div className="my-6 w-full overflow-x-auto rounded-sm border shadow-sm">
                 <table className="w-full text-sm" {...props}>{children}</table>
               </div>
             );
@@ -1027,7 +1027,7 @@ export function MarkdownRenderer({ content, className, hideFirstH1 = true, baseP
               <img
                 src={resolvedSrc}
                 alt={alt || ""}
-                className="rounded-xl border my-6 max-w-full"
+                className="rounded-sm border my-6 max-w-full"
                 loading="lazy"
                 {...props}
               />

@@ -87,7 +87,7 @@ function SuggestionItem({ suggestion, onAdd }: SuggestionItemProps) {
 
   return (
     <div
-      className="p-3 rounded-lg bg-background/80 border"
+      className="p-3 rounded-sm bg-background/80 border"
       data-testid="suggestion-item"
     >
       <div className="flex items-start gap-2">
@@ -135,8 +135,8 @@ export function AISuggestionsSkeleton() {
             <div className="h-3 w-48 bg-muted animate-pulse rounded mt-1.5" />
           </div>
           <div className="space-y-2">
-            <div className="h-20 bg-muted animate-pulse rounded-lg" />
-            <div className="h-20 bg-muted animate-pulse rounded-lg" />
+            <div className="h-20 bg-muted animate-pulse rounded-sm" />
+            <div className="h-20 bg-muted animate-pulse rounded-sm" />
           </div>
         </div>
       </div>

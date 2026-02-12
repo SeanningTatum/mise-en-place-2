@@ -56,7 +56,7 @@ export function RecipeVisibilityList({
           <div
             key={recipe.id}
             className={cn(
-              "flex items-center gap-4 p-3 rounded-lg border transition-colors",
+              "flex items-center gap-4 p-3 rounded-sm border transition-colors",
               recipe.isPublic
                 ? "bg-accent/10 border-accent/30"
                 : "bg-muted/30 border-border"

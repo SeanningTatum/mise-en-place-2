@@ -179,7 +179,7 @@ export function WeeklyMacroSummary({
   return (
     <div
       className={cn(
-        "bg-card/50 border border-border/50 rounded-xl p-4 sm:p-6",
+        "bg-card/50 border border-border/50 rounded-sm p-4 sm:p-6",
         className
       )}
       data-testid="weekly-macro-summary"

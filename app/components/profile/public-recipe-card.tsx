@@ -38,7 +38,7 @@ export function PublicRecipeCard({
   const recipeUrl = `/u/${username}/recipe/${slug}`;
 
   return (
-    <Card className="group overflow-hidden border-border/60 hover:border-primary/30 transition-all hover:shadow-warm">
+    <Card className="group overflow-hidden border-border/60 hover:border-primary/30 transition-all">
       <Link to={recipeUrl} className="block">
         {/* Thumbnail */}
         <div className="aspect-[4/3] relative overflow-hidden bg-muted">
@@ -46,7 +46,7 @@ export function PublicRecipeCard({
             <img
               src={thumbnailUrl}
               alt={title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">

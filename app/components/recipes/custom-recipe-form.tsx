@@ -167,7 +167,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Section 1: Basic Info */}
-          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
+          <section className="space-y-5 bg-card rounded-sm border border-border/50 p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 1
@@ -307,7 +307,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           </section>
 
           {/* Section 2: Ingredients */}
-          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
+          <section className="space-y-5 bg-card rounded-sm border border-border/50 p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -412,7 +412,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           </section>
 
           {/* Section 3: Steps */}
-          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
+          <section className="space-y-5 bg-card rounded-sm border border-border/50 p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -495,7 +495,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           <Collapsible
             open={nutritionOpen}
             onOpenChange={setNutritionOpen}
-            className="bg-card rounded-lg border border-border/50 shadow-sm"
+            className="bg-card rounded-sm border border-border/50 shadow-sm"
           >
             <CollapsibleTrigger asChild>
               <button
@@ -681,7 +681,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="gap-2 shadow-warm hover:shadow-warm-lg min-w-32"
+              className="gap-2 min-w-32"
               data-testid="save-recipe-button"
             >
               {isSubmitting ? (

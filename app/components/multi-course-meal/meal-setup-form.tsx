@@ -227,7 +227,7 @@ export function MealSetupForm({
                       key={option.value}
                       htmlFor={`service-${option.value}`}
                       className={cn(
-                        "flex flex-col items-center gap-2 p-4 border rounded-lg cursor-pointer transition-all hover:border-primary/50",
+                        "flex flex-col items-center gap-2 p-4 border rounded-sm cursor-pointer transition-all hover:border-primary/50",
                         field.value === option.value &&
                           "border-primary bg-primary/5"
                       )}

@@ -141,7 +141,7 @@ function EmptyState() {
 
 function TemplateCardSkeleton() {
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="border rounded-sm overflow-hidden">
       <Skeleton className="aspect-video" />
       <div className="p-4 space-y-3">
         <Skeleton className="h-6 w-3/4" />

@@ -21,7 +21,7 @@ export function PhilosophyCard({
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-between p-8 rounded-[24px] min-h-[280px]",
+        "group relative flex flex-col justify-between p-8 rounded-sm min-h-[280px]",
         "bg-accent text-accent-foreground",
         "hover:bg-primary hover:text-primary-foreground",
         "transition-all duration-500 ease-out",
@@ -30,7 +30,7 @@ export function PhilosophyCard({
       )}
     >
       {/* Icon - top left */}
-      <div className="flex items-center justify-center size-12 rounded-[12px] bg-foreground/10 group-hover:bg-white/10 transition-colors duration-500">
+      <div className="flex items-center justify-center size-12 rounded-sm bg-foreground/10 group-hover:bg-white/10 transition-colors duration-500">
         {icon}
       </div>
 
@@ -60,7 +60,7 @@ export function PhilosophyCardWithAuthor({
   return (
     <div
       className={cn(
-        "group relative flex flex-col justify-between p-8 rounded-[24px] min-h-[320px]",
+        "group relative flex flex-col justify-between p-8 rounded-sm min-h-[320px]",
         "bg-accent text-accent-foreground",
         "hover:bg-primary hover:text-primary-foreground",
         "transition-all duration-500 ease-out",
@@ -69,7 +69,7 @@ export function PhilosophyCardWithAuthor({
       )}
     >
       {/* Icon - top left */}
-      <div className="flex items-center justify-center size-12 rounded-[12px] bg-foreground/10 group-hover:bg-white/10 transition-colors duration-500">
+      <div className="flex items-center justify-center size-12 rounded-sm bg-foreground/10 group-hover:bg-white/10 transition-colors duration-500">
         {icon}
       </div>
 

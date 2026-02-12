@@ -163,7 +163,7 @@ export default function PublicMealDetailPage({ loaderData, params }: Route.Compo
                   {meal.courses.map((course) => (
                     <div
                       key={course.id}
-                      className="flex items-center gap-4 p-4 rounded-lg border bg-card"
+                      className="flex items-center gap-4 p-4 rounded-sm border bg-card"
                     >
                       <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted">
                         {course.recipe.thumbnailUrl ? (
@@ -289,7 +289,7 @@ export default function PublicMealDetailPage({ loaderData, params }: Route.Compo
               <CardContent>
                 <Link
                   to={`/u/${username}`}
-                  className="flex items-center gap-3 hover:bg-muted/50 -m-2 p-2 rounded-lg transition-colors"
+                  className="flex items-center gap-3 hover:bg-muted/50 -m-2 p-2 rounded-sm transition-colors"
                 >
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <span className="text-lg font-semibold text-primary">

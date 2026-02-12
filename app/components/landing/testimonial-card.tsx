@@ -22,7 +22,7 @@ export function TestimonialCard({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 rounded-[24px] border border-border/50 bg-card p-8 shadow-warm",
+        "flex flex-col gap-6 rounded-sm border border-border bg-card p-8",
         className
       )}
     >
@@ -39,12 +39,12 @@ export function TestimonialCard({
       )}
 
       {/* Quote */}
-      <blockquote className="flex-1 font-display text-xl leading-relaxed text-foreground">
+      <blockquote className="flex-1 font-display text-xl italic leading-relaxed text-foreground">
         "{quote}"
       </blockquote>
 
       {/* Author */}
-      <div className="flex items-center gap-4 pt-4 border-t border-border/50">
+      <div className="flex items-center gap-4 pt-4 border-t border-border">
         {avatar ? (
           <img
             src={avatar}

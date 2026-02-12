@@ -152,7 +152,7 @@ export function PrintMealModal({
                   key={option.value}
                   htmlFor={option.value}
                   className={cn(
-                    "flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-colors",
+                    "flex items-center gap-4 p-4 rounded-sm border cursor-pointer transition-colors",
                     selectedFormat === option.value
                       ? "border-primary bg-primary/5"
                       : "border-border hover:bg-muted/50"
@@ -161,7 +161,7 @@ export function PrintMealModal({
                   <RadioGroupItem value={option.value} id={option.value} />
                   <div
                     className={cn(
-                      "p-2 rounded-lg",
+                      "p-2 rounded-sm",
                       selectedFormat === option.value
                         ? "bg-primary/10 text-primary"
                         : "bg-muted text-muted-foreground"

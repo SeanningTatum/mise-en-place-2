@@ -76,7 +76,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-2! rounded-[12px]"
+              className="data-[slot=sidebar-menu-button]:p-2! rounded-sm"
             >
               <Link to="/admin/">
                 <IconToolsKitchen2 className="size-5!" />

@@ -38,16 +38,16 @@ export function PricingCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-[32px] border p-8 lg:p-10 transition-all duration-500",
+        "relative flex flex-col rounded-sm border p-8 lg:p-10 transition-all duration-500",
         highlighted
-          ? "border-primary bg-card shadow-warm-lg scale-[1.02]"
-          : "border-border/50 bg-card shadow-warm hover:border-accent",
+          ? "border-primary bg-card"
+          : "border-border bg-card hover:border-foreground",
         className
       )}
     >
       {badge && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className="rounded-full bg-primary px-5 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground">
+          <span className="rounded-sm bg-primary px-5 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-primary-foreground">
             {badge}
           </span>
         </div>
@@ -61,7 +61,7 @@ export function PricingCard({
 
       {/* Price */}
       <div className="mb-8">
-        <span className="font-display text-5xl lg:text-6xl">{price}</span>
+        <span className="font-display font-light text-5xl lg:text-6xl">{price}</span>
         {period && (
           <span className="text-muted-foreground ml-1">/{period}</span>
         )}
@@ -93,10 +93,7 @@ export function PricingCard({
         asChild
         variant={highlighted ? "default" : "outline"}
         size="pill-lg"
-        className={cn(
-          "w-full",
-          highlighted && "shadow-warm hover:scale-105 transition-transform"
-        )}
+        className="w-full"
       >
         <Link to={cta.href}>{cta.label}</Link>
       </Button>

@@ -57,7 +57,7 @@ export function CourseList({
           ))}
         </div>
       ) : (
-        <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center">
+        <div className="border border-dashed border-muted rounded-sm p-8 text-center">
           <p className="text-muted-foreground text-sm">
             No courses added yet. Start building your menu!
           </p>

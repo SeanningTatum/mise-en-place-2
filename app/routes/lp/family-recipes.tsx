@@ -61,7 +61,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
         {/* Hero Visual - Recipe Card Transformation */}
         <div className="relative">
           {/* Old recipe card */}
-          <div className="absolute -left-8 top-8 z-0 w-48 rotate-[-8deg] rounded-lg bg-amber-50 p-4 shadow-lg dark:bg-amber-100">
+          <div className="absolute -left-8 top-8 z-0 w-48 rotate-[-8deg] rounded-sm bg-amber-50 p-4 shadow-lg dark:bg-amber-100">
             <div className="mb-2 font-display text-sm font-semibold text-amber-900">
               Nana's Apple Pie
             </div>
@@ -76,7 +76,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
           </div>
 
           {/* Digital recipe card */}
-          <div className="relative z-10 ml-16 rounded-2xl border border-border/50 bg-card p-6 shadow-warm-lg">
+          <div className="relative z-10 ml-16 rounded-sm border border-border/50 bg-card p-6">
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <span className="mb-1 block text-xs text-muted-foreground">
@@ -119,7 +119,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
 
           {/* Decorative arrow */}
           <div className="absolute left-28 top-1/2 z-20 -translate-y-1/2">
-            <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-warm">
+            <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <Sparkles className="size-5" />
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
 
           <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-3">
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm bg-destructive/10 text-destructive">
                 <span className="text-2xl">📦</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">Lost in moves</h3>
@@ -162,7 +162,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm bg-destructive/10 text-destructive">
                 <span className="text-2xl">💧</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">Damaged by time</h3>
@@ -171,7 +171,7 @@ export default function FamilyRecipesLanding({}: Route.ComponentProps) {
               </p>
             </div>
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm bg-destructive/10 text-destructive">
                 <span className="text-2xl">🕊️</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">Never written down</h3>

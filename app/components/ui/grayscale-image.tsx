@@ -35,7 +35,7 @@ export function GrayscaleImage({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-[24px]",
+        "group relative overflow-hidden rounded-sm",
         aspectClasses[aspectRatio],
         containerClassName
       )}
@@ -82,7 +82,7 @@ export function GrayscaleImageWithCaption({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-[24px]",
+        "group relative overflow-hidden rounded-sm",
         aspectClasses[aspectRatio],
         containerClassName
       )}
@@ -149,7 +149,7 @@ export function HeroImageBlock({
         className
       )}
     >
-      <div className="group relative overflow-hidden rounded-[64px] h-[80vh] min-h-[500px]">
+      <div className="group relative overflow-hidden rounded-sm h-[80vh] min-h-[500px]">
         <img
           src={src}
           alt={alt}

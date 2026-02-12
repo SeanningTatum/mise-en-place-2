@@ -247,12 +247,12 @@ export function TimeSeriesChart({
               >
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="rounded-xl">
+              <SelectContent className="rounded-sm">
                 {timeRanges.map((range) => (
                   <SelectItem
                     key={range.value}
                     value={range.value}
-                    className="rounded-lg"
+                    className="rounded-sm"
                   >
                     {range.label}
                   </SelectItem>

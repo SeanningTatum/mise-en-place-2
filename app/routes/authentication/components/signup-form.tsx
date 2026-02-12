@@ -73,7 +73,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="border-border/30 shadow-warm rounded-[32px] overflow-hidden">
+      <Card className="border-border/30 rounded-sm overflow-hidden">
         {/* Decorative top accent */}
         <div className="h-1.5 bg-linear-to-r from-accent via-primary to-accent" />
         
@@ -173,7 +173,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
               />
               
               {authError && (
-                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-[12px] px-4 py-3">
+                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-sm px-4 py-3">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{authError}</span>
                 </div>
@@ -183,7 +183,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
                 <Button
                   type="submit"
                   size="pill-lg"
-                  className="w-full gap-2 shadow-warm hover:shadow-warm-lg"
+                  className="w-full gap-2"
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting ? (

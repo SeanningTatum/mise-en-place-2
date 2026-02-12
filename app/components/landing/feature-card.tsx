@@ -20,10 +20,10 @@ export function FeatureCard({
 }: FeatureCardProps) {
   const content = (
     <>
-      <div className="mb-6 flex size-14 items-center justify-center rounded-[16px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+      <div className="mb-6 flex size-14 items-center justify-center rounded-sm border border-border bg-transparent text-foreground transition-all duration-500">
         {icon}
       </div>
-      <h3 className="mb-3 font-display text-xl">{title}</h3>
+      <h3 className="mb-3 font-display font-light text-xl">{title}</h3>
       <p className="text-muted-foreground leading-relaxed">{description}</p>
       {href && (
         <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary opacity-0 transition-all duration-500 group-hover:opacity-100">
@@ -39,7 +39,7 @@ export function FeatureCard({
       <Link
         to={href}
         className={cn(
-          "group flex flex-col rounded-[24px] border border-border/50 bg-card p-8 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg",
+          "group flex flex-col rounded-sm border border-border bg-card p-8 transition-all duration-500 hover:border-foreground",
           className
         )}
       >
@@ -51,7 +51,7 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        "group flex flex-col rounded-[24px] border border-border/50 bg-card p-8 shadow-warm",
+        "group flex flex-col rounded-sm border border-border bg-card p-8",
         className
       )}
     >

@@ -25,6 +25,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackgroundGrid } from "@/components/editorial";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -52,6 +53,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 export default function Home({}: Route.ComponentProps) {
   return (
     <div className="min-h-screen">
+      <BackgroundGrid />
       <LandingNav />
 
       {/* Hero Section */}
@@ -66,9 +68,9 @@ export default function Home({}: Route.ComponentProps) {
       >
         {/* Hero Visual - Video Player Mockup */}
         <div className="relative">
-          <div className="rounded-[40px] border border-border/30 bg-card p-3 shadow-warm-lg">
+          <div className="rounded-sm border border-border/30 bg-card p-3">
             {/* Video player mockup */}
-            <div className="relative aspect-video overflow-hidden rounded-[32px] bg-muted">
+            <div className="relative aspect-video overflow-hidden rounded-sm bg-muted">
               <img
                 src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop&q=80"
                 alt="Cooking demonstration"
@@ -76,7 +78,7 @@ export default function Home({}: Route.ComponentProps) {
               />
               {/* Play button overlay */}
               <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                <div className="flex size-20 items-center justify-center rounded-full bg-white/90 shadow-warm-lg transition-transform duration-500 hover:scale-110">
+                <div className="flex size-20 items-center justify-center rounded-full bg-white/90 transition-transform duration-500">
                   <Play className="ml-1 size-8 text-primary" fill="currentColor" />
                 </div>
               </div>
@@ -88,13 +90,13 @@ export default function Home({}: Route.ComponentProps) {
           </div>
 
           {/* Timestamp annotations */}
-          <div className="absolute -right-4 top-8 animate-fade-slide-up-delay-500 rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm">
+          <div className="absolute -right-4 top-8 animate-fade-slide-up-delay-500 rounded-sm border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground">
             <span className="font-mono">2:34</span> Prep onions
           </div>
-          <div className="absolute -right-8 top-28 animate-fade-slide-up rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm" style={{ animationDelay: "0.7s" }}>
+          <div className="absolute -right-8 top-28 animate-fade-slide-up rounded-sm border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground" style={{ animationDelay: "0.7s" }}>
             <span className="font-mono">5:12</span> Add garlic
           </div>
-          <div className="absolute -right-4 top-48 animate-fade-slide-up rounded-[16px] border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-warm" style={{ animationDelay: "0.9s" }}>
+          <div className="absolute -right-4 top-48 animate-fade-slide-up rounded-sm border border-accent/30 bg-primary px-4 py-3 text-sm font-medium text-primary-foreground" style={{ animationDelay: "0.9s" }}>
             <span className="font-mono">8:45</span> Simmer sauce
           </div>
         </div>
@@ -169,7 +171,7 @@ export default function Home({}: Route.ComponentProps) {
       </section>
 
       {/* ICP Sections */}
-      <section className="py-24 lg:py-40 bg-secondary">
+      <section className="py-24 lg:py-40 border-t border-border">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="mb-16 text-center">
             <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight">
@@ -184,9 +186,9 @@ export default function Home({}: Route.ComponentProps) {
             {/* Video Recipes Card */}
             <Link
               to="/lp/video-recipes"
-              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-sm border border-border bg-card p-8 lg:p-10 transition-all duration-500 hover:border-foreground"
             >
-              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="mb-8 flex size-16 items-center justify-center rounded-sm border border-border bg-transparent text-foreground transition-all duration-500">
                 <Youtube className="size-8" />
               </div>
               <h3 className="mb-3 font-display text-2xl">
@@ -204,9 +206,9 @@ export default function Home({}: Route.ComponentProps) {
             {/* Meal Planning Card */}
             <Link
               to="/lp/meal-planning"
-              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-sm border border-border bg-card p-8 lg:p-10 transition-all duration-500 hover:border-foreground"
             >
-              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="mb-8 flex size-16 items-center justify-center rounded-sm border border-border bg-transparent text-foreground transition-all duration-500">
                 <Calendar className="size-8" />
               </div>
               <h3 className="mb-3 font-display text-2xl">
@@ -224,9 +226,9 @@ export default function Home({}: Route.ComponentProps) {
             {/* Family Recipes Card */}
             <Link
               to="/lp/family-recipes"
-              className="group relative overflow-hidden rounded-[32px] border border-border/30 bg-card p-8 lg:p-10 shadow-warm transition-all duration-500 hover:border-accent hover:shadow-warm-lg"
+              className="group relative overflow-hidden rounded-sm border border-border bg-card p-8 lg:p-10 transition-all duration-500 hover:border-foreground"
             >
-              <div className="mb-8 flex size-16 items-center justify-center rounded-[20px] bg-accent text-accent-foreground transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="mb-8 flex size-16 items-center justify-center rounded-sm border border-border bg-transparent text-foreground transition-all duration-500">
                 <BookOpen className="size-8" />
               </div>
               <h3 className="mb-3 font-display text-2xl">
@@ -273,7 +275,7 @@ export default function Home({}: Route.ComponentProps) {
       <PricingSection
         headline="Free to start, powerful when you need it"
         subheadline="No subscription required for core features. Upgrade when you're ready."
-        className="bg-secondary"
+        className="border-t border-border"
       >
         <PricingCard
           name="Free"

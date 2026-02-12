@@ -214,7 +214,7 @@ export default function PlannerPage({ loaderData }: Route.ComponentProps) {
                 Today
               </Button>
             )}
-            <div className="flex items-center rounded-lg border border-border">
+            <div className="flex items-center rounded-sm border border-border">
               <Button
                 variant="ghost"
                 size="icon"

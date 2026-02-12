@@ -61,8 +61,8 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
       >
         {/* Hero Visual - Video Player with Timestamps */}
         <div className="relative">
-          <div className="rounded-2xl border border-border/50 bg-card p-2 shadow-warm-lg">
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-muted">
+          <div className="rounded-sm border border-border/50 bg-card p-2">
+            <div className="relative aspect-video overflow-hidden rounded-sm bg-muted">
               <img
                 src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&auto=format&fit=crop&q=80"
                 alt="Cooking demonstration"
@@ -80,13 +80,13 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
           </div>
 
           {/* Timestamp annotations */}
-          <div className="absolute -right-4 top-8 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-500 duration-500">
+          <div className="absolute -right-4 top-8 animate-in fade-in slide-in-from-right-4 rounded-sm border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground delay-500 duration-500">
             <span className="font-mono">2:34</span> Prep onions
           </div>
-          <div className="absolute -right-8 top-24 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-700 duration-500">
+          <div className="absolute -right-8 top-24 animate-in fade-in slide-in-from-right-4 rounded-sm border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground delay-700 duration-500">
             <span className="font-mono">5:12</span> Add garlic
           </div>
-          <div className="absolute -right-4 top-40 animate-in fade-in slide-in-from-right-4 rounded-lg border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-warm delay-900 duration-500">
+          <div className="absolute -right-4 top-40 animate-in fade-in slide-in-from-right-4 rounded-sm border border-primary/20 bg-primary px-3 py-2 text-sm font-medium text-primary-foreground delay-900 duration-500">
             <span className="font-mono">8:45</span> Simmer sauce
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
 
           <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-3">
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-warm">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm border border-border bg-primary text-primary-foreground">
                 <span className="font-display text-2xl font-semibold">1</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">Paste a URL</h3>
@@ -160,7 +160,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
             </div>
 
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-warm">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm border border-border bg-primary text-primary-foreground">
                 <span className="font-display text-2xl font-semibold">2</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">AI extracts the recipe</h3>
@@ -171,7 +171,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
             </div>
 
             <div className="text-center">
-              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-warm">
+              <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-sm border border-border bg-primary text-primary-foreground">
                 <span className="font-display text-2xl font-semibold">3</span>
               </div>
               <h3 className="mb-2 font-display text-lg font-semibold">Cook along with timestamps</h3>
@@ -264,7 +264,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
 
           <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
             {/* Other apps */}
-            <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-8">
+            <div className="rounded-sm border border-destructive/20 bg-destructive/5 p-8">
               <h3 className="mb-4 font-display text-lg font-semibold text-destructive">
                 Other recipe apps
               </h3>
@@ -289,7 +289,7 @@ export default function VideoRecipesLanding({}: Route.ComponentProps) {
             </div>
 
             {/* Mise en place */}
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-8">
+            <div className="rounded-sm border border-primary/20 bg-primary/5 p-8">
               <h3 className="mb-4 font-display text-lg font-semibold text-primary">
                 Mise en place
               </h3>

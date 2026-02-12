@@ -91,7 +91,7 @@ export function CoursePickerModal({
                     key={option.value}
                     htmlFor={`course-type-${option.value}`}
                     className={cn(
-                      "flex items-center gap-3 p-3 border rounded-lg cursor-pointer transition-all hover:border-primary/50",
+                      "flex items-center gap-3 p-3 border rounded-sm cursor-pointer transition-all hover:border-primary/50",
                       alreadyExists && "opacity-50"
                     )}
                   >

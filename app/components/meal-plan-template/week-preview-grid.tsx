@@ -56,7 +56,7 @@ export function WeekPreviewGrid({
   return (
     <div
       className={cn(
-        "border rounded-lg overflow-hidden",
+        "border rounded-sm overflow-hidden",
         compact ? "text-xs" : "text-sm"
       )}
       data-testid="week-preview-grid"
@@ -188,7 +188,7 @@ function MealCell({ entry, compact, isLastColumn }: MealCellProps) {
  */
 export function WeekPreviewGridSkeleton({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="border rounded-lg overflow-hidden animate-pulse">
+    <div className="border rounded-sm overflow-hidden animate-pulse">
       {/* Header */}
       <div className="grid grid-cols-8 bg-secondary/50">
         <div className="p-2 border-r">&nbsp;</div>

@@ -38,7 +38,7 @@ export function LoadingTips({
   return (
     <div
       className={cn(
-        "w-full max-w-md rounded-lg bg-muted/50 border border-border p-4",
+        "w-full max-w-md rounded-sm bg-muted/50 border border-border p-4",
         className
       )}
     >

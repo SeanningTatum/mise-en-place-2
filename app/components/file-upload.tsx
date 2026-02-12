@@ -131,9 +131,9 @@ export function FileUpload({
           onDrop={handleDrop}
           onClick={handleBrowseClick}
           className={cn(
-            "relative flex flex-col items-center justify-center w-full h-64 px-4 transition-all border-2 border-dashed rounded-lg cursor-pointer",
+            "relative flex flex-col items-center justify-center w-full h-64 px-4 transition-all border border-dashed rounded-sm cursor-pointer",
             isDragging
-              ? "border-primary bg-primary/5 scale-[1.02]"
+              ? "border-primary bg-primary/5"
               : "border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500",
             "bg-background hover:bg-accent/50 dark:bg-input/10",
             isUploading && "pointer-events-none opacity-70"
@@ -187,7 +187,7 @@ export function FileUpload({
           )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center w-full h-64 px-4 border-2 border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-950/20 rounded-lg">
+        <div className="flex flex-col items-center justify-center w-full h-64 px-4 border border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-950/20 rounded-sm">
           <svg
             className="w-16 h-16 mb-4 text-green-500 dark:text-green-400"
             fill="none"
@@ -217,7 +217,7 @@ export function FileUpload({
       )}
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg">
+        <div className="mt-4 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-sm">
           <div className="flex items-start gap-3">
             <svg
               className="w-5 h-5 text-red-500 dark:text-red-400 shrink-0 mt-0.5"

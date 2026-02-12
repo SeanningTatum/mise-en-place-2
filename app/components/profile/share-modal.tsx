@@ -152,7 +152,7 @@ export function ShareModal({
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`flex items-center justify-center w-12 h-12 rounded-full text-white transition-transform hover:scale-105 ${link.color}`}
+                  className={`flex items-center justify-center w-12 h-12 rounded-full text-white transition-transform ${link.color}`}
                   title={`Share on ${link.name}`}
                 >
                   {link.icon}
@@ -163,7 +163,7 @@ export function ShareModal({
 
           {/* QR Code Section */}
           <div className="flex flex-col items-center gap-3 pt-4 border-t">
-            <div className="bg-white p-3 rounded-lg border-2 border-accent/30">
+            <div className="bg-white p-3 rounded-sm border border-accent/30">
               <QRCodeSVG
                 value={profileUrl}
                 size={112}

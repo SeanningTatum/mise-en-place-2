@@ -31,15 +31,15 @@ export function RecipeCard({
 
   return (
     <Link to={`/recipes/${id}`} data-testid={`recipe-card-${id}`} className="block h-full">
-      <Card className="group h-full flex flex-col overflow-hidden transition-all duration-500 hover:shadow-warm-lg border-border/30 bg-card rounded-[24px] py-0 gap-0">
+      <Card className="group h-full flex flex-col overflow-hidden transition-all duration-500 border-border/30 bg-card rounded-sm py-0 gap-0">
         {/* Image container with overlay gradient */}
-        <div className="aspect-4/3 relative overflow-hidden bg-secondary rounded-t-[24px]">
+        <div className="aspect-4/3 relative overflow-hidden bg-secondary rounded-t-sm">
           {thumbnailUrl ? (
             <>
               <img
                 src={thumbnailUrl}
                 alt={title}
-                className="h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-105"
+                className="h-full w-full object-cover transition-all duration-500 ease-out"
               />
               {/* Gradient overlay for better text legibility */}
               <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
@@ -116,15 +116,15 @@ export function RecipeCard({
 
 export function RecipeCardSkeleton() {
   return (
-    <Card className="h-full flex flex-col overflow-hidden border-border/30 rounded-[24px] py-0 gap-0">
-      <div className="aspect-4/3 bg-linear-to-br from-secondary to-muted animate-pulse rounded-t-[24px]" />
+    <Card className="h-full flex flex-col overflow-hidden border-border/30 rounded-sm py-0 gap-0">
+      <div className="aspect-4/3 bg-linear-to-br from-secondary to-muted animate-pulse rounded-t-sm" />
       <div className="flex flex-col flex-1 p-4">
         <div className="min-h-[2.75rem] space-y-1.5">
-          <div className="h-5 w-full bg-secondary animate-pulse rounded-[6px]" />
-          <div className="h-5 w-2/3 bg-secondary animate-pulse rounded-[6px]" />
+          <div className="h-5 w-full bg-secondary animate-pulse rounded-sm" />
+          <div className="h-5 w-2/3 bg-secondary animate-pulse rounded-sm" />
         </div>
         <div className="mt-auto pt-3 border-t border-border/30">
-          <div className="h-4 w-1/2 bg-secondary animate-pulse rounded-[6px]" />
+          <div className="h-4 w-1/2 bg-secondary animate-pulse rounded-sm" />
         </div>
       </div>
     </Card>

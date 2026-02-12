@@ -87,7 +87,7 @@ export default function MealsPage({ loaderData }: Route.ComponentProps) {
         title="My Meals"
         subtitle="Plan and organize your multi-course dining experiences"
         actions={
-          <Button asChild className="shadow-warm hover:shadow-warm-lg">
+          <Button asChild>
             <Link to="/recipes/meal">
               <Plus className="h-4 w-4" />
               Plan a Meal
@@ -114,7 +114,7 @@ export default function MealsPage({ loaderData }: Route.ComponentProps) {
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <div className="relative mb-8">
             <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/10 rounded-full blur-2xl scale-150" />
-            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card border-2 border-dashed border-border">
+            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card border border-dashed border-border">
               <UtensilsCrossed className="h-10 w-10 text-primary/60" />
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function MealsPage({ loaderData }: Route.ComponentProps) {
             Start planning your first multi-course meal. Our AI will help you create
             the perfect cooking timeline.
           </p>
-          <Button asChild size="lg" className="shadow-warm hover:shadow-warm-lg">
+          <Button asChild size="lg">
             <Link to="/recipes/meal">
               <Plus className="h-5 w-5" />
               Plan Your First Meal

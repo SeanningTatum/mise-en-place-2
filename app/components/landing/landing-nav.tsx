@@ -27,11 +27,7 @@ export function LandingNav({ className }: LandingNavProps) {
       <div className="container mx-auto flex h-full items-center justify-between px-6 lg:px-12">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-[12px] bg-primary">
-            <span className="font-display text-xl text-primary-foreground">
-              M
-            </span>
-          </div>
+          <span className="font-display text-2xl italic tracking-tight">m</span>
           <span className="font-display text-xl tracking-tight">
             mise en place
           </span>
@@ -48,7 +44,7 @@ export function LandingNav({ className }: LandingNavProps) {
               {link.label}
             </Link>
           ))}
-          <Button asChild size="pill" className="shadow-warm">
+          <Button asChild>
             <Link to="/sign-up">Get Started</Link>
           </Button>
         </nav>
@@ -56,7 +52,7 @@ export function LandingNav({ className }: LandingNavProps) {
         {/* Mobile Menu Button */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-[12px] p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground md:hidden transition-colors"
+          className="inline-flex items-center justify-center rounded-sm p-2.5 text-muted-foreground hover:bg-accent hover:text-foreground md:hidden transition-colors"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -82,7 +78,7 @@ export function LandingNav({ className }: LandingNavProps) {
                 {link.label}
               </Link>
             ))}
-            <Button asChild size="pill" className="w-full shadow-warm mt-4">
+            <Button asChild className="w-full mt-4">
               <Link to="/sign-up">Get Started</Link>
             </Button>
           </nav>

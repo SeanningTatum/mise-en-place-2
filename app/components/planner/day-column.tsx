@@ -74,7 +74,7 @@ export function DayColumn({
     <>
       <div
         className={cn(
-          "flex flex-col gap-3 p-3 rounded-[20px] min-w-0 transition-all duration-300",
+          "flex flex-col gap-3 p-3 rounded-sm min-w-0 transition-all duration-300",
           isToday && "bg-accent/20 ring-1 ring-accent/40"
         )}
         data-testid={`day-column-${dayOfWeek}`}
@@ -86,7 +86,7 @@ export function DayColumn({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-7 w-7 text-muted-foreground hover:text-foreground rounded-[10px]"
+              className="absolute right-0 top-0 h-7 w-7 text-muted-foreground hover:text-foreground rounded-sm"
               onClick={() => setExportModalOpen(true)}
               data-testid={`print-day-${dayOfWeek}`}
             >
@@ -154,15 +154,15 @@ export function DayColumn({
 
 export function DayColumnSkeleton() {
   return (
-    <div className="flex flex-col gap-3 p-3 rounded-[20px] min-w-0">
+    <div className="flex flex-col gap-3 p-3 rounded-sm min-w-0">
       <div className="text-center pb-3 border-b border-border/30">
-        <div className="h-3 w-10 bg-secondary animate-pulse rounded-[6px] mx-auto mb-2" />
-        <div className="h-8 w-8 bg-secondary animate-pulse rounded-[8px] mx-auto" />
+        <div className="h-3 w-10 bg-secondary animate-pulse rounded-sm mx-auto mb-2" />
+        <div className="h-8 w-8 bg-secondary animate-pulse rounded-sm mx-auto" />
       </div>
       <div className="flex flex-col gap-3">
         {mealTypes.map((mealType) => (
           <div key={mealType}>
-            <div className="h-2.5 w-14 bg-secondary animate-pulse rounded-[4px] mb-2" />
+            <div className="h-2.5 w-14 bg-secondary animate-pulse rounded-sm mb-2" />
             <MealSlotSkeleton />
           </div>
         ))}

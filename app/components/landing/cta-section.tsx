@@ -32,16 +32,13 @@ export function CTASection({
     >
       <div className="container relative mx-auto">
         {/* Centered card with sage background */}
-        <div className="relative mx-auto max-w-4xl rounded-[48px] bg-accent p-12 md:p-16 lg:p-20 overflow-hidden">
-          {/* Subtle white glow at top */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-32 bg-white/30 blur-[120px] pointer-events-none" />
-
+        <div className="relative mx-auto max-w-4xl border-t border-b border-border py-16 md:py-24 lg:py-32">
           <div className="relative text-center">
-            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight text-accent-foreground leading-[0.9]">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl tracking-tight text-foreground leading-[0.9]">
               {headline}
             </h2>
             {subheadline && (
-              <p className="mt-6 text-lg md:text-xl text-accent-foreground/80 max-w-2xl mx-auto leading-relaxed">
+              <p className="mt-6 text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto leading-relaxed">
                 {subheadline}
               </p>
             )}
@@ -49,7 +46,7 @@ export function CTASection({
               <Button
                 asChild
                 size="pill-xl"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-warm-lg"
+                className="bg-primary text-primary-foreground hover:opacity-90 transition-all duration-300"
               >
                 <Link to={primaryCta.href}>{primaryCta.label}</Link>
               </Button>
@@ -58,7 +55,7 @@ export function CTASection({
                   asChild
                   variant="outline"
                   size="pill-lg"
-                  className="border-accent-foreground/30 text-accent-foreground hover:bg-accent-foreground/10"
+                  className="border-foreground/30 text-foreground hover:bg-foreground/10"
                 >
                   <Link to={secondaryCta.href}>{secondaryCta.label}</Link>
                 </Button>

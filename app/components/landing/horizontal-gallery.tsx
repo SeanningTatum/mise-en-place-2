@@ -27,7 +27,7 @@ export function GalleryCard({
         className
       )}
     >
-      <div className="relative aspect-[16/10] overflow-hidden rounded-[24px]">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-sm">
         <img
           src={image}
           alt={title}
@@ -102,14 +102,14 @@ export function HorizontalGallery({
       {/* Navigation buttons */}
       <button
         onClick={() => scroll("left")}
-        className="absolute left-4 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-border shadow-warm hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+        className="absolute left-4 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300"
         aria-label="Scroll left"
       >
         <ChevronLeft className="size-5" />
       </button>
       <button
         onClick={() => scroll("right")}
-        className="absolute right-4 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-border shadow-warm hover:bg-accent hover:text-accent-foreground transition-all duration-300"
+        className="absolute right-4 top-1/2 -translate-y-1/2 flex size-12 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-border hover:bg-accent hover:text-accent-foreground transition-all duration-300"
         aria-label="Scroll right"
       >
         <ChevronRight className="size-5" />

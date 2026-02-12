@@ -11,7 +11,7 @@ export function ChefAnimation({ className }: ChefAnimationProps) {
       <div className="relative">
         {/* Animated chef hat */}
         <div className="animate-bounce">
-          <div className="p-6 rounded-full bg-primary/10 border-2 border-primary/20">
+          <div className="p-6 rounded-full bg-primary/10 border border-primary/20">
             <ChefHat className="h-12 w-12 text-primary" />
           </div>
         </div>

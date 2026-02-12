@@ -101,7 +101,7 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
   const isYouTubeUrl = url.includes("youtube.com") || url.includes("youtu.be");
 
   return (
-    <Card className="border-border/50 shadow-warm overflow-hidden">
+    <Card className="border-border/50 overflow-hidden">
       {/* Decorative top border */}
       <div className="h-1 bg-linear-to-r from-primary via-primary/50 to-accent" />
       
@@ -148,7 +148,7 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
                 <Button
                   type="submit"
                   disabled={extractMutation.isPending || !url.trim()}
-                  className="h-12 px-6 gap-2 shadow-warm hover:shadow-warm-lg font-medium"
+                  className="h-12 px-6 gap-2 font-medium"
                   data-testid="extract-recipe-button"
                 >
                   {extractMutation.isPending ? (
@@ -172,7 +172,7 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
-                <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/20">
+                <div className="relative flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 border border-primary/20">
                   <Loader2 className="h-8 w-8 text-primary animate-spin" />
                 </div>
               </div>
@@ -205,7 +205,7 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
           {/* Duplicate recipe detected */}
           {existingRecipe && (
             <div 
-              className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-4"
+              className="rounded-sm border border-primary/20 bg-primary/5 p-5 space-y-4"
               data-testid="duplicate-recipe-alert"
             >
               <div className="flex items-start gap-3">
@@ -223,15 +223,15 @@ export function RecipeExtractor({ onExtracted }: RecipeExtractorProps) {
               </div>
               
               {/* Recipe preview card */}
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border/50">
+              <div className="flex items-center gap-3 p-3 rounded-sm bg-card border border-border/50">
                 {existingRecipe.thumbnailUrl ? (
                   <img
                     src={existingRecipe.thumbnailUrl}
                     alt={existingRecipe.title}
-                    className="w-16 h-16 rounded-lg object-cover shrink-0"
+                    className="w-16 h-16 rounded-sm object-cover shrink-0"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                  <div className="w-16 h-16 rounded-sm bg-secondary flex items-center justify-center shrink-0">
                     {existingRecipe.sourceType === "youtube" ? (
                       <Youtube className="h-6 w-6 text-muted-foreground" />
                     ) : (

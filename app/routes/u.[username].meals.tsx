@@ -119,7 +119,7 @@ export default function PublicMealsPage({ loaderData, params }: Route.ComponentP
                       <img
                         src={meal.thumbnailUrl}
                         alt={meal.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover transition-transform duration-300"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">

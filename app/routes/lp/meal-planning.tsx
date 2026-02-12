@@ -62,7 +62,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
       >
         {/* Hero Visual - Calendar Grid */}
         <div className="relative">
-          <div className="rounded-2xl border border-border/50 bg-card p-4 shadow-warm-lg">
+          <div className="rounded-sm border border-border/50 bg-card p-4">
             {/* Calendar header */}
             <div className="mb-4 flex items-center justify-between">
               <h3 className="font-display text-lg font-semibold">This Week</h3>
@@ -89,7 +89,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className={`rounded-lg p-2 text-center ${item.color}`}
+                  className={`rounded-sm p-2 text-center ${item.color}`}
                 >
                   <div className="text-xs font-medium">{item.meal}</div>
                 </div>
@@ -98,7 +98,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
           </div>
 
           {/* Floating grocery list */}
-          <div className="absolute -bottom-8 -right-4 w-48 animate-in fade-in slide-in-from-bottom-4 rounded-xl border border-border/50 bg-card p-4 shadow-warm delay-500 duration-500">
+          <div className="absolute -bottom-8 -right-4 w-48 animate-in fade-in slide-in-from-bottom-4 rounded-sm border border-border/50 bg-card p-4 delay-500 duration-500">
             <div className="mb-2 flex items-center gap-2">
               <ShoppingCart className="size-4 text-primary" />
               <span className="text-sm font-semibold">Grocery List</span>
@@ -154,7 +154,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
             {/* Steps */}
             <div className="space-y-8">
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
                   1
                 </div>
                 <div>
@@ -169,7 +169,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
                   2
                 </div>
                 <div>
@@ -184,7 +184,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
               </div>
 
               <div className="flex gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-primary font-mono text-sm font-semibold text-primary-foreground">
                   3
                 </div>
                 <div>
@@ -200,7 +200,7 @@ export default function MealPlanningLanding({}: Route.ComponentProps) {
             </div>
 
             {/* Visual */}
-            <div className="relative rounded-2xl border border-border/50 bg-card p-6 shadow-warm-lg">
+            <div className="relative rounded-sm border border-border/50 bg-card p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="size-5 text-primary" />

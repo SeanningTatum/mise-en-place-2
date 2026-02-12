@@ -259,7 +259,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
           {!isDesktop ? (
             // Mobile: Stacked layout
             <div className="space-y-6">
-              <div className="rounded-xl overflow-hidden shadow-warm-lg">
+              <div className="rounded-sm overflow-hidden">
                 <YouTubePlayer
                   videoId={recipe.youtubeVideoId!}
                   seekTo={seekTo}
@@ -276,7 +276,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
                 fiber={recipe.fiber}
                 servings={recipe.servings}
               />
-              <Card className="border-border/50 shadow-warm overflow-hidden">
+              <Card className="border-border/50 overflow-hidden">
                 <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-5">
@@ -286,7 +286,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
                   <IngredientsList ingredients={recipe.ingredients} checkable />
                 </div>
               </Card>
-              <Card className="border-border/50 shadow-warm overflow-hidden">
+              <Card className="border-border/50 overflow-hidden">
                 <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-5">
@@ -308,7 +308,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
               {/* Left: Sticky video */}
               <div className="space-y-6">
                 <div className="sticky top-24">
-                  <div className="rounded-xl overflow-hidden shadow-warm-lg">
+                  <div className="rounded-sm overflow-hidden">
                     <YouTubePlayer
                       videoId={recipe.youtubeVideoId!}
                       seekTo={seekTo}
@@ -332,7 +332,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
                   fiber={recipe.fiber}
                   servings={recipe.servings}
                 />
-                <Card className="border-border/50 shadow-warm overflow-hidden">
+                <Card className="border-border/50 overflow-hidden">
                   <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-5">
@@ -342,7 +342,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
                     <IngredientsList ingredients={recipe.ingredients} checkable />
                   </div>
                 </Card>
-                <Card className="border-border/50 shadow-warm overflow-hidden">
+                <Card className="border-border/50 overflow-hidden">
                   <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
                   <div className="p-6">
                     <div className="flex items-center gap-2 mb-5">
@@ -393,7 +393,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
         <div className="space-y-8">
           {/* Hero image */}
           {recipe.thumbnailUrl && (
-            <div className="aspect-video rounded-xl overflow-hidden shadow-warm-lg">
+            <div className="aspect-video rounded-sm overflow-hidden">
               <img
                 src={recipe.thumbnailUrl}
                 alt={recipe.title}
@@ -414,7 +414,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
           />
 
           <div className="grid md:grid-cols-[1fr_1.5fr] gap-8">
-            <Card className="border-border/50 shadow-warm overflow-hidden h-fit">
+            <Card className="border-border/50 overflow-hidden h-fit">
               <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-5">
@@ -425,7 +425,7 @@ export default function PublicRecipeDetailPage({ loaderData }: Route.ComponentPr
               </div>
             </Card>
 
-            <Card className="border-border/50 shadow-warm overflow-hidden">
+            <Card className="border-border/50 overflow-hidden">
               <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-5">

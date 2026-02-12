@@ -38,7 +38,7 @@ export function RecipeSteps({
           <li
             key={step.id}
             className={cn(
-              "flex gap-4 p-3 rounded-lg transition-colors",
+              "flex gap-4 p-3 rounded-sm transition-colors",
               activeStep === step.stepNumber && "bg-primary/5 ring-1 ring-primary/20"
             )}
             data-testid={`recipe-step-${step.stepNumber}`}

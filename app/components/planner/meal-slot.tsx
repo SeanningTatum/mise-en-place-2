@@ -97,7 +97,7 @@ export function MealSlot({
         disabled={isLoading}
         data-testid={`meal-slot-${mealType}-empty`}
         className={cn(
-          "w-full border-2 border-dashed border-border/40 rounded-[16px]",
+          "w-full border border-dashed border-border/40 rounded-sm",
           slotHeight,
           "flex flex-col items-center justify-center gap-2",
           "text-muted-foreground hover:text-foreground",
@@ -118,7 +118,7 @@ export function MealSlot({
       <HoverCardTrigger asChild>
         <Card
           className={cn(
-            "group relative overflow-hidden bg-card border-border/30 hover:shadow-warm transition-all duration-500 cursor-pointer rounded-[16px]",
+            "group relative overflow-hidden bg-card border-border/30 transition-all duration-500 cursor-pointer rounded-sm",
             slotHeight,
             "py-0!" // Override Card's default padding
           )}
@@ -135,7 +135,7 @@ export function MealSlot({
             disabled={isLoading}
             aria-label={`Remove ${mealTypeLabels[mealType]}`}
             className={cn(
-              "absolute top-1.5 right-1.5 z-10 h-6 w-6 rounded-[8px]",
+              "absolute top-1.5 right-1.5 z-10 h-6 w-6 rounded-sm",
               "opacity-60 hover:opacity-100 transition-all duration-300",
               "bg-background/80 hover:bg-destructive hover:text-destructive-foreground"
             )}
@@ -147,7 +147,7 @@ export function MealSlot({
           <div className="flex gap-2.5 p-2.5 h-full">
             {/* Thumbnail */}
             {recipe.thumbnailUrl ? (
-              <div className="w-16 h-16 shrink-0 rounded-[12px] overflow-hidden bg-secondary my-auto">
+              <div className="w-16 h-16 shrink-0 rounded-sm overflow-hidden bg-secondary my-auto">
                 <img
                   src={recipe.thumbnailUrl}
                   alt={recipe.title}
@@ -155,7 +155,7 @@ export function MealSlot({
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 shrink-0 rounded-[12px] bg-secondary flex items-center justify-center my-auto">
+              <div className="w-16 h-16 shrink-0 rounded-sm bg-secondary flex items-center justify-center my-auto">
                 <span className="text-[9px] uppercase tracking-wider text-muted-foreground">No image</span>
               </div>
             )}
@@ -279,12 +279,12 @@ export function MealSlot({
 
 export function MealSlotSkeleton() {
   return (
-    <Card className="overflow-hidden border-border/30 h-[88px] py-0! rounded-[16px]">
+    <Card className="overflow-hidden border-border/30 h-[88px] py-0! rounded-sm">
       <div className="flex gap-2.5 p-2.5 h-full">
-        <div className="w-16 h-16 shrink-0 rounded-[12px] bg-secondary animate-pulse my-auto" />
+        <div className="w-16 h-16 shrink-0 rounded-sm bg-secondary animate-pulse my-auto" />
         <div className="flex-1 flex flex-col justify-center py-0.5">
-          <div className="h-4 bg-secondary animate-pulse rounded-[6px] w-full" />
-          <div className="h-3 bg-secondary animate-pulse rounded-[6px] w-1/2 mt-2" />
+          <div className="h-4 bg-secondary animate-pulse rounded-sm w-full" />
+          <div className="h-3 bg-secondary animate-pulse rounded-sm w-1/2 mt-2" />
         </div>
       </div>
     </Card>

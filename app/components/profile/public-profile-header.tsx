@@ -33,10 +33,10 @@ export function PublicProfileHeader({
     .slice(0, 2);
 
   return (
-    <div className="bg-primary/5 rounded-2xl p-6 sm:p-8">
+    <div className="bg-primary/5 rounded-sm p-6 sm:p-8">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         {/* Avatar */}
-        <Avatar className="h-24 w-24 sm:h-28 sm:w-28 ring-4 ring-background shadow-warm-lg">
+        <Avatar className="h-24 w-24 sm:h-28 sm:w-28 ring-4 ring-background">
           <AvatarImage src={avatarUrl || undefined} alt={displayName || username} />
           <AvatarFallback className="bg-primary/20 text-primary text-2xl font-display">
             {initials || <User className="h-10 w-10" />}
@@ -75,7 +75,7 @@ export function PublicProfileHeader({
           <div className="flex items-center justify-center sm:justify-start gap-3 pt-2">
             <Button
               onClick={onShareClick}
-              className="gap-2 shadow-warm hover:shadow-warm-lg transition-shadow"
+              className="gap-2 transition-shadow"
             >
               <Share2 className="h-4 w-4" />
               Share

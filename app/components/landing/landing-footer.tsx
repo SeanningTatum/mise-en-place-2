@@ -29,17 +29,13 @@ export function LandingFooter({ className }: LandingFooterProps) {
 
   return (
     <footer
-      className={cn("bg-secondary", className)}
+      className={cn("border-t border-border bg-transparent", className)}
     >
       <div className="container mx-auto px-6 lg:px-12 py-16 lg:py-24">
         {/* Top section - Logo and tagline */}
         <div className="mb-16">
           <Link to="/" className="flex items-center gap-3 mb-6">
-            <div className="flex size-12 items-center justify-center rounded-[14px] bg-primary">
-              <span className="font-display text-2xl text-primary-foreground">
-                M
-              </span>
-            </div>
+            <span className="font-display text-2xl italic">m</span>
             <span className="font-display text-2xl tracking-tight">
               mise en place
             </span>
@@ -54,7 +50,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-16">
           {/* Product Links */}
           <div>
-            <h3 className="text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
               Product
             </h3>
             <ul className="space-y-4">
@@ -73,7 +69,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
 
           {/* Company Links */}
           <div>
-            <h3 className="text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
               Company
             </h3>
             <ul className="space-y-4">
@@ -92,7 +88,7 @@ export function LandingFooter({ className }: LandingFooterProps) {
 
           {/* Legal Links */}
           <div>
-            <h3 className="text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
+            <h3 className="font-mono text-[10px] uppercase tracking-[0.3em] font-medium text-foreground mb-6">
               Legal
             </h3>
             <ul className="space-y-4">

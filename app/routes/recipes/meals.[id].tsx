@@ -179,7 +179,7 @@ export default function MealDetailPage({ loaderData }: Route.ComponentProps) {
                 {meal.courses.map((course, index) => (
                   <div
                     key={course.id}
-                    className="flex items-center gap-4 p-4 rounded-lg border bg-card"
+                    className="flex items-center gap-4 p-4 rounded-sm border bg-card"
                   >
                     <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden bg-muted">
                       {course.recipe.thumbnailUrl ? (
@@ -363,7 +363,7 @@ export default function MealDetailPage({ loaderData }: Route.ComponentProps) {
                   );
                   const perPerson = Math.round(total / meal.guestCount);
                   return (
-                    <div key={macro} className="text-center p-3 rounded-lg bg-muted/50">
+                    <div key={macro} className="text-center p-3 rounded-sm bg-muted/50">
                       <p className="text-2xl font-semibold">{perPerson}</p>
                       <p className="text-xs text-muted-foreground capitalize">
                         {macro === "calories" ? "cal" : "g"} {macro}/person

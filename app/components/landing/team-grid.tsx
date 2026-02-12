@@ -20,7 +20,7 @@ export function TeamMember({
 }: TeamMemberProps) {
   return (
     <div className={cn("group", className)}>
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[24px] mb-4">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-sm mb-4">
         <img
           src={image}
           alt={name}

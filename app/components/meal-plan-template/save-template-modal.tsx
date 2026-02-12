@@ -118,7 +118,7 @@ export function SaveTemplateModal({
 
         <div className="flex flex-col gap-4 py-2">
           {/* Preview stats */}
-          <div className="flex items-center gap-4 p-3 bg-secondary/50 rounded-lg text-sm">
+          <div className="flex items-center gap-4 p-3 bg-secondary/50 rounded-sm text-sm">
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <Calendar className="h-4 w-4" />
               <span>7 days</span>

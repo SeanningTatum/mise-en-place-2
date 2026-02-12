@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { HandDrawnUnderline } from "@/components/ui/hand-drawn-underline";
+import { EditorialEmphasis } from "@/components/editorial";
 import { ArrowDown } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -36,9 +36,9 @@ function parseHeadline(text: string): ReactNode[] {
     const match = part.match(/\{underline:([^}]+)\}/);
     if (match) {
       return (
-        <HandDrawnUnderline key={index}>
+        <EditorialEmphasis key={index}>
           {match[1]}
-        </HandDrawnUnderline>
+        </EditorialEmphasis>
       );
     }
     return part;
@@ -81,7 +81,8 @@ export function HeroSection({
           >
             {badge && (
               <div className="animate-fade-slide-up">
-                <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-foreground">
+                <span className="inline-flex items-center gap-2 rounded-sm border border-border bg-secondary px-4 py-2 text-[10px] uppercase tracking-[0.2em] font-medium text-foreground">
+                  <span className="inline-block size-1.5 rounded-full bg-primary animate-pulse-dot" />
                   {badge}
                 </span>
               </div>
@@ -104,7 +105,7 @@ export function HeroSection({
             </p>
 
             <div className="animate-fade-slide-up-delay-300 flex flex-wrap gap-3">
-              <Button asChild size="pill-lg" className="shadow-warm-lg">
+              <Button asChild size="pill-lg">
                 <Link to={primaryCta.href}>{primaryCta.label}</Link>
               </Button>
               {secondaryCta && (
@@ -117,8 +118,8 @@ export function HeroSection({
             {/* Handwritten annotation */}
             {annotation && (
               <div className="animate-fade-slide-up-delay-500 flex items-center gap-2 text-muted-foreground mt-2">
-                <span className="font-handwritten text-2xl md:text-3xl">{annotation}</span>
-                <ArrowDown className="size-4 animate-float" />
+                <span className="font-mono text-sm">{annotation}</span>
+                <ArrowDown className="size-4" />
               </div>
             )}
           </div>

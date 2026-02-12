@@ -111,13 +111,13 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           {/* Action buttons */}
           <div className="flex items-center gap-3 flex-wrap">
             <Link to="/recipes/new">
-              <Button className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-recipe-button">
+              <Button className="gap-2" data-testid="extract-recipe-button">
                 <Sparkles className="h-4 w-4" />
                 Extract from URL
               </Button>
             </Link>
             <Link to="/recipes/create">
-              <Button variant="outline" className="gap-2 shadow-warm" data-testid="create-recipe-button">
+              <Button variant="outline" className="gap-2" data-testid="create-recipe-button">
                 <PenLine className="h-4 w-4" />
                 Create Your Own
               </Button>
@@ -127,7 +127,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
       </div>
 
       {/* Filters - refined styling */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center bg-card/50 p-4 rounded-xl border border-border/50">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center bg-card/50 p-4 rounded-sm border border-border/50">
         <Tabs value={currentSource} onValueChange={handleSourceChange} className="w-full sm:w-auto">
           <TabsList className="bg-secondary/50">
             <TabsTrigger value="all" data-testid="filter-tab-all" className="data-[state=active]:bg-card">
@@ -193,7 +193,6 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
                   params.set("page", String(page - 1));
                   setSearchParams(params);
                 }}
-                className="shadow-warm hover:shadow-warm-lg"
                 data-testid="pagination-previous"
               >
                 Previous
@@ -210,7 +209,6 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
                   params.set("page", String(page + 1));
                   setSearchParams(params);
                 }}
-                className="shadow-warm hover:shadow-warm-lg"
                 data-testid="pagination-next"
               >
                 Next
@@ -224,7 +222,7 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           <div className="relative mb-8">
             {/* Decorative circle */}
             <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-accent/10 rounded-full blur-2xl scale-150" />
-            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card border-2 border-dashed border-border">
+            <div className="relative flex items-center justify-center w-24 h-24 rounded-full bg-card border border-dashed border-border">
               <ChefHat className="h-10 w-10 text-primary/60" />
             </div>
           </div>
@@ -241,14 +239,14 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           {!searchInput && currentSource === "all" && (
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <Link to="/recipes/new">
-                <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-first-recipe-button">
+                <Button size="lg" className="gap-2" data-testid="extract-first-recipe-button">
                   <Sparkles className="h-4 w-4" />
                   Extract from URL
                 </Button>
               </Link>
               <span className="text-muted-foreground">or</span>
               <Link to="/recipes/create">
-                <Button size="lg" variant="outline" className="gap-2 shadow-warm" data-testid="create-first-recipe-button">
+                <Button size="lg" variant="outline" className="gap-2" data-testid="create-first-recipe-button">
                   <PenLine className="h-4 w-4" />
                   Create Your Own
                 </Button>

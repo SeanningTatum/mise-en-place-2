@@ -240,7 +240,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
         {!isDesktop ? (
           // Mobile: Stacked layout
           <div className="space-y-6">
-            <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
+            <div data-testid="youtube-player-container" className="rounded-sm overflow-hidden">
               <YouTubePlayer
                 videoId={recipe.youtubeVideoId!}
                 seekTo={seekTo}
@@ -257,7 +257,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               fiber={recipe.fiber}
               servings={recipe.servings}
             />
-            <Card className="border-border/50 shadow-warm overflow-hidden">
+            <Card className="border-border/50 overflow-hidden">
               <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-5">
@@ -267,7 +267,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
                 <IngredientsList ingredients={recipe.ingredients} checkable />
               </div>
             </Card>
-            <Card className="border-border/50 shadow-warm overflow-hidden">
+            <Card className="border-border/50 overflow-hidden">
               <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-5">
@@ -289,7 +289,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
             {/* Left column: Sticky video player */}
             <div className="relative">
               <div className="sticky top-4 space-y-4">
-                <div data-testid="youtube-player-container" className="rounded-xl overflow-hidden shadow-warm-lg">
+                <div data-testid="youtube-player-container" className="rounded-sm overflow-hidden">
                   <YouTubePlayer
                     videoId={recipe.youtubeVideoId!}
                     seekTo={seekTo}
@@ -312,7 +312,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
 
                 {/* Collapsible ingredients under video */}
                 <Collapsible open={ingredientsOpen} onOpenChange={setIngredientsOpen}>
-                  <Card className="border-border/50 shadow-warm overflow-hidden">
+                  <Card className="border-border/50 overflow-hidden">
                     <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
                     <CollapsibleTrigger asChild>
                       <button className="w-full p-4 flex items-center justify-between hover:bg-muted/50 transition-colors">
@@ -344,7 +344,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
               <RecipeHeader />
               
               {/* Steps - Full height for scrolling through timestamps */}
-              <Card className="border-border/50 shadow-warm overflow-hidden">
+              <Card className="border-border/50 overflow-hidden">
                 <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-5">
@@ -411,7 +411,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
       {/* Content Grid - Editorial Layout */}
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Ingredients - Sidebar style */}
-        <Card className="lg:col-span-1 border-border/50 shadow-warm overflow-hidden">
+        <Card className="lg:col-span-1 border-border/50 overflow-hidden">
           <div className="h-1 bg-linear-to-r from-accent to-accent/50" />
           <div className="p-6">
             <div className="flex items-center gap-2 mb-5">
@@ -426,7 +426,7 @@ export default function RecipeDetailPage({ loaderData }: Route.ComponentProps) {
         </Card>
 
         {/* Steps - Main content */}
-        <Card className="lg:col-span-2 border-border/50 shadow-warm overflow-hidden">
+        <Card className="lg:col-span-2 border-border/50 overflow-hidden">
           <div className="h-1 bg-linear-to-r from-primary to-primary/50" />
           <div className="p-6">
             <div className="flex items-center gap-2 mb-5">

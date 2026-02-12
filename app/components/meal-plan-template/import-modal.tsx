@@ -127,7 +127,7 @@ export function ImportModal({
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 disabled={(date) => date < getMonday(new Date())}
-                className="rounded-lg border"
+                className="rounded-sm border"
                 data-testid="import-week-calendar"
               />
             </div>
@@ -135,7 +135,7 @@ export function ImportModal({
 
           {/* Selected week display */}
           {targetWeekStart && (
-            <div className="p-3 bg-secondary/50 rounded-lg space-y-2">
+            <div className="p-3 bg-secondary/50 rounded-sm space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <CalendarIcon className="h-4 w-4 text-primary" />
                 <span className="font-medium">
@@ -151,7 +151,7 @@ export function ImportModal({
           {/* Warning/info message */}
           {targetWeekStart && (
             <div
-              className={`flex items-start gap-2 p-3 rounded-lg text-sm ${showWarning
+              className={`flex items-start gap-2 p-3 rounded-sm text-sm ${showWarning
                   ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
                   : "bg-green-500/10 text-green-700 dark:text-green-400"
                 }`}

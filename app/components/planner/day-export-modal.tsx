@@ -110,7 +110,7 @@ export function DayExportModal({
               onValueChange={(value) => setFormat(value as ExportFormat)}
               className="space-y-3"
             >
-              <div className="flex items-start space-x-3 p-3 rounded-lg border border-border/60 hover:border-primary/40 hover:bg-secondary/30 transition-colors">
+              <div className="flex items-start space-x-3 p-3 rounded-sm border border-border/60 hover:border-primary/40 hover:bg-secondary/30 transition-colors">
                 <RadioGroupItem
                   value="separate"
                   id="separate"
@@ -131,7 +131,7 @@ export function DayExportModal({
                 </div>
               </div>
 
-              <div className="flex items-start space-x-3 p-3 rounded-lg border border-border/60 hover:border-primary/40 hover:bg-secondary/30 transition-colors">
+              <div className="flex items-start space-x-3 p-3 rounded-sm border border-border/60 hover:border-primary/40 hover:bg-secondary/30 transition-colors">
                 <RadioGroupItem
                   value="unified"
                   id="unified"
@@ -156,14 +156,14 @@ export function DayExportModal({
 
           {/* Recipe preview */}
           {isLoading ? (
-            <div className="mt-4 p-3 bg-secondary/30 rounded-lg">
+            <div className="mt-4 p-3 bg-secondary/30 rounded-sm">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Loading recipes...
               </div>
             </div>
           ) : data && data.meals.length > 0 ? (
-            <div className="mt-4 p-3 bg-secondary/30 rounded-lg">
+            <div className="mt-4 p-3 bg-secondary/30 rounded-sm">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
                 Included recipes
               </p>
