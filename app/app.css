@@ -1,5 +1,5 @@
-/* Google Fonts - Modern Organic Editorial Typography */
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&family=Reenie+Beanie&display=swap');
+/* Google Fonts - Playful Geometric Typography */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss" source(".");
 @import "tw-animate-css";
@@ -8,13 +8,11 @@
 
 
 @theme {
-  /* Display/Headlines: High-contrast Serif */
-  --font-display: "DM Serif Display", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  /* Body: Clean, modern sans-serif */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+  /* Headings: Geometric sans with rounded, friendly character */
+  --font-display: "Outfit", system-ui, sans-serif;
+  /* Body: Highly legible, modern geometric humanist */
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* Handwritten accents */
-  --font-handwritten: "Reenie Beanie", cursive;
 }
 
 html,
@@ -29,26 +27,14 @@ body {
   }
 }
 
-/* Paper texture overlay - natural, organic feel */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.4;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
-
 @theme inline {
-  /* Organic radius system */
-  --radius-sm: 16px;
-  --radius-md: 24px;
-  --radius-lg: 40px;
-  --radius-xl: 64px;
-  --radius-pill: 999px;
+  /* Playful Geometric radius system */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
   
-  /* Semantic color mappings */
+  /* Core color mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -63,15 +49,52 @@ body::before {
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  
+  /* Playful palette extras */
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+  --color-quaternary: var(--quaternary);
+  --color-quaternary-foreground: var(--quaternary-foreground);
+  
+  /* Surface hierarchy colors */
+  --color-background-subtle: var(--background-subtle);
+  --color-background-elevated: var(--background-elevated);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  
+  /* Semantic status colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-background: var(--success-background);
+  --color-success-text: var(--success-text);
+  
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-background: var(--warning-background);
+  --color-warning-text: var(--warning-text);
+  
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-background: var(--destructive-background);
+  --color-destructive-text: var(--destructive-text);
+  
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-background: var(--info-background);
+  --color-info-text: var(--info-text);
+  
+  /* Chart colors */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  
+  /* Sidebar colors */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -80,135 +103,178 @@ body::before {
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  /* Custom organic theme colors */
-  --color-charcoal: var(--charcoal);
-  --color-charcoal-foreground: var(--charcoal-foreground);
-  --color-sage: var(--sage);
-  --color-sage-foreground: var(--sage-foreground);
-  --color-cream: var(--cream);
-  --color-cream-secondary: var(--cream-secondary);
 }
 
 :root {
-  /* Modern Organic Editorial Palette */
-  --background: #F7F5EB;
-  --foreground: #202A2D;
+  /* Playful Geometric Palette - Punchy, High-Saturation */
+  --background: #FFFDF5;
+  --foreground: #1E293B;
   
-  /* Card: Same cream for seamless feel */
-  --card: #F7F5EB;
-  --card-foreground: #202A2D;
-  --popover: #F7F5EB;
-  --popover-foreground: #202A2D;
+  /* Surface Hierarchy */
+  --background-subtle: #F1F5F9;
+  --background-elevated: #FFFFFF;
+  --foreground-muted: #64748B;
+  --foreground-subtle: #94A3B8;
   
-  /* Primary: Deep charcoal */
-  --primary: #202A2D;
-  --primary-foreground: #F7F5EB;
+  /* Card: White elevated surface */
+  --card: #FFFFFF;
+  --card-foreground: #1E293B;
+  --popover: #FFFFFF;
+  --popover-foreground: #1E293B;
   
-  /* Secondary: Slightly darker cream */
-  --secondary: #F0EDE1;
-  --secondary-foreground: #202A2D;
+  /* Primary: Vivid Violet - main brand action */
+  --primary: #8B5CF6;
+  --primary-foreground: #FFFFFF;
   
-  /* Muted: Soft warm gray */
-  --muted: #F0EDE1;
-  --muted-foreground: #6B7280;
+  /* Secondary: Hot Pink - playful pop */
+  --secondary: #F472B6;
+  --secondary-foreground: #FFFFFF;
   
-  /* Accent: Sage green - organic and natural */
-  --accent: #CBD0B5;
-  --accent-foreground: #202A2D;
+  /* Muted: Slate 100 */
+  --muted: #F1F5F9;
+  --muted-foreground: #64748B;
   
-  /* Destructive: Muted rust red */
-  --destructive: #B85450;
+  /* Accent: Same as primary (Violet) for consistent brand */
+  --accent: #8B5CF6;
+  --accent-foreground: #FFFFFF;
   
-  /* Borders: Subtle warm tone */
-  --border: #E5E2D6;
-  --input: #F0EDE1;
-  --ring: #202A2D;
+  /* Tertiary: Amber/Yellow - optimism */
+  --tertiary: #FBBF24;
+  --tertiary-foreground: #1E293B;
   
-  /* Chart colors - organic, muted palette */
-  --chart-1: #202A2D;
-  --chart-2: #CBD0B5;
-  --chart-3: #A3A899;
-  --chart-4: #8B9A7D;
-  --chart-5: #6B7280;
+  /* Quaternary: Emerald/Mint - freshness */
+  --quaternary: #34D399;
+  --quaternary-foreground: #1E293B;
+  
+  /* Semantic Colors */
+  --success: #34D399;
+  --success-foreground: #FFFFFF;
+  --success-background: #ECFDF5;
+  --success-text: #065F46;
+  
+  --warning: #FBBF24;
+  --warning-foreground: #1E293B;
+  --warning-background: #FFFBEB;
+  --warning-text: #92400E;
+  
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --destructive-background: #FEF2F2;
+  --destructive-text: #991B1B;
+  
+  --info: #3B82F6;
+  --info-foreground: #FFFFFF;
+  --info-background: #EFF6FF;
+  --info-text: #1E40AF;
+  
+  /* Borders: Slate 200 with chunky 2px default */
+  --border: #E2E8F0;
+  --border-strong: #1E293B;
+  --input: #FFFFFF;
+  --ring: #8B5CF6;
+  
+  /* Chart colors - playful rotation */
+  --chart-1: #8B5CF6;
+  --chart-2: #F472B6;
+  --chart-3: #FBBF24;
+  --chart-4: #34D399;
+  --chart-5: #3B82F6;
   
   /* Sidebar */
-  --sidebar: #F0EDE1;
-  --sidebar-foreground: #202A2D;
-  --sidebar-primary: #202A2D;
-  --sidebar-primary-foreground: #F7F5EB;
-  --sidebar-accent: #CBD0B5;
-  --sidebar-accent-foreground: #202A2D;
-  --sidebar-border: #E5E2D6;
-  --sidebar-ring: #202A2D;
-  
-  /* Custom: Named organic colors */
-  --charcoal: #202A2D;
-  --charcoal-foreground: #F7F5EB;
-  --sage: #CBD0B5;
-  --sage-foreground: #202A2D;
-  --cream: #F7F5EB;
-  --cream-secondary: #F0EDE1;
+  --sidebar: #FFFDF5;
+  --sidebar-foreground: #1E293B;
+  --sidebar-primary: #8B5CF6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F1F5F9;
+  --sidebar-accent-foreground: #1E293B;
+  --sidebar-border: #E2E8F0;
+  --sidebar-ring: #8B5CF6;
 }
 
 .dark {
-  /* Dark: Inverted organic palette */
-  --background: #202A2D;
-  --foreground: #F7F5EB;
+  /* Dark: Playful Geometric - Dark Mode */
+  --background: #0F172A;
+  --foreground: #F8FAFC;
   
-  /* Card: Slightly lighter charcoal */
-  --card: #2A3538;
-  --card-foreground: #F7F5EB;
-  --popover: #2A3538;
-  --popover-foreground: #F7F5EB;
+  /* Surface Hierarchy - dark mode layers */
+  --background-subtle: #1E293B;
+  --background-elevated: #1E293B;
+  --foreground-muted: #94A3B8;
+  --foreground-subtle: #64748B;
   
-  /* Primary: Cream on dark */
-  --primary: #F7F5EB;
-  --primary-foreground: #202A2D;
+  /* Card: Elevated dark surface */
+  --card: #1E293B;
+  --card-foreground: #F8FAFC;
+  --popover: #1E293B;
+  --popover-foreground: #F8FAFC;
   
-  /* Secondary */
-  --secondary: #353F42;
-  --secondary-foreground: #F7F5EB;
+  /* Primary: Violet - slightly brighter for dark */
+  --primary: #A78BFA;
+  --primary-foreground: #0F172A;
+  
+  /* Secondary: Pink */
+  --secondary: #F9A8D4;
+  --secondary-foreground: #0F172A;
   
   /* Muted */
-  --muted: #353F42;
-  --muted-foreground: #9CA3AF;
+  --muted: #334155;
+  --muted-foreground: #94A3B8;
   
-  /* Accent: Muted sage for dark */
-  --accent: #8B9A7D;
-  --accent-foreground: #F7F5EB;
+  /* Accent: Violet */
+  --accent: #A78BFA;
+  --accent-foreground: #0F172A;
   
-  /* Destructive */
-  --destructive: #DC6B67;
+  /* Tertiary: Amber */
+  --tertiary: #FCD34D;
+  --tertiary-foreground: #0F172A;
+  
+  /* Quaternary: Emerald */
+  --quaternary: #6EE7B7;
+  --quaternary-foreground: #0F172A;
+  
+  /* Semantic Colors - dark mode variants */
+  --success: #6EE7B7;
+  --success-foreground: #0F172A;
+  --success-background: #064E3B;
+  --success-text: #A7F3D0;
+  
+  --warning: #FCD34D;
+  --warning-foreground: #0F172A;
+  --warning-background: #78350F;
+  --warning-text: #FDE68A;
+  
+  --destructive: #FCA5A5;
+  --destructive-foreground: #0F172A;
+  --destructive-background: #7F1D1D;
+  --destructive-text: #FECACA;
+  
+  --info: #93C5FD;
+  --info-foreground: #0F172A;
+  --info-background: #1E3A5F;
+  --info-text: #BFDBFE;
   
   /* Borders */
-  --border: #404A4D;
-  --input: #353F42;
-  --ring: #F7F5EB;
+  --border: #334155;
+  --border-strong: #F8FAFC;
+  --input: #1E293B;
+  --ring: #A78BFA;
   
-  /* Charts */
-  --chart-1: #F7F5EB;
-  --chart-2: #CBD0B5;
-  --chart-3: #A3A899;
-  --chart-4: #8B9A7D;
-  --chart-5: #9CA3AF;
+  /* Charts - dark mode */
+  --chart-1: #A78BFA;
+  --chart-2: #F9A8D4;
+  --chart-3: #FCD34D;
+  --chart-4: #6EE7B7;
+  --chart-5: #93C5FD;
   
   /* Sidebar */
-  --sidebar: #2A3538;
-  --sidebar-foreground: #F7F5EB;
-  --sidebar-primary: #F7F5EB;
-  --sidebar-primary-foreground: #202A2D;
-  --sidebar-accent: #8B9A7D;
-  --sidebar-accent-foreground: #F7F5EB;
-  --sidebar-border: #404A4D;
-  --sidebar-ring: #F7F5EB;
-  
-  /* Custom */
-  --charcoal: #F7F5EB;
-  --charcoal-foreground: #202A2D;
-  --sage: #8B9A7D;
-  --sage-foreground: #F7F5EB;
-  --cream: #202A2D;
-  --cream-secondary: #2A3538;
+  --sidebar: #0F172A;
+  --sidebar-foreground: #F8FAFC;
+  --sidebar-primary: #A78BFA;
+  --sidebar-primary-foreground: #0F172A;
+  --sidebar-accent: #334155;
+  --sidebar-accent-foreground: #F8FAFC;
+  --sidebar-border: #334155;
+  --sidebar-ring: #A78BFA;
 }
 
 @layer base {
@@ -219,177 +285,369 @@ body::before {
     @apply bg-background text-foreground;
   }
   
-  /* Editorial typography - high-contrast serifs for headings */
+  /* Playful Geometric typography - bold geometric headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
-    font-weight: 400;
-    line-height: 0.95;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+    line-height: 1.1;
   }
   
-  /* Smooth transitions */
+  /* Bouncy transitions for interactive elements */
   a, button {
-    @apply transition-all duration-500;
+    @apply transition-all duration-300;
+    transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-/* Animation keyframes for Modern Organic Editorial */
-@keyframes fadeSlideUp {
-  from {
+/* ============================================ */
+/* Animation Keyframes - Playful Geometric      */
+/* ============================================ */
+
+@keyframes popIn {
+  0% {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.8);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes grayscaleReveal {
-  from {
-    filter: grayscale(100%);
-    transform: scale(1);
-  }
-  to {
-    filter: grayscale(0%);
+  70% {
     transform: scale(1.05);
   }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-@keyframes subtleFloat {
+@keyframes wiggle {
   0%, 100% {
-    transform: translateY(0);
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  60% {
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-12px) rotate(2deg);
   }
 }
 
-/* Utility classes for the Modern Organic Editorial aesthetic */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================ */
+/* Utility Classes - Playful Geometric          */
+/* ============================================ */
+
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
-  }
-  
-  .font-handwritten {
-    font-family: var(--font-handwritten);
   }
   
   .text-balance {
     text-wrap: balance;
   }
   
-  /* Organic border radii */
-  .rounded-organic {
-    border-radius: 40px;
+  /* === Hard "Pop" Shadows === */
+  .shadow-pop {
+    box-shadow: 4px 4px 0px 0px #1E293B;
   }
   
-  .rounded-organic-lg {
-    border-radius: 64px;
+  .shadow-pop-sm {
+    box-shadow: 2px 2px 0px 0px #1E293B;
   }
   
-  .rounded-pill {
-    border-radius: 999px;
+  .shadow-pop-lg {
+    box-shadow: 8px 8px 0px 0px #1E293B;
   }
   
-  /* Fade slide up animation with configurable delay */
-  .animate-fade-slide-up {
-    animation: fadeSlideUp 0.8s ease-out forwards;
+  .shadow-pop-hover {
+    box-shadow: 6px 6px 0px 0px #1E293B;
+  }
+  
+  .shadow-pop-active {
+    box-shadow: 2px 2px 0px 0px #1E293B;
+  }
+  
+  /* Colored hard shadows for cards */
+  .shadow-pop-pink {
+    box-shadow: 8px 8px 0px 0px #F472B6;
+  }
+  
+  .shadow-pop-violet {
+    box-shadow: 8px 8px 0px 0px #8B5CF6;
+  }
+  
+  .shadow-pop-yellow {
+    box-shadow: 8px 8px 0px 0px #FBBF24;
+  }
+  
+  .shadow-pop-mint {
+    box-shadow: 8px 8px 0px 0px #34D399;
+  }
+  
+  .shadow-pop-muted {
+    box-shadow: 8px 8px 0px 0px #E2E8F0;
+  }
+  
+  /* Focus shadow with accent color */
+  .shadow-pop-accent {
+    box-shadow: 4px 4px 0px 0px #8B5CF6;
+  }
+  
+  /* === Animations === */
+  .animate-pop-in {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     opacity: 0;
   }
   
-  .animate-fade-slide-up-delay-100 {
-    animation: fadeSlideUp 0.8s ease-out 0.1s forwards;
+  .animate-pop-in-delay-100 {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
     opacity: 0;
   }
   
-  .animate-fade-slide-up-delay-200 {
-    animation: fadeSlideUp 0.8s ease-out 0.2s forwards;
+  .animate-pop-in-delay-200 {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
     opacity: 0;
   }
   
-  .animate-fade-slide-up-delay-300 {
-    animation: fadeSlideUp 0.8s ease-out 0.3s forwards;
+  .animate-pop-in-delay-300 {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
     opacity: 0;
   }
   
-  .animate-fade-slide-up-delay-500 {
-    animation: fadeSlideUp 0.8s ease-out 0.5s forwards;
+  .animate-pop-in-delay-500 {
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
     opacity: 0;
   }
   
-  /* Grayscale hover effect for images */
-  .grayscale-hover {
-    filter: grayscale(100%);
-    transition: all 2000ms ease-out;
+  .animate-bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    opacity: 0;
   }
   
-  .grayscale-hover:hover,
-  .group:hover .grayscale-hover {
-    filter: grayscale(0%);
-    transform: scale(1.05);
+  .animate-wiggle {
+    animation: wiggle 0.5s ease-in-out;
   }
   
-  /* Subtle float animation */
+  .hover\:animate-wiggle:hover {
+    animation: wiggle 0.5s ease-in-out;
+  }
+  
   .animate-float {
-    animation: subtleFloat 4s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
   
-  /* Glassmorphism backdrop */
-  .backdrop-blur-organic {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  .animate-spin-slow {
+    animation: spin-slow 12s linear infinite;
   }
   
-  /* Subtle white glow for CTA sections */
-  .glow-white {
-    box-shadow: 0 -120px 120px -60px rgba(255, 255, 255, 0.5);
+  .animate-marquee {
+    animation: marquee 20s linear infinite;
   }
   
-  /* Warm paper shadow - updated for organic feel */
-  .shadow-warm {
-    box-shadow: 0 4px 24px -4px rgba(32, 42, 45, 0.08),
-                0 2px 8px -2px rgba(32, 42, 45, 0.04);
+  /* === Special Border Radii (Blob/Speech Bubble) === */
+  .rounded-blob {
+    border-radius: 24px 24px 24px 0px;
   }
   
-  .shadow-warm-lg {
-    box-shadow: 0 8px 40px -8px rgba(32, 42, 45, 0.12),
-                0 4px 16px -4px rgba(32, 42, 45, 0.06);
+  .rounded-blob-alt {
+    border-radius: 0px 24px 24px 24px;
   }
   
-  /* Decorative underline for headings - organic style */
-  .heading-underline {
-    position: relative;
-    display: inline-block;
+  .rounded-arch {
+    border-radius: 9999px 9999px 0px 0px;
   }
   
-  .heading-underline::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 40%;
-    height: 3px;
-    background: var(--sage);
-    border-radius: 2px;
+  .rounded-leaf {
+    border-radius: 0px 24px 0px 24px;
   }
   
-  /* UI Label styling */
+  /* === Dot Grid Background Pattern === */
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, #CBD5E1 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .bg-dot-grid-dense {
+    background-image: radial-gradient(circle, #CBD5E1 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  
+  /* === Diagonal Stripe Pattern === */
+  .bg-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      #F1F5F9 8px,
+      #F1F5F9 16px
+    );
+  }
+  
+  /* === Grid Lines Pattern === */
+  .bg-grid-lines {
+    background-image: 
+      linear-gradient(#E2E8F0 1px, transparent 1px),
+      linear-gradient(90deg, #E2E8F0 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  
+  /* === Section Spacing === */
+  .section-spacing {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+  
+  .section-spacing-sm {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  
+  /* === Label Uppercase (UI labels) === */
   .label-uppercase {
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    font-weight: 500;
+    font-weight: 700;
   }
   
-  /* Large organic section spacing */
-  .section-spacing {
-    padding-top: 160px;
-    padding-bottom: 160px;
+  /* === Status Badges === */
+  .badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    border: 2px solid #1E293B;
   }
   
-  .section-spacing-sm {
-    padding-top: 80px;
-    padding-bottom: 80px;
+  .badge-success {
+    background-color: var(--success-background);
+    color: var(--success-text);
+  }
+  
+  .badge-warning {
+    background-color: var(--warning-background);
+    color: var(--warning-text);
+  }
+  
+  .badge-error {
+    background-color: var(--destructive-background);
+    color: var(--destructive-text);
+  }
+  
+  .badge-info {
+    background-color: var(--info-background);
+    color: var(--info-text);
+  }
+  
+  .badge-neutral {
+    background-color: var(--muted);
+    color: var(--foreground-muted);
+  }
+  
+  /* === Alert Banners === */
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border-width: 2px;
+  }
+  
+  .alert-success {
+    background-color: var(--success-background);
+    border-color: var(--success);
+    color: var(--success-text);
+  }
+  
+  .alert-warning {
+    background-color: var(--warning-background);
+    border-color: var(--warning);
+    color: var(--warning-text);
+  }
+  
+  .alert-error {
+    background-color: var(--destructive-background);
+    border-color: var(--destructive);
+    color: var(--destructive-text);
+  }
+  
+  .alert-info {
+    background-color: var(--info-background);
+    border-color: var(--info);
+    color: var(--info-text);
+  }
+  
+  /* === Elevated & Subtle Surfaces === */
+  .surface-elevated {
+    background-color: var(--background-elevated);
+    border: 2px solid var(--border);
+    box-shadow: 4px 4px 0px 0px #E2E8F0;
+  }
+  
+  .surface-subtle {
+    background-color: var(--background-subtle);
+  }
+  
+  /* === Reduced Motion === */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-pop-in,
+    .animate-pop-in-delay-100,
+    .animate-pop-in-delay-200,
+    .animate-pop-in-delay-300,
+    .animate-pop-in-delay-500,
+    .animate-bounce-in,
+    .animate-wiggle,
+    .hover\:animate-wiggle:hover,
+    .animate-float,
+    .animate-spin-slow,
+    .animate-marquee {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
   }
 }

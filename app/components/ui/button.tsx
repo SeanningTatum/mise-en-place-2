@@ -5,34 +5,35 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[16px] text-sm font-medium transition-all duration-500 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:ring-ring/50 focus-visible:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground",
+        default:
+          "bg-primary text-primary-foreground border-2 border-border-strong rounded-full shadow-pop hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-pop-hover active:translate-x-[2px] active:translate-y-[2px] active:shadow-pop-active",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white border-2 border-border-strong rounded-full shadow-pop hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-pop-hover active:translate-x-[2px] active:translate-y-[2px] active:shadow-pop-active",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "bg-transparent text-foreground border-2 border-border-strong rounded-full hover:bg-tertiary hover:text-tertiary-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground border-2 border-border-strong rounded-full shadow-pop hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-pop-hover active:translate-x-[2px] active:translate-y-[2px] active:shadow-pop-active",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "hover:bg-muted hover:text-foreground rounded-lg",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        xs: "h-6 gap-1 rounded-[12px] px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 rounded-[14px] gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-11 rounded-[20px] px-8 has-[>svg]:px-5",
-        xl: "h-14 rounded-full px-10 text-base has-[>svg]:px-6",
+        default: "h-10 px-6 py-2 has-[>svg]:px-4",
+        xs: "h-7 gap-1 px-3 text-xs has-[>svg]:px-2 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-9 gap-1.5 px-4 has-[>svg]:px-3",
+        lg: "h-12 px-8 text-base has-[>svg]:px-6",
+        xl: "h-14 px-10 text-lg has-[>svg]:px-7",
         pill: "h-10 rounded-full px-6 has-[>svg]:px-4",
         "pill-lg": "h-12 rounded-full px-8 text-base has-[>svg]:px-5",
         "pill-xl": "h-14 rounded-full px-10 text-lg has-[>svg]:px-6",
-        icon: "size-9 rounded-[16px]",
-        "icon-xs": "size-6 rounded-[12px] [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm": "size-8 rounded-[14px]",
-        "icon-lg": "size-10 rounded-[18px]",
+        icon: "size-10 rounded-full",
+        "icon-xs": "size-7 rounded-full [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-9 rounded-full",
+        "icon-lg": "size-11 rounded-lg",
       },
     },
     defaultVariants: {

@@ -4,32 +4,68 @@ alwaysApply: false
 ---
 # Tailwind CSS & Color Variables Rules
 
-## Design System: Modern Organic Editorial
+## Design System: Playful Geometric
 
-The app uses a "Modern Organic Editorial" design system with high-contrast editorial typography and organic, human-centric elements.
+The app uses a "Playful Geometric" design system inspired by the Memphis Group — optimistic, tactile, and fun. The core concept is **"Stable Grid, Wild Decoration"**: content lives in clean, readable areas while the surrounding elements are alive with shape and color.
+
+**The Vibe**: Friendly. Tactile. Pop. Energetic.
 
 **Core Palette:**
-- Primary Background: `#F7F5EB` (cream) - `bg-background`
-- Primary Text: `#202A2D` (charcoal) - `text-foreground`
-- Accent: `#CBD0B5` (sage) - `bg-accent`
-- Secondary Background: `#F0EDE1` - `bg-secondary`
+- Background: `#FFFDF5` (warm cream/paper) - `bg-background`
+- Foreground: `#1E293B` (slate 800) - `text-foreground`
+- Primary/Accent: `#8B5CF6` (vivid violet) - `bg-primary`, `bg-accent`
+- Secondary: `#F472B6` (hot pink) - `bg-secondary`
+- Tertiary: `#FBBF24` (amber/yellow) - `bg-tertiary`
+- Quaternary: `#34D399` (emerald/mint) - `bg-quaternary`
+- Muted: `#F1F5F9` (slate 100) - `bg-muted`
+
+**Surface Hierarchy:**
+- `bg-background` - Warm cream base layer (#FFFDF5)
+- `bg-background-subtle` - Grouped sections (#F1F5F9)
+- `bg-background-elevated` - Cards, modals (#FFFFFF)
+
+**Semantic Colors (vibrant, clear):**
+- Success: Emerald `#34D399` - `bg-success`, `bg-success-background`
+- Warning: Amber `#FBBF24` - `bg-warning`, `bg-warning-background`
+- Error: Red `#EF4444` - `bg-destructive`, `bg-destructive-background`
+- Info: Blue `#3B82F6` - `bg-info`, `bg-info-background`
 
 **Typography:**
-- Headings: DM Serif Display (`.font-display`) - 48px to 160px
-- Body: Inter (default sans) - weights 300, 400, 500
-- Accents: Reenie Beanie (`.font-handwritten`) - handwritten annotations
-- UI Labels: 10px uppercase with 0.2em-0.3em tracking (`.label-uppercase`)
+- Headings: Outfit (`.font-display`) - weights 700, 800. Geometric, friendly.
+- Body: Plus Jakarta Sans (default sans) - weights 400, 500, 600
+- Scale Ratio: 1.25 (Major Third)
 
 **Border Radii (IMPORTANT):**
-- Main containers/images: `rounded-[64px]` or `.rounded-organic-lg`
-- Cards: `rounded-[24px]` to `rounded-[40px]` or `.rounded-organic`
-- Buttons: `rounded-full` (pills) or `rounded-[16px]`
-- **NEVER use `rounded-sm`, `rounded-md`, or small radii for visible containers**
+- Small elements: `rounded-lg` (16px)
+- Cards/containers: `rounded-xl` (24px)
+- Buttons/badges: `rounded-full` (pill shape)
+- **All borders are 2px** (`border-2`) — chunky by default
+- Special shapes: `.rounded-blob`, `.rounded-blob-alt`, `.rounded-arch`, `.rounded-leaf`
 
-**Animations:**
-- Text entry: `.animate-fade-slide-up` (0.8s ease-out with translateY)
-- Image hover: `.grayscale-hover` (2000ms grayscale-to-color + scale)
-- Subtle float: `.animate-float` (4s infinite)
+**Shadows (Hard "Pop" Shadows — no blur):**
+- `.shadow-pop` - 4px 4px solid black offset
+- `.shadow-pop-sm` - 2px 2px for small elements
+- `.shadow-pop-lg` - 8px 8px for cards
+- `.shadow-pop-hover` - 6px 6px for hover lift
+- `.shadow-pop-active` - 2px 2px for press
+- `.shadow-pop-accent` - 4px 4px violet (focus state)
+- `.shadow-pop-pink`, `.shadow-pop-violet`, `.shadow-pop-yellow`, `.shadow-pop-mint` - Colored card shadows
+- `.shadow-pop-muted` - 8px 8px slate for default cards
+
+**Animations (bouncy, elastic, fun):**
+- Entry: `.animate-pop-in` (scale bounce with delays: 100, 200, 300, 500)
+- Bounce: `.animate-bounce-in` (translateY + scale bounce)
+- Wiggle: `.animate-wiggle`, `.hover:animate-wiggle` (rotation wiggle on hover)
+- Float: `.animate-float` (4s infinite bob)
+- Marquee: `.animate-marquee` (infinite horizontal scroll)
+- Spin: `.animate-spin-slow` (12s rotation)
+- Transition curve: `cubic-bezier(0.34, 1.56, 0.64, 1)` (bouncy overshoot)
+
+**Background Patterns:**
+- `.bg-dot-grid` — 24px dot grid
+- `.bg-dot-grid-dense` — 16px dot grid
+- `.bg-stripes` — 45deg diagonal stripes
+- `.bg-grid-lines` — 32px grid lines
 
 ## Core Principles
 
@@ -57,44 +93,61 @@ The `cn()` utility combines `clsx` for conditional logic and `tailwind-merge` to
 
 ## Available CSS Variables
 
-### Semantic Colors (Use These First)
+### Core Colors (Use These First)
 These are defined in `app/app.css` and automatically switch for dark mode:
 
 | Variable | Usage | Tailwind Class |
 |----------|-------|----------------|
-| `--background` | Page backgrounds | `bg-background` |
-| `--foreground` | Primary text | `text-foreground` |
-| `--card` | Card backgrounds | `bg-card` |
+| `--background` | Page backgrounds (cream) | `bg-background` |
+| `--foreground` | Primary text (slate) | `text-foreground` |
+| `--card` | Card backgrounds (white) | `bg-card` |
 | `--card-foreground` | Card text | `text-card-foreground` |
-| `--primary` | Primary buttons, links | `bg-primary`, `text-primary` |
+| `--primary` | Primary brand (violet) | `bg-primary`, `text-primary` |
 | `--primary-foreground` | Text on primary | `text-primary-foreground` |
-| `--secondary` | Secondary actions | `bg-secondary`, `text-secondary` |
+| `--secondary` | Hot pink pop | `bg-secondary`, `text-secondary` |
 | `--secondary-foreground` | Text on secondary | `text-secondary-foreground` |
 | `--muted` | Muted backgrounds | `bg-muted` |
-| `--muted-foreground` | Muted text | `text-muted-foreground` |
-| `--accent` | Accent highlights | `bg-accent`, `text-accent` |
+| `--muted-foreground` | Secondary text | `text-muted-foreground` |
+| `--accent` | Accent (violet) | `bg-accent`, `text-accent` |
 | `--accent-foreground` | Text on accent | `text-accent-foreground` |
-| `--destructive` | Error/danger states | `bg-destructive`, `text-destructive` |
-| `--border` | Borders | `border-border` |
+| `--border` | Default borders (slate 200) | `border-border` |
+| `--border-strong` | Chunky dark borders (slate 800) | `border-border-strong` |
 | `--input` | Input backgrounds | `bg-input` |
-| `--ring` | Focus rings | `ring-ring` |
+| `--ring` | Focus rings (violet) | `ring-ring` |
 
-### Text Hierarchy Variables
+### Playful Palette Colors
 | Variable | Usage | Tailwind Class |
 |----------|-------|----------------|
-| `--text-heading` | Headings, titles | `text-text-heading` |
-| `--text-body` | Body text | `text-text-body` |
-| `--text-body-subtle` | Secondary text | `text-text-body-subtle` |
+| `--tertiary` | Amber/Yellow (optimism) | `bg-tertiary`, `text-tertiary` |
+| `--tertiary-foreground` | Text on tertiary | `text-tertiary-foreground` |
+| `--quaternary` | Emerald/Mint (freshness) | `bg-quaternary`, `text-quaternary` |
+| `--quaternary-foreground` | Text on quaternary | `text-quaternary-foreground` |
 
-### Organic Theme Colors
+**Confetti Rule**: Use `secondary`, `tertiary`, and `quaternary` rotationally for decorative shapes, icons, or emphasized words to create a "confetti" effect.
+
+### Surface Hierarchy Variables
 | Variable | Usage | Tailwind Class |
 |----------|-------|----------------|
-| `--charcoal` | Primary dark color | `bg-charcoal`, `text-charcoal` |
-| `--charcoal-foreground` | Text on charcoal | `text-charcoal-foreground` |
-| `--sage` | Accent green | `bg-sage`, `text-sage` |
-| `--sage-foreground` | Text on sage | `text-sage-foreground` |
-| `--cream` | Primary cream | `bg-cream` |
-| `--cream-secondary` | Secondary cream | `bg-cream-secondary` |
+| `--background-subtle` | Grouped sections | `bg-background-subtle` |
+| `--background-elevated` | Cards, modals, popovers | `bg-background-elevated` |
+| `--foreground-muted` | Secondary text | `text-foreground-muted` |
+| `--foreground-subtle` | Tertiary/disabled text | `text-foreground-subtle` |
+
+### Semantic Status Colors
+| Variable | Usage | Tailwind Class |
+|----------|-------|----------------|
+| `--success` | Success states (emerald) | `bg-success`, `text-success` |
+| `--success-background` | Success banners | `bg-success-background` |
+| `--success-text` | Text on success bg | `text-success-text` |
+| `--warning` | Warning states (amber) | `bg-warning`, `text-warning` |
+| `--warning-background` | Warning banners | `bg-warning-background` |
+| `--warning-text` | Text on warning bg | `text-warning-text` |
+| `--destructive` | Error states (red) | `bg-destructive`, `text-destructive` |
+| `--destructive-background` | Error banners | `bg-destructive-background` |
+| `--destructive-text` | Text on error bg | `text-destructive-text` |
+| `--info` | Info states (blue) | `bg-info`, `text-info` |
+| `--info-background` | Info banners | `bg-info-background` |
+| `--info-text` | Text on info bg | `text-info-text` |
 
 ### Sidebar Variables
 For sidebar-specific styling:
@@ -104,8 +157,8 @@ For sidebar-specific styling:
 - `--sidebar-border`, `--sidebar-ring`
 
 ### Chart Colors
-For data visualization:
-- `--chart-1` through `--chart-5`
+For data visualization (playful rotation):
+- `--chart-1` (violet) through `--chart-5` (blue)
 
 ## Decision Flow
 
@@ -120,134 +173,182 @@ For data visualization:
    <div className="bg-[#F9FAFB] text-[#1a1a1a]">
    ```
 
-2. **If no semantic variable fits, check if a brand color works:**
+2. **If no semantic variable fits, check if a playful palette color works:**
    ```tsx
-   // ✅ CORRECT - Uses brand palette
-   <div className="bg-brand-100 text-brand-900">
+   // ✅ CORRECT - Uses playful palette
+   <div className="bg-tertiary text-tertiary-foreground">
    
    // ❌ WRONG - Arbitrary color
-   <div className="bg-[#e0e7ff]">
+   <div className="bg-[#FBBF24]">
    ```
 
 3. **If a new color is truly needed, ADD IT TO `app/app.css` first:**
    ```css
    /* In :root section of app/app.css */
-   --success: oklch(0.72 0.19 142.5);
-   --success-foreground: oklch(1.0 0 0);
+   --new-color: #HEX;
+   --new-color-foreground: #HEX;
    ```
    
    Then register it in the `@theme inline` block:
    ```css
    @theme inline {
-     --color-success: var(--success);
-     --color-success-foreground: var(--success-foreground);
+     --color-new-color: var(--new-color);
+     --color-new-color-foreground: var(--new-color-foreground);
    }
-   ```
-   
-   Then use it:
-   ```tsx
-   <div className="bg-success text-success-foreground">
    ```
 
-4. **For dark mode support, also add to `.dark` section:**
-   ```css
-   .dark {
-     --success: oklch(0.65 0.17 140.2);
-     --success-foreground: oklch(1.0 0 0);
-   }
-   ```
+4. **For dark mode support, also add to `.dark` section**
 
 ## Forbidden Patterns
 
 ### ❌ Never Use Template Literals for Class Names
 ```tsx
-// BAD - Template literals don't merge conflicting classes properly
+// BAD
 <div className={`p-4 ${isActive ? "bg-primary" : ""} ${className}`}>
 
-// BAD - Ternary in template literal
-<button className={`btn ${variant === "primary" ? "bg-primary" : "bg-secondary"}`}>
-
-// GOOD - Use cn() for all conditional/dynamic classes
+// GOOD
 <div className={cn("p-4", isActive && "bg-primary", className)}>
-<button className={cn("btn", variant === "primary" ? "bg-primary" : "bg-secondary")}>
 ```
 
 ### ❌ Never Use Hardcoded Colors in Classes
 ```tsx
-// BAD - Hardcoded hex
+// BAD
 <div className="bg-[#003362]">
-
-// BAD - Hardcoded rgb
 <div className="text-[rgb(100,100,100)]">
 
-// BAD - Hardcoded oklch in className
-<div className="bg-[oklch(0.5_0.1_250)]">
+// GOOD - Use semantic variables
+<div className="bg-primary">
 ```
 
 ### ❌ Never Use Tailwind's Default Palette for Semantic UI
 ```tsx
-// BAD - Using Tailwind defaults instead of semantic vars
+// BAD
 <button className="bg-blue-600 text-white">
 
-// GOOD - Using semantic vars
+// GOOD
 <button className="bg-primary text-primary-foreground">
 ```
 
-### ✅ Exception: Tailwind Grays for Layout
-Using Tailwind's gray scale is acceptable for subtle layout purposes:
+### ❌ Never Use Soft Blurred Shadows
 ```tsx
-// OK - Using gray for subtle borders/dividers
-<div className="border-gray-200 dark:border-gray-800">
+// BAD - Soft shadows don't fit this design system
+<div className="shadow-lg">
+<div className="shadow-md">
+
+// GOOD - Hard pop shadows
+<div className="shadow-pop">
+<div className="shadow-pop-lg">
+```
+
+### ❌ Never Use Small Border Radii for Visible Containers
+```tsx
+// BAD - Too subtle
+<div className="rounded-sm">
+<div className="rounded-md">
+
+// GOOD - Bold geometric shapes
+<div className="rounded-xl">
+<div className="rounded-full">
 ```
 
 ## Quick Reference: Common Replacements
 
 | Instead of... | Use... |
 |---------------|--------|
-| `bg-white` | `bg-background` or `bg-card` |
+| `bg-white` | `bg-card` or `bg-background-elevated` |
 | `text-gray-900` | `text-foreground` |
-| `text-gray-600` | `text-muted-foreground` |
-| `bg-blue-600` | `bg-primary` |
-| `bg-green-100` | `bg-accent` |
-| `border-gray-200` | `border-border` |
-| `bg-gray-100` | `bg-muted` or `bg-secondary` |
+| `text-gray-600` | `text-foreground-muted` or `text-muted-foreground` |
+| `text-gray-400` | `text-foreground-subtle` |
+| `bg-violet-600` | `bg-primary` |
+| `bg-pink-400` | `bg-secondary` |
+| `bg-yellow-400` | `bg-tertiary` |
+| `bg-emerald-400` | `bg-quaternary` |
+| `bg-green-100` | `bg-success-background` |
+| `bg-green-500` | `bg-success` |
+| `bg-yellow-100` | `bg-warning-background` |
+| `bg-yellow-500` | `bg-warning` |
+| `bg-red-100` | `bg-destructive-background` |
 | `bg-red-500` | `bg-destructive` |
-| `rounded-lg` | `rounded-[24px]` (for cards) |
-| `rounded-md` | `rounded-[16px]` (for inputs/buttons) |
+| `bg-blue-100` | `bg-info-background` |
+| `bg-blue-500` | `bg-info` |
+| `border-gray-200` | `border-border` |
+| `border-gray-900` | `border-border-strong` |
+| `shadow-md` | `shadow-pop` |
+| `shadow-lg` | `shadow-pop-lg` |
+| `rounded-lg` | `rounded-xl` (for cards) |
+| `rounded-md` | `rounded-lg` (for inputs) |
 
-## Organic Design Patterns
+## Playful Geometric Design Patterns
 
-### Card Components
+### Card Components ("Sticker Cards")
 ```tsx
-// ✅ CORRECT - Organic card styling
+// ✅ CORRECT - Playful card with hard shadow and wiggle
+<div className="rounded-xl border-2 border-border-strong bg-card p-6 shadow-pop-muted hover:rotate-[-1deg] hover:scale-[1.02] transition-all duration-300">
+
+// For featured cards, use colored shadows:
+<div className="rounded-xl border-2 border-border-strong bg-card p-6 shadow-pop-pink">
+
+// ❌ WRONG - Soft organic styling
 <div className="rounded-[24px] border-border/30 bg-card p-8 shadow-warm">
-
-// ❌ WRONG - Standard radii
-<div className="rounded-lg border bg-white p-4 shadow">
 ```
 
-### Buttons
+### Buttons ("Candy Buttons")
 ```tsx
-// ✅ CORRECT - Pill buttons for CTAs
-<Button size="pill-lg" className="shadow-warm">Get Started</Button>
+// ✅ CORRECT - Primary candy button
+<Button>Get Started</Button>  // Default variant already styled
 
-// ✅ CORRECT - Organic radius for standard buttons
-<Button className="rounded-[16px]">Submit</Button>
+// ✅ CORRECT - Outline with yellow hover fill
+<Button variant="outline">Learn More</Button>
+
+// ❌ WRONG - Soft organic styling
+<Button className="rounded-[16px] shadow-warm">Submit</Button>
 ```
 
-### Image Containers
+### Inputs (Hard Shadow Focus)
 ```tsx
-// ✅ CORRECT - Grayscale hover effect
-<div className="rounded-[24px] overflow-hidden">
-  <img className="grayscale group-hover:grayscale-0 transition-all duration-[2000ms]" />
+// ✅ CORRECT - Input with chunky border and pop shadow on focus
+<Input placeholder="Enter your name" />  // Default already styled
+
+// ❌ WRONG
+<input className="rounded-md border shadow-xs">
+```
+
+### Decorative Elements
+```tsx
+// ✅ Floating shape behind content
+<div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-tertiary animate-float" />
+
+// ✅ Icon enclosed in a colored circle
+<div className="flex items-center justify-center w-10 h-10 rounded-full bg-quaternary">
+  <CheckIcon className="text-white" strokeWidth={2.5} />
 </div>
+
+// ✅ Dot grid background pattern
+<section className="bg-dot-grid py-24">
 ```
 
 ### Animations
 ```tsx
-// ✅ CORRECT - Entry animations with delays
-<div className="animate-fade-slide-up">First element</div>
-<div className="animate-fade-slide-up-delay-200">Second element</div>
+// ✅ CORRECT - Bouncy pop-in entrance
+<div className="animate-pop-in">First element</div>
+<div className="animate-pop-in-delay-200">Second element</div>
+
+// ✅ CORRECT - Wiggle on hover for icons
+<div className="hover:animate-wiggle">🎉</div>
+```
+
+### Iconography (Lucide React)
+```tsx
+// ✅ CORRECT - Bold chunky icons enclosed in shapes
+<CheckIcon strokeWidth={2.5} className="text-white" />
+
+// Icons should be enclosed in colored circles:
+<div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary">
+  <StarIcon strokeWidth={2.5} className="size-4 text-white" />
+</div>
+
+// ❌ WRONG - Floating icon alone
+<StarIcon className="text-gray-500" />
 ```
 
 ## Adding New CSS Variables
@@ -258,9 +359,9 @@ When you need a color that doesn't exist:
    - ✅ `--success`, `--warning`, `--info`
    - ❌ `--green`, `--yellow`, `--blue-light`
 
-2. **Use OKLCH color format** for consistency with existing variables:
+2. **Use hex color format** for consistency with existing variables:
    ```css
-   --success: oklch(0.72 0.19 142.5);
+   --new-color: #HEX;
    ```
 
 3. **Always define both light and dark variants** in their respective sections

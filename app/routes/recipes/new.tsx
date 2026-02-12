@@ -68,38 +68,38 @@ export default function NewRecipePage() {
           <RecipeExtractor onExtracted={setExtractedRecipe} />
           
           {/* How it works section */}
-          <div className="bg-card/50 border border-border/50 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-4">
+          <div className="bg-card/50 border border-border/50 rounded-xl p-6 sm:p-8">
+            <div className="flex items-center justify-center gap-2 mb-6">
               <BookOpen className="h-4 w-4 text-primary" />
               <h2 className="font-display text-sm font-medium uppercase tracking-wider text-muted-foreground">
                 How it works
               </h2>
             </div>
-            <div className="grid sm:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-display font-semibold text-sm">
+            <div className="grid sm:grid-cols-3 gap-8">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-foreground font-display font-semibold">
                   1
                 </div>
-                <h3 className="font-medium text-foreground">Paste a URL</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-foreground">Paste a URL</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Copy a link from YouTube or your favorite recipe blog
                 </p>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-display font-semibold text-sm">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-foreground font-display font-semibold">
                   2
                 </div>
-                <h3 className="font-medium text-foreground">AI Extraction</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-foreground">AI Extraction</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Our AI reads the content and structures the recipe for you
                 </p>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-display font-semibold text-sm">
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-foreground font-display font-semibold">
                   3
                 </div>
-                <h3 className="font-medium text-foreground">Save & Cook</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-foreground">Save & Cook</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Review the recipe and add it to your personal cookbook
                 </p>
               </div>

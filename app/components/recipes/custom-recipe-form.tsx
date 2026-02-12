@@ -163,11 +163,11 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
   const isSubmitting = createMutation.isPending;
 
   return (
-    <div className={cn("space-y-8", className)}>
+    <div className={cn("space-y-6", className)}>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Section 1: Basic Info */}
-          <section className="space-y-6 bg-card rounded-xl border border-border/50 p-6 shadow-warm">
+          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 1
@@ -307,7 +307,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           </section>
 
           {/* Section 2: Ingredients */}
-          <section className="space-y-6 bg-card rounded-xl border border-border/50 p-6 shadow-warm">
+          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -412,7 +412,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           </section>
 
           {/* Section 3: Steps */}
-          <section className="space-y-6 bg-card rounded-xl border border-border/50 p-6 shadow-warm">
+          <section className="space-y-5 bg-card rounded-lg border border-border/50 p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-medium">
@@ -495,12 +495,12 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
           <Collapsible
             open={nutritionOpen}
             onOpenChange={setNutritionOpen}
-            className="bg-card rounded-xl border border-border/50 shadow-warm"
+            className="bg-card rounded-lg border border-border/50 shadow-sm"
           >
             <CollapsibleTrigger asChild>
               <button
                 type="button"
-                className="flex items-center justify-between w-full p-6 text-left"
+                className="flex items-center justify-between w-full p-5 text-left"
                 data-testid="nutrition-toggle"
               >
                 <div className="flex items-center gap-2">
@@ -520,7 +520,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="px-6 pb-6">
+              <div className="px-5 pb-5">
                 <div className="grid grid-cols-5 gap-4">
                   <FormField
                     control={form.control}
@@ -662,7 +662,7 @@ export function CustomRecipeForm({ className }: CustomRecipeFormProps) {
 
           {/* Error Display */}
           {submitError && (
-            <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-lg px-4 py-3">
+            <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/5 border border-destructive/20 rounded-md px-4 py-3">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{submitError}</span>
             </div>

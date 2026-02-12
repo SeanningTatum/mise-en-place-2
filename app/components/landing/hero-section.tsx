@@ -60,14 +60,14 @@ export function HeroSection({
   return (
     <section
       className={cn(
-        "relative overflow-hidden py-24 md:py-32 lg:py-40",
+        "relative overflow-hidden pt-16 pb-20 md:pt-20 md:pb-24 lg:pt-24 lg:pb-32",
         className
       )}
     >
       <div className="container relative mx-auto px-6 lg:px-12">
         <div
           className={cn(
-            "grid gap-16 lg:gap-20",
+            "grid gap-12 lg:gap-16",
             children ? "lg:grid-cols-2 lg:items-center" : "lg:grid-cols-1",
             align === "center" && !children && "text-center"
           )}
@@ -75,7 +75,7 @@ export function HeroSection({
           {/* Content */}
           <div
             className={cn(
-              "flex flex-col gap-8",
+              "flex flex-col gap-6",
               align === "center" && !children && "mx-auto max-w-4xl items-center"
             )}
           >
@@ -90,20 +90,20 @@ export function HeroSection({
             {/* Massive serif headline */}
             <div className="animate-fade-slide-up-delay-100">
               {italicFirstLine && (
-                <span className="block font-display text-4xl md:text-6xl lg:text-7xl italic text-foreground leading-[0.9] mb-2">
+                <span className="block font-display text-3xl md:text-5xl lg:text-6xl italic text-foreground leading-[0.9] mb-1">
                   {italicFirstLine}
                 </span>
               )}
-              <h1 className="font-display text-5xl md:text-7xl lg:text-[120px] xl:text-[160px] tracking-tight text-balance leading-[0.85]">
+              <h1 className="font-display text-5xl md:text-6xl lg:text-[96px] xl:text-[120px] tracking-tight text-balance leading-[0.85]">
                 {parseHeadline(headline)}
               </h1>
             </div>
 
-            <p className="animate-fade-slide-up-delay-200 max-w-[650px] text-lg md:text-xl lg:text-2xl text-muted-foreground text-balance leading-relaxed">
+            <p className="animate-fade-slide-up-delay-200 max-w-[580px] text-base md:text-lg lg:text-xl text-muted-foreground text-balance leading-relaxed">
               {subheadline}
             </p>
 
-            <div className="animate-fade-slide-up-delay-300 flex flex-wrap gap-4">
+            <div className="animate-fade-slide-up-delay-300 flex flex-wrap gap-3">
               <Button asChild size="pill-lg" className="shadow-warm-lg">
                 <Link to={primaryCta.href}>{primaryCta.label}</Link>
               </Button>
@@ -116,9 +116,9 @@ export function HeroSection({
 
             {/* Handwritten annotation */}
             {annotation && (
-              <div className="animate-fade-slide-up-delay-500 flex items-center gap-2 text-muted-foreground">
-                <span className="font-handwritten text-3xl md:text-4xl">{annotation}</span>
-                <ArrowDown className="size-5 animate-float" />
+              <div className="animate-fade-slide-up-delay-500 flex items-center gap-2 text-muted-foreground mt-2">
+                <span className="font-handwritten text-2xl md:text-3xl">{annotation}</span>
+                <ArrowDown className="size-4 animate-float" />
               </div>
             )}
           </div>

@@ -111,13 +111,13 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           {/* Action buttons */}
           <div className="flex items-center gap-3 flex-wrap">
             <Link to="/recipes/new">
-              <Button variant="outline" className="gap-2 shadow-warm" data-testid="extract-recipe-button">
+              <Button className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-recipe-button">
                 <Sparkles className="h-4 w-4" />
                 Extract from URL
               </Button>
             </Link>
             <Link to="/recipes/create">
-              <Button className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="create-recipe-button">
+              <Button variant="outline" className="gap-2 shadow-warm" data-testid="create-recipe-button">
                 <PenLine className="h-4 w-4" />
                 Create Your Own
               </Button>
@@ -241,14 +241,14 @@ export default function RecipesIndex({ loaderData }: Route.ComponentProps) {
           {!searchInput && currentSource === "all" && (
             <div className="flex flex-col sm:flex-row items-center gap-4">
               <Link to="/recipes/new">
-                <Button size="lg" variant="outline" className="gap-2 shadow-warm" data-testid="extract-first-recipe-button">
+                <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="extract-first-recipe-button">
                   <Sparkles className="h-4 w-4" />
                   Extract from URL
                 </Button>
               </Link>
               <span className="text-muted-foreground">or</span>
               <Link to="/recipes/create">
-                <Button size="lg" className="gap-2 shadow-warm hover:shadow-warm-lg" data-testid="create-first-recipe-button">
+                <Button size="lg" variant="outline" className="gap-2 shadow-warm" data-testid="create-first-recipe-button">
                   <PenLine className="h-4 w-4" />
                   Create Your Own
                 </Button>

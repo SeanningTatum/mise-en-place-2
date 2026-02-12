@@ -144,8 +144,8 @@ export interface RecipeWithRelations {
 
 // Max rows per insert to stay under D1's 100 parameter limit
 // recipe_step has 6 columns: 100 / 6 = 16 rows max
-// recipe_ingredient has 6 columns: 100 / 6 = 16 rows max
-const MAX_ROWS_PER_INSERT = 15; // Using 15 to be safe
+// recipe_ingredient has 8 columns: 100 / 8 = 12 rows max
+const MAX_ROWS_PER_INSERT = 12; // Use 12 so both step and ingredient inserts stay under 100 params
 
 /**
  * Find or create ingredients and return their IDs
