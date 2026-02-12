@@ -213,7 +213,7 @@ export function GroceryListPanel({
             }
             
             h1 {
-              font-family: 'Instrument Serif', Georgia, serif;
+              font-family: 'Playfair Display', serif;
               font-size: 2rem;
               font-weight: 600;
               margin-bottom: 0.5rem;

@@ -97,7 +97,7 @@ const printStyles = `
   }
   
   h1 {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Playfair Display', serif;
     font-size: 2.25rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
@@ -105,7 +105,7 @@ const printStyles = `
   }
   
   h2 {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Playfair Display', serif;
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -147,7 +147,7 @@ const printStyles = `
   }
   
   .section-title {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Playfair Display', serif;
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 1rem;
@@ -220,7 +220,7 @@ const printStyles = `
   }
   
   .course-title {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Playfair Display', serif;
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
